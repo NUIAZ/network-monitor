@@ -407,11 +407,36 @@ public class DemoDataSeeder
             var deviceCount = devices.Count(d => d.NetworkId == network.Id);
             var onlineCount = devices.Count(d => d.NetworkId == network.Id && d.Status != "offline");
 
+            // Networks are not all as old as the history window. Staggering when
+            // each one came under monitoring gives the activity chart an upward
+            // shape instead of a flat line, which is both more realistic and the
+            // difference between a chart that looks alive and one that looks
+            // broken.
+            var onboardedDaysAgo = n switch
+            {
+                0 or 1 or 2 => 14,   // the original estate
+                3 or 4 => 11,        // second site brought online
+                _ => 7,              // most recent additions
+            };
+
             for (var day = 13; day >= 0; day--)
             {
-                for (var slot = 0; slot < 6; slot++)
+                if (day >= onboardedDaysAgo) continue;
+
+                // Cadence is not identical every day: maintenance windows,
+                // restarts and paused schedules all reduce a day's run count in
+                // practice. Vary it so the series has texture.
+                var slotsToday = _rng.NextDouble() switch
                 {
-                    // Six runs spread across the day at ~4h spacing with jitter.
+                    < 0.10 => 3,   // a long maintenance window
+                    < 0.28 => 5,
+                    < 0.80 => 6,   // the usual day
+                    _ => 7,        // an extra ad-hoc run
+                };
+
+                for (var slot = 0; slot < slotsToday; slot++)
+                {
+                    // Runs spread across the day at ~4h spacing with jitter.
                     var startedAt = _now.Date.AddDays(-day)
                         .AddHours(slot * 4)
                         .AddMinutes(_rng.Next(0, 50));
