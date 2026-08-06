@@ -60,6 +60,29 @@ describe('api wrapper', () => {
     expect((error as ApiError).status).toBe(0);
   });
 
+  it('captures the correlationId from an RFC 7807 problem+json body', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        respond(
+          500,
+          JSON.stringify({ title: 'An unexpected error occurred', status: 500, correlationId: 'abc-123' }),
+          'application/problem+json',
+        ),
+      ),
+    );
+    const error = await api.get('/api/devices').catch((e: unknown) => e);
+    expect((error as ApiError).message).toBe('An unexpected error occurred');
+    // errorLogger reads this off the error object when reporting the failure.
+    expect((error as ApiError).correlationId).toBe('abc-123');
+  });
+
+  it('leaves correlationId null when the body has none', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond(400, JSON.stringify({ message: 'Bad input' }))));
+    const error = await api.get('/api/x').catch((e: unknown) => e);
+    expect((error as ApiError).correlationId).toBeNull();
+  });
+
   it('returns undefined for 204 responses', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 204 })));
     await expect(api.del('/api/alerts/1')).resolves.toBeUndefined();

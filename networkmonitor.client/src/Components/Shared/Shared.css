@@ -239,6 +239,19 @@
   max-width: 420px;
 }
 
+.empty-state .error-boundary-note {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.error-boundary-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .error-banner {
   display: flex;
   align-items: center;

@@ -30,6 +30,10 @@ public class DemoDataSeeder
     /// <summary>Captured once so every generated timestamp is mutually consistent.</summary>
     private DateTime _now;
 
+    /// <summary>Creates the seeder. Seeding is decided at call time, not here.</summary>
+    /// <param name="db">Context the fictional estate is written through.</param>
+    /// <param name="options">Carries the first-run switch and the company name woven through the generated data.</param>
+    /// <param name="logger">Reports what was seeded, or why seeding was skipped.</param>
     public DemoDataSeeder(NetworkMonitorDbContext db, IOptions<DemoOptions> options, ILogger<DemoDataSeeder> logger)
     {
         _db = db;

@@ -244,7 +244,7 @@ export default function Switches() {
                         <th>Interface</th>
                         <th>Status</th>
                         <th>Speed</th>
-                        <th style={{ width: '22%' }}>Utilization</th>
+                        <th className="util-col">Utilization</th>
                         <th>Errors in/out</th>
                         <th>Sampled</th>
                       </tr>

@@ -18,6 +18,7 @@ public class SnmpController : ControllerBase
 {
     private readonly NetworkMonitorDbContext _db;
 
+    /// <summary>Creates the controller.</summary>
     public SnmpController(NetworkMonitorDbContext db) => _db = db;
 
     /// <summary>

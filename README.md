@@ -37,6 +37,8 @@ A raw nmap scan tells you what is on the network *right now*. That is rarely the
 | **SNMP** | Per-switch interface tables and utilization time series | `/api/snmp/*` |
 | **Sites & networks** | CRUD for sites and CIDR-defined networks; per-network scan cadence and per-profile nmap arguments | `/api/sites`, `/api/networks` |
 | **Settings** | Key/value app settings plus system info (version, nmap availability, DB provider, demo mode) | `/api/settings` |
+| **Error logs** | Failures from both tiers in one table — server exceptions, any `ILogger` call at Warning or above, and browser errors posted back by the client — with severity filters, full stack traces, correlation ids linking a browser report to the request that caused it, and a retention purge | `/api/logs` |
+| **Help guide** | In-app documentation: 12 searchable sections covering every page, how change detection works, and the safety rules | — |
 
 The full endpoint list is in [docs/API.md](docs/API.md).
 

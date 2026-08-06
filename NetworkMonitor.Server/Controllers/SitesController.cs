@@ -16,6 +16,7 @@ public class SitesController : ControllerBase
 {
     private readonly NetworkMonitorDbContext _db;
 
+    /// <summary>Creates the controller.</summary>
     public SitesController(NetworkMonitorDbContext db) => _db = db;
 
     /// <summary>All sites with rolled-up network/device counts for the site cards.</summary>
@@ -53,6 +54,9 @@ public class SitesController : ControllerBase
         return site is null ? NotFound() : site;
     }
 
+    /// <summary>Creates a site.</summary>
+    /// <param name="request">Site key and name are required; the key is uppercased before the uniqueness check.</param>
+    /// <returns>201 with the new site (counts zero), 400 with a message when validation fails, or 409 when the site key is already taken.</returns>
     [HttpPost]
     public async Task<ActionResult<SiteDto>> Create([FromBody] SiteUpsertRequest request)
     {
@@ -80,6 +84,13 @@ public class SitesController : ControllerBase
                 site.Latitude, site.Longitude, site.CreatedAt, 0, 0));
     }
 
+    /// <summary>
+    /// Replaces a site's editable fields. This is a full replace, not a patch —
+    /// omitting City clears it rather than leaving it alone.
+    /// </summary>
+    /// <param name="id">Site to update.</param>
+    /// <param name="request">Same shape and validation as create.</param>
+    /// <returns>The updated site with freshly counted networks and devices, 404 when it does not exist, or 409 when the new key belongs to another site.</returns>
     [HttpPut("{id:int}")]
     public async Task<ActionResult<SiteDto>> Update(int id, [FromBody] SiteUpsertRequest request)
     {

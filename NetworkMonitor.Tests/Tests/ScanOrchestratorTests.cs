@@ -240,6 +240,52 @@ public class ScanOrchestratorTests : IDisposable
     }
 
     [Fact]
+    public async Task An_operator_set_hostname_survives_the_next_scan()
+    {
+        // Regression: discovery used to overwrite the hostname unconditionally,
+        // so correcting a wrong or missing reverse-DNS name appeared to save and
+        // then silently reverted on the next scan.
+        var network = await SeedNetworkAsync();
+        _nmap.Xml = XmlWithHostname("203.0.113.10", "wrong-dns-name");
+        await CreateOrchestrator().RunScanAsync(network.Id, "deep");
+
+        var device = _db.Context.Devices.Single();
+        device.Hostname = "warehouse-scanner-03";
+        device.HostnameIsManual = true;
+        await _db.Context.SaveChangesAsync();
+
+        _nmap.Xml = XmlWithHostname("203.0.113.10", "wrong-dns-name");
+        await CreateOrchestrator().RunScanAsync(network.Id, "deep");
+
+        using var verify = _db.NewContext();
+        verify.Devices.Single().Hostname.Should().Be("warehouse-scanner-03");
+    }
+
+    [Fact]
+    public async Task A_discovered_hostname_still_updates_when_no_operator_override_exists()
+    {
+        // The flip side: the override must not freeze the field for every device.
+        var network = await SeedNetworkAsync();
+        _nmap.Xml = XmlWithHostname("203.0.113.10", "old-name");
+        await CreateOrchestrator().RunScanAsync(network.Id, "deep");
+
+        _nmap.Xml = XmlWithHostname("203.0.113.10", "renamed-in-dns");
+        await CreateOrchestrator().RunScanAsync(network.Id, "deep");
+
+        using var verify = _db.NewContext();
+        verify.Devices.Single().Hostname.Should().Be("renamed-in-dns");
+    }
+
+    /// <summary>Minimal XML for one up host that resolves to a given hostname.</summary>
+    private static string XmlWithHostname(string ip, string hostname) => $"""
+        <?xml version="1.0"?><nmaprun><host><status state="up"/>
+        <address addr="{ip}" addrtype="ipv4"/>
+        <hostnames><hostname name="{hostname}" type="PTR"/></hostnames>
+        <ports><port protocol="tcp" portid="22"><state state="open"/><service name="ssh"/></port></ports>
+        </host></nmaprun>
+        """;
+
+    [Fact]
     public async Task An_oversized_target_is_refused_before_any_packets_are_sent()
     {
         // A mistyped /8 is 16.7M addresses. The guard must reject it, record the

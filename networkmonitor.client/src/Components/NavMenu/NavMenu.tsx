@@ -21,6 +21,7 @@ const TITLES: Array<[prefix: string, title: string]> = [
   ['/security/certificates', 'Certificates'],
   ['/network/switches', 'Switches'],
   ['/admin/settings', 'Settings'],
+  ['/help', 'Help'],
 ];
 
 function titleForPath(pathname: string): string {
@@ -81,6 +82,18 @@ export default function NavMenu({ onToggleSidebar }: { onToggleSidebar: () => vo
           <i className="bi bi-clock me-2" />
           {now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', second: '2-digit' })}
         </span>
+        {/* Documentation is one click from every page — an evaluator should
+            never have to hunt the sidebar to find out what a screen does. */}
+        <button
+          type="button"
+          className="btn btn-ghost help-button"
+          onClick={() => navigate('/help')}
+          aria-label="Help"
+          title="Help and documentation"
+          data-testid="help-button"
+        >
+          <i className="bi bi-question-circle" />
+        </button>
         <ThemePicker />
       </div>
     </header>

@@ -6,10 +6,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <SpaRoot>..\networkmonitor.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
+    <!-- Must match what Vite actually serves (see networkmonitor.client/vite.config.ts).
+         Declaring https here while Vite listens on http makes F5 hang forever
+         waiting for a dev server that never appears. -->
+    <SpaProxyServerUrl>http://localhost:5173</SpaProxyServerUrl>
     <Version>1.0.0</Version>
     <InformationalVersion>1.0.0</InformationalVersion>
     <UserSecretsId>networkmonitor-server</UserSecretsId>
+
+    <!-- Program.cs feeds this XML into Swagger (IncludeXmlComments), so without
+         it every doc comment in the project is invisible in the API browser.
+         Warning 1591 (missing XML comment on a public member) is deliberately
+         left ON: it makes "builds with no warnings" mean "the public surface is
+         actually documented", which is the point of the house comment style. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -32,6 +32,10 @@ public class ScansController : ControllerBase
     private readonly ScanOrchestrator _orchestrator;
     private readonly INmapExecutorService _nmap;
 
+    /// <summary>Creates the controller.</summary>
+    /// <param name="db">Scan history.</param>
+    /// <param name="orchestrator">Runs the scan and persists its outcome, including failures.</param>
+    /// <param name="nmap">Consulted before a run so a missing binary comes back as a 503 with instructions rather than a mysterious failed scan.</param>
     public ScansController(NetworkMonitorDbContext db, ScanOrchestrator orchestrator, INmapExecutorService nmap)
     {
         _db = db;

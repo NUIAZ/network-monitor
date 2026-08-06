@@ -14,39 +14,63 @@ export class ApiError extends Error {
   /** HTTP status code — pages branch on this (404 → not found, 503 → nmap missing). */
   readonly status: number;
 
-  constructor(status: number, message: string) {
+  /**
+   * Correlation id lifted out of an RFC 7807 problem+json body, when the
+   * server sent one. errorLogger sends it back with the browser-side report so
+   * the two rows describing one incident are findable by a single value
+   * instead of by guessing from timestamps.
+   */
+  readonly correlationId: string | null;
+
+  constructor(status: number, message: string, correlationId: string | null = null) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.correlationId = correlationId;
   }
 }
 
+/** What a failed response told us: something to show, and something to trace with. */
+interface FailureDetail {
+  message: string;
+  correlationId: string | null;
+}
+
 /**
- * Extracts the most human-readable message a failed response has to offer.
+ * Extracts the most human-readable message a failed response has to offer,
+ * plus the correlation id when the body is problem+json carrying one.
  * Tries JSON shapes first (ASP.NET ProblemDetails `title`/`detail`, custom
  * `{ message }` / `{ error }`), then raw text, then falls back to the status.
  */
-async function extractError(response: Response): Promise<string> {
+async function extractError(response: Response): Promise<FailureDetail> {
   const fallback = `Request failed (${response.status} ${response.statusText})`;
   try {
     const text = await response.text();
-    if (!text) return fallback;
+    if (!text) return { message: fallback, correlationId: null };
     try {
       const body: unknown = JSON.parse(text);
       if (body && typeof body === 'object') {
         const record = body as Record<string, unknown>;
+        // Read the id off any JSON error body rather than gating on the
+        // content-type header: proxies rewrite content types, and an id that
+        // is present is worth keeping regardless of how it was labelled.
+        const rawId = record['correlationId'];
+        const correlationId = typeof rawId === 'string' && rawId.length > 0 ? rawId : null;
         for (const key of ['message', 'detail', 'title', 'error']) {
           const value = record[key];
-          if (typeof value === 'string' && value.trim().length > 0) return value;
+          if (typeof value === 'string' && value.trim().length > 0) {
+            return { message: value, correlationId };
+          }
         }
+        return { message: fallback, correlationId };
       }
-      return fallback;
+      return { message: fallback, correlationId: null };
     } catch {
       // Not JSON — a short plain-text body is usually the message itself.
-      return text.length <= 500 ? text : fallback;
+      return { message: text.length <= 500 ? text : fallback, correlationId: null };
     }
   } catch {
-    return fallback;
+    return { message: fallback, correlationId: null };
   }
 }
 
@@ -65,7 +89,8 @@ async function request<T>(method: string, url: string, body?: unknown): Promise<
   }
 
   if (!response.ok) {
-    throw new ApiError(response.status, await extractError(response));
+    const { message, correlationId } = await extractError(response);
+    throw new ApiError(response.status, message, correlationId);
   }
 
   // DELETEs and some POSTs legitimately return nothing.

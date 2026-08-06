@@ -21,6 +21,10 @@ public class DashboardController : ControllerBase
     private readonly INmapExecutorService _nmap;
     private readonly AlertOptions _alertOptions;
 
+    /// <summary>Creates the controller.</summary>
+    /// <param name="db">Everything on this page is counted straight out of this context — the dashboard caches nothing.</param>
+    /// <param name="nmap">Queried per request so the "install nmap" banner reflects the host as it is now, not as it was at startup.</param>
+    /// <param name="alertOptions">Supplies the certificate expiry warning window used for the expiring-certs tile.</param>
     public DashboardController(NetworkMonitorDbContext db, INmapExecutorService nmap, IOptions<AlertOptions> alertOptions)
     {
         _db = db;

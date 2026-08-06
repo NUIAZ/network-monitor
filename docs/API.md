@@ -73,6 +73,28 @@ Base path `/api`. Swagger UI is served at `/swagger` in Development.
 | GET | `/api/snmp/targets/{id}/interfaces` | Latest snapshot per interface |
 | GET | `/api/snmp/targets/{id}/utilization?hours=24` | Time series per interface for charting |
 
+## Error logs
+
+Errors from both tiers land in one table. Server-side entries arrive two ways:
+the exception middleware records anything that escapes a controller, and a
+custom `ILoggerProvider` persists every `ILogger` call at or above
+`Logging:Database:MinimumLevel` (default `Warning`) — so `_logger.LogError(...)`
+anywhere in the codebase is reviewable in the UI. Browser failures are posted
+back by the client's error reporter.
+
+| Method | Route | Notes |
+|---|---|---|
+| GET | `/api/logs` | Query: `source` (`server`/`client`), `level` (`warning`/`error`/`fatal`), `search`, `resolved`, `page`, `pageSize` (max 200) → paged, newest first |
+| GET | `/api/logs/summary` | `{ total, last24Hours, serverErrors, clientErrors, unresolved }` |
+| POST | `/api/logs/client-error` | Body: `{ message, exceptionType, stackTrace, path, level, correlationId }` → 202. Deliberately permissive: an already-broken browser should not have to handle an error from the error reporter |
+| PUT | `/api/logs/{id}/resolved` | Body: `{ isResolved }` |
+| DELETE | `/api/logs?olderThanDays=30` | Purges old entries; returns `{ removed }`. The error log is the one table a misbehaving deployment can grow without bound |
+
+Unhandled server exceptions return RFC 7807 `application/problem+json` carrying
+a `correlationId`. The client sends that id back when it reports the resulting
+failure, so one incident is one searchable value rather than two unlinked rows.
+Exception detail appears in the response body only outside Production.
+
 ## Settings
 
 | Method | Route | Notes |

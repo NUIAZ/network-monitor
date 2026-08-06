@@ -16,6 +16,7 @@ public class AlertsController : ControllerBase
 {
     private readonly NetworkMonitorDbContext _db;
 
+    /// <summary>Creates the controller.</summary>
     public AlertsController(NetworkMonitorDbContext db) => _db = db;
 
     /// <summary>Paged alert feed, newest first, with the usual triage filters.</summary>
@@ -99,6 +100,13 @@ public class AlertsController : ControllerBase
         return new { acknowledged };
     }
 
+    /// <summary>
+    /// Permanently removes one alert. Acknowledging is the normal disposition —
+    /// deleting discards the record that something happened at all, which is why
+    /// there is no bulk equivalent of this call.
+    /// </summary>
+    /// <param name="id">Alert to delete.</param>
+    /// <returns>204 on success, 404 when the alert does not exist.</returns>
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

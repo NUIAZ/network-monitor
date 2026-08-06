@@ -24,6 +24,12 @@ public class SettingsController : ControllerBase
     private readonly ScanningOptions _scanningOptions;
     private readonly DemoOptions _demoOptions;
 
+    /// <summary>Creates the controller.</summary>
+    /// <param name="db">Backs the key/value settings table.</param>
+    /// <param name="nmap">Reports nmap availability for the About panel.</param>
+    /// <param name="configuration">Read directly rather than through an options class, because the only value needed is the database provider name chosen at startup.</param>
+    /// <param name="scanningOptions">Supplies whether the background scheduler is enabled.</param>
+    /// <param name="demoOptions">Supplies the company name and whether this instance is showing demo data.</param>
     public SettingsController(
         NetworkMonitorDbContext db,
         INmapExecutorService nmap,
@@ -73,8 +79,15 @@ public class SettingsController : ControllerBase
 
         // InformationalVersion carries the human-readable version from the
         // csproj; AssemblyVersion would show 1.0.0.0 regardless.
-        var version = Assembly.GetExecutingAssembly()
+        //
+        // The SDK appends "+<git sha>" during build. That 40-character suffix
+        // means nothing to a user and overflows the sidebar footer this value is
+        // rendered into, so it is trimmed here — once, rather than in every
+        // consumer of the field.
+        var informational = Assembly.GetExecutingAssembly()
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.0.0";
+        var shaStart = informational.IndexOf('+');
+        var version = shaStart > 0 ? informational[..shaStart] : informational;
 
         return new SystemInfoDto(
             Version: version,

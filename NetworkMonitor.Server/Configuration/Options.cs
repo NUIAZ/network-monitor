@@ -3,6 +3,7 @@ namespace NetworkMonitor.Server.Configuration;
 /// <summary>Scan execution and scheduling settings, bound from the "Scanning" section.</summary>
 public class ScanningOptions
 {
+    /// <summary>appsettings.json section this class binds to.</summary>
     public const string SectionName = "Scanning";
 
     /// <summary>Path to the nmap binary. Empty means "find nmap on PATH".</summary>
@@ -32,6 +33,7 @@ public class ScanningOptions
 /// <summary>Alerting thresholds, bound from the "Alerts" section.</summary>
 public class AlertOptions
 {
+    /// <summary>appsettings.json section this class binds to.</summary>
     public const string SectionName = "Alerts";
 
     /// <summary>
@@ -50,6 +52,7 @@ public class AlertOptions
 /// <summary>Demo-data settings, bound from the "Demo" section.</summary>
 public class DemoOptions
 {
+    /// <summary>appsettings.json section this class binds to.</summary>
     public const string SectionName = "Demo";
 
     /// <summary>

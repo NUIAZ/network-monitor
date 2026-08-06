@@ -18,6 +18,7 @@ public class VulnerabilitiesController : ControllerBase
 
     private readonly NetworkMonitorDbContext _db;
 
+    /// <summary>Creates the controller.</summary>
     public VulnerabilitiesController(NetworkMonitorDbContext db) => _db = db;
 
     /// <summary>Paged findings, highest CVSS first — triage order is the default order.</summary>

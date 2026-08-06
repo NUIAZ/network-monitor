@@ -66,7 +66,17 @@ const NAV_GROUPS: NavGroup[] = [
   {
     id: 'admin',
     label: 'Admin',
-    items: [{ to: '/admin/settings', label: 'Settings', icon: 'bi-gear' }],
+    items: [
+      { to: '/admin/settings', label: 'Settings', icon: 'bi-gear' },
+      { to: '/admin/error-logs', label: 'Error Logs', icon: 'bi-bug-fill' },
+    ],
+  },
+  // Its own group at the very bottom: the guide documents every other group,
+  // so filing it under one of them would be arbitrary.
+  {
+    id: 'help',
+    label: 'Help',
+    items: [{ to: '/help', label: 'Help guide', icon: 'bi-question-circle' }],
   },
 ];
 

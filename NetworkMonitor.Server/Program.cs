@@ -1,9 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using NetworkMonitor.Server.Configuration;
 using NetworkMonitor.Server.Context;
+using NetworkMonitor.Server.Logging;
+using NetworkMonitor.Server.Middleware;
 using NetworkMonitor.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ── Logging ───────────────────────────────────────────────────────────────────
+// Adds a database sink alongside the console one, so anything written through
+// the standard ILogger API at Warning or above is reviewable in the Error Logs
+// page without shell access to the host. See DatabaseLoggerProvider for how it
+// avoids recursing through EF Core's own logging.
+builder.Logging.AddDatabaseLogging(builder.Configuration);
 
 // ── Options ───────────────────────────────────────────────────────────────────
 builder.Services.Configure<ScanningOptions>(builder.Configuration.GetSection(ScanningOptions.SectionName));
@@ -31,6 +40,7 @@ builder.Services.AddSingleton<INmapExecutorService, NmapExecutorService>();
 builder.Services.AddSingleton<IScanResultParserService, ScanResultParserService>();
 builder.Services.AddScoped<ScanOrchestrator>();
 builder.Services.AddScoped<DemoDataSeeder>();
+builder.Services.AddScoped<IErrorLogService, ErrorLogService>();
 builder.Services.AddHostedService<ScanSchedulerService>();
 
 builder.Services.AddControllers();
@@ -62,6 +72,11 @@ using (var scope = app.Services.CreateScope())
     var seeder = scope.ServiceProvider.GetRequiredService<DemoDataSeeder>();
     await seeder.SeedIfEmptyAsync();
 }
+
+// First in the pipeline so it wraps everything downstream: an exception raised
+// anywhere below becomes a logged row and a structured problem+json response
+// rather than an empty 500.
+app.UseExceptionLogging();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

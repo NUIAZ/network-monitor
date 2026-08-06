@@ -405,6 +405,65 @@ export interface UtilizationSample {
 }
 
 // ---------------------------------------------------------------------------
+// Error logs
+// ---------------------------------------------------------------------------
+
+/** Which tier produced the entry — the API host or a browser session. */
+export type ErrorLogSource = 'server' | 'client';
+
+/** Severity the server persists. `fatal` is reserved for crashes that took a screen down. */
+export type ErrorLogLevel = 'warning' | 'error' | 'fatal';
+
+/** Filter options rendered by the Error Logs page, in the order they read best. */
+export const ERROR_LOG_LEVELS: ErrorLogLevel[] = ['fatal', 'error', 'warning'];
+
+/**
+ * One row of `exception_logs`. Most fields are request-scoped and therefore
+ * only present on server entries (`method`, `statusCode`) or only on browser
+ * entries (`userAgent`), so everything optional on the wire is nullable here.
+ */
+export interface ErrorLogEntry {
+  id: number;
+  source: string;
+  level: string;
+  message: string;
+  exceptionType: string | null;
+  stackTrace: string | null;
+  path: string | null;
+  method: string | null;
+  statusCode: number | null;
+  userAgent: string | null;
+  /** Ties a browser report to the server exception that caused it. */
+  correlationId: string | null;
+  occurredAt: string;
+  isResolved: boolean;
+}
+
+/** GET /api/logs/summary — the five numbers the page tiles. */
+export interface ErrorLogSummary {
+  total: number;
+  last24Hours: number;
+  serverErrors: number;
+  clientErrors: number;
+  unresolved: number;
+}
+
+/** Body of POST /api/logs/client-error, built by services/errorLogger.ts. */
+export interface ClientErrorReport {
+  message: string;
+  exceptionType: string;
+  stackTrace: string | null;
+  path: string;
+  level: ErrorLogLevel;
+  correlationId: string | null;
+}
+
+/** DELETE /api/logs?olderThanDays= — how many rows the purge removed. */
+export interface ErrorLogPurgeResult {
+  removed: number;
+}
+
+// ---------------------------------------------------------------------------
 // Settings
 // ---------------------------------------------------------------------------
 

@@ -23,6 +23,13 @@ public class ScanOrchestrator
     private readonly ScanningOptions _scanningOptions;
     private readonly ILogger<ScanOrchestrator> _logger;
 
+    /// <summary>Creates the orchestrator. Scoped, because it holds a DbContext.</summary>
+    /// <param name="db">Unit of work for the whole reconciliation — the scan record, device updates, snapshots, and alerts all land through this one context.</param>
+    /// <param name="nmap">The process seam; substituting it is what makes this class testable without a scanner.</param>
+    /// <param name="parser">Turns the XML nmap wrote into objects.</param>
+    /// <param name="alertOptions">Supplies the missed-scan threshold that decides when a quiet device becomes an offline one.</param>
+    /// <param name="scanningOptions">Supplies the maximum target size, checked before any packet leaves the host.</param>
+    /// <param name="logger">Scan progress and failures.</param>
     public ScanOrchestrator(
         NetworkMonitorDbContext db,
         INmapExecutorService nmap,
@@ -188,7 +195,12 @@ public class ScanOrchestrator
                 var wasOffline = device.Status == "offline";
 
                 device.MacAddress = host.MacAddress ?? device.MacAddress;
-                device.Hostname = host.Hostname ?? device.Hostname;
+                // Discovery owns the hostname unless an operator overrode it.
+                // Overwriting a hand-entered name silently undoes the
+                // correction, and the operator's only clue is that their edit
+                // "didn't save".
+                if (!device.HostnameIsManual)
+                    device.Hostname = host.Hostname ?? device.Hostname;
                 device.Vendor = host.Vendor ?? device.Vendor;
                 device.OsGuess = host.OsGuess ?? device.OsGuess;
                 device.LastSeen = now;
@@ -339,6 +351,11 @@ public class ScanOrchestrator
 /// </summary>
 public static class ScanProfileDefaults
 {
+    /// <summary>
+    /// The five profile types, in the order the UI lists them. This collection is
+    /// also the validation whitelist for the run endpoint, so adding a profile
+    /// here is all it takes to make it runnable.
+    /// </summary>
     public static IReadOnlyList<DefaultProfile> All { get; } =
     [
         // Host discovery only — cheap enough to run every few minutes.
@@ -382,6 +399,11 @@ public static class ScanProfileDefaults
         }
     }
 
+    /// <summary>One entry in the built-in profile table.</summary>
+    /// <param name="ProfileType">quick, deep, security, full_port, or udp. Doubles as the route segment for per-profile updates.</param>
+    /// <param name="NmapArgs">Default arguments, minus the target and output flags the executor appends.</param>
+    /// <param name="IntervalSeconds">Default cadence in seconds. The quick and deep values are overridden per network by the network's own interval fields.</param>
+    /// <param name="IsEnabled">Whether a newly created network schedules this profile. The three heavy profiles ship off, so a new network cannot start a week-long full-port sweep by itself.</param>
     public sealed record DefaultProfile(string ProfileType, string NmapArgs, int IntervalSeconds, bool IsEnabled);
 }
 
@@ -397,6 +419,10 @@ public class ScanSchedulerService : BackgroundService
     private readonly ScanningOptions _options;
     private readonly ILogger<ScanSchedulerService> _logger;
 
+    /// <summary>Creates the scheduler.</summary>
+    /// <param name="scopeFactory">The service is a singleton but the orchestrator it drives is scoped, so every tick opens its own scope rather than capturing a DbContext.</param>
+    /// <param name="options">Supplies the master enable switch and the tick interval.</param>
+    /// <param name="logger">Tick-level progress and per-profile failures.</param>
     public ScanSchedulerService(
         IServiceScopeFactory scopeFactory,
         IOptions<ScanningOptions> options,
@@ -407,6 +433,13 @@ public class ScanSchedulerService : BackgroundService
         _logger = logger;
     }
 
+    /// <summary>
+    /// The scheduling loop. Returns immediately without scanning anything when
+    /// Scanning:SchedulerEnabled is false, which is how the shipped configuration
+    /// leaves it — a freshly cloned demo must not start probing the network it
+    /// happens to be sitting on.
+    /// </summary>
+    /// <param name="stoppingToken">Signalled on host shutdown; ends the loop.</param>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         if (!_options.SchedulerEnabled)

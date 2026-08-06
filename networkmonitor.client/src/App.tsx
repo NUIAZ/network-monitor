@@ -25,6 +25,8 @@ const Vulnerabilities = lazy(() => import('./Components/Vulnerabilities/Vulnerab
 const Certificates = lazy(() => import('./Components/Certificates/Certificates'));
 const Switches = lazy(() => import('./Components/Switches/Switches'));
 const Settings = lazy(() => import('./Components/Settings/Settings'));
+const ErrorLogs = lazy(() => import('./Components/ErrorLogs/ErrorLogs'));
+const HelpGuide = lazy(() => import('./Components/HelpGuide/HelpGuide'));
 const NotFound = lazy(() => import('./Components/NotFound/NotFound'));
 
 /** Shell + routes; separated from App so hooks can use the router context. */
@@ -51,6 +53,8 @@ function Layout() {
                 <Route path="/security/certificates" element={<Certificates />} />
                 <Route path="/network/switches" element={<Switches />} />
                 <Route path="/admin/settings" element={<Settings />} />
+                <Route path="/admin/error-logs" element={<ErrorLogs />} />
+                <Route path="/help" element={<HelpGuide />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

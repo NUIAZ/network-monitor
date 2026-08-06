@@ -22,6 +22,9 @@ public class NetworksController : ControllerBase
     private readonly NetworkMonitorDbContext _db;
     private readonly ScanningOptions _scanningOptions;
 
+    /// <summary>Creates the controller.</summary>
+    /// <param name="db">Inventory context.</param>
+    /// <param name="scanningOptions">Supplies the maximum target size, which is enforced here at configuration time rather than only when a scan runs.</param>
     public NetworksController(NetworkMonitorDbContext db, IOptions<ScanningOptions> scanningOptions)
     {
         _db = db;
@@ -97,6 +100,14 @@ public class NetworksController : ControllerBase
                 network.IsEnabled, 0, null, network.CreatedAt));
     }
 
+    /// <summary>
+    /// Updates a network's site, name, range, and cadence. The CIDR is
+    /// re-validated (including the address-count guard) on every call, since
+    /// widening a prefix is exactly how a harmless network becomes a huge one.
+    /// </summary>
+    /// <param name="id">Network to update.</param>
+    /// <param name="request">Interval fields are only applied when positive; IsEnabled is only applied when supplied.</param>
+    /// <returns>The updated network with recounted devices and its last scan time, 404 when it does not exist, or 400 with a message when validation fails.</returns>
     [HttpPut("{id:int}")]
     public async Task<ActionResult<NetworkDto>> Update(int id, [FromBody] NetworkUpdateRequest request)
     {
@@ -123,6 +134,13 @@ public class NetworksController : ControllerBase
             network.IsEnabled, deviceCount, lastScanAt, network.CreatedAt);
     }
 
+    /// <summary>
+    /// Deletes a network and, via cascade, its devices, ports, scan history, and
+    /// profiles. To stop scanning without losing the inventory, set IsEnabled
+    /// false instead.
+    /// </summary>
+    /// <param name="id">Network to delete.</param>
+    /// <returns>204 on success, 404 when the network does not exist.</returns>
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

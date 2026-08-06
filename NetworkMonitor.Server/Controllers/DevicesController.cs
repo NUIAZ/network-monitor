@@ -20,6 +20,7 @@ public class DevicesController : ControllerBase
 
     private readonly NetworkMonitorDbContext _db;
 
+    /// <summary>Creates the controller.</summary>
     public DevicesController(NetworkMonitorDbContext db) => _db = db;
 
     /// <summary>
@@ -175,7 +176,14 @@ public class DevicesController : ControllerBase
         if (request.DeviceType != null && !ValidDeviceTypes.Contains(request.DeviceType))
             return BadRequest(new { message = $"deviceType must be one of: {string.Join(", ", ValidDeviceTypes)}." });
 
-        if (request.Hostname != null) device.Hostname = request.Hostname.Trim();
+        if (request.Hostname != null)
+        {
+            var hostname = request.Hostname.Trim();
+            device.Hostname = hostname.Length == 0 ? null : hostname;
+            // Clearing the field hands the name back to discovery; anything else
+            // is an override the next scan must not clobber.
+            device.HostnameIsManual = hostname.Length > 0;
+        }
         if (request.Hardware != null) device.Hardware = request.Hardware.Trim();
         if (request.PhysicalLocation != null) device.PhysicalLocation = request.PhysicalLocation.Trim();
         if (request.AssignedTo != null) device.AssignedTo = request.AssignedTo.Trim();

@@ -17,6 +17,7 @@ public class CertificatesController : ControllerBase
 {
     private readonly NetworkMonitorDbContext _db;
 
+    /// <summary>Creates the controller.</summary>
     public CertificatesController(NetworkMonitorDbContext db) => _db = db;
 
     /// <summary>

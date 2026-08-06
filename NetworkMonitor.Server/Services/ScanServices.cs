@@ -14,41 +14,83 @@ namespace NetworkMonitor.Server.Services;
 /// <summary>Everything one scan produced, before it touches the database.</summary>
 public class ParsedScanResult
 {
+    /// <summary>Hosts that carried a usable IPv4 address. Hosts nmap listed without one are dropped during parsing.</summary>
     public List<ParsedHost> Hosts { get; } = [];
+
+    /// <summary>Count of hosts nmap reported as up. Counted from the XML rather than derived from <see cref="Hosts"/>, which excludes unusable entries.</summary>
     public int HostsUp { get; set; }
+
+    /// <summary>Count of hosts nmap reported as down.</summary>
     public int HostsDown { get; set; }
 }
 
 /// <summary>One host as nmap reported it.</summary>
 public class ParsedHost
 {
+    /// <summary>IPv4 address from the host's ipv4 &lt;address&gt; element. Empty means the host is discarded.</summary>
     public string IpAddress { get; set; } = "";
+
+    /// <summary>MAC from the mac &lt;address&gt; element. Only present when the scan ran on-subnet, since MAC resolves via ARP.</summary>
     public string? MacAddress { get; set; }
+
+    /// <summary>First reverse-DNS name nmap resolved, if any.</summary>
     public string? Hostname { get; set; }
+
+    /// <summary>OUI vendor nmap looked up from the MAC. Null whenever the MAC is.</summary>
     public string? Vendor { get; set; }
+
+    /// <summary>Highest-confidence osmatch name. Only populated when the profile ran -O.</summary>
     public string? OsGuess { get; set; }
+
+    /// <summary>Whether the host's status element said "up".</summary>
     public bool IsUp { get; set; }
+
+    /// <summary>Smoothed round-trip time in milliseconds, converted from nmap's srtt (which is microseconds). Null when the scan reported no timing.</summary>
     public double? LatencyMs { get; set; }
+
+    /// <summary>Ports found on this host, in XML order. Includes closed and filtered ports, not just open ones.</summary>
     public List<ParsedPort> Ports { get; } = [];
+
+    /// <summary>NSE scripts that ran against the host rather than a specific port, e.g. SMB discovery.</summary>
     public List<ParsedScript> HostScripts { get; } = [];
 }
 
 /// <summary>One port and the service nmap identified on it.</summary>
 public class ParsedPort
 {
+    /// <summary>Port number, 1-65535. Zero means the portid attribute was missing or unparseable.</summary>
     public int PortNumber { get; set; }
+
+    /// <summary>"tcp" or "udp".</summary>
     public string Protocol { get; set; } = "tcp";
+
+    /// <summary>Nmap port state: open, filtered, closed — or "unknown" when the XML carried no state element.</summary>
     public string State { get; set; } = "open";
+
+    /// <summary>Service name nmap assigned. Inferred from the port number alone unless -sV ran.</summary>
     public string? ServiceName { get; set; }
+
+    /// <summary>Product, version, and extra info joined into one string; null when nmap identified none of them.</summary>
     public string? ServiceVersion { get; set; }
+
+    /// <summary>NSE scripts that ran against this specific port, e.g. ssl-cert or a vuln script.</summary>
     public List<ParsedScript> Scripts { get; } = [];
 }
 
 /// <summary>Output of one NSE script, both raw text and any structured elements.</summary>
 public class ParsedScript
 {
+    /// <summary>Script name, e.g. "ssl-cert" or "vulners" — how consumers decide whether they care about this result.</summary>
     public string Id { get; set; } = "";
+
+    /// <summary>The script's human-readable output block, kept verbatim for scripts with no structured elements.</summary>
     public string Output { get; set; } = "";
+
+    /// <summary>
+    /// Structured &lt;elem&gt; values keyed by name. Elements nested one table deep
+    /// are flattened to "tableKey.elemKey", which is how ssl-cert exposes the
+    /// fields that matter.
+    /// </summary>
     public Dictionary<string, string> Elements { get; } = [];
 }
 
@@ -56,9 +98,24 @@ public class ParsedScript
 // Nmap execution
 // ─────────────────────────────────────────────────────────────────────────────
 
+/// <summary>
+/// The seam between the application and the nmap binary. Everything that shells
+/// out lives behind this interface, which is what lets the tests exercise the
+/// whole pipeline without a scanner installed.
+/// </summary>
 public interface INmapExecutorService
 {
+    /// <summary>Runs one scan and returns the XML output path plus the exact command that produced it.</summary>
+    /// <param name="cidr">Target IPv4 address or CIDR block. Validated before it can reach a command line.</param>
+    /// <param name="nmapArgs">Profile arguments, minus target and output flags. The implementation may adjust these — see the remarks on the concrete method.</param>
+    /// <param name="excludeIps">Addresses to skip via --exclude. Each is validated the same way as the target.</param>
+    /// <param name="ct">Cancels the wait on the nmap process.</param>
+    /// <returns>The path to the XML nmap wrote, and the full command line, which the caller stores on the scan record.</returns>
     Task<(string xmlPath, string command)> RunProfileScanAsync(string cidr, string nmapArgs, IEnumerable<string>? excludeIps = null, CancellationToken ct = default);
+
+    /// <summary>Whether the configured nmap binary can actually be executed on this host.</summary>
+    /// <param name="version">Receives the first line of <c>nmap --version</c>, or null when nmap could not be run.</param>
+    /// <returns>True when nmap exited cleanly.</returns>
     bool IsNmapAvailable(out string? version);
 }
 
@@ -73,6 +130,9 @@ public class NmapExecutorService : INmapExecutorService
     private readonly ScanningOptions _options;
     private readonly ILogger<NmapExecutorService> _logger;
 
+    /// <summary>Creates the executor.</summary>
+    /// <param name="options">Supplies the nmap binary path and the temp directory scan XML is written to; both fall back to sensible defaults when blank.</param>
+    /// <param name="logger">Receives the full command line of every scan, which is the first thing anyone wants when a scan misbehaves.</param>
     public NmapExecutorService(IOptions<ScanningOptions> options, ILogger<NmapExecutorService> logger)
     {
         _options = options.Value;
@@ -203,8 +263,16 @@ public class NmapExecutorService : INmapExecutorService
 // XML parsing
 // ─────────────────────────────────────────────────────────────────────────────
 
+/// <summary>
+/// Turns nmap's XML into plain objects. Split from the executor so scan
+/// reconciliation can be tested against captured XML fixtures with no process
+/// launching anywhere in the picture.
+/// </summary>
 public interface IScanResultParserService
 {
+    /// <summary>Parses one nmap XML document.</summary>
+    /// <param name="xmlContent">The complete XML text nmap wrote. Its DOCTYPE is ignored rather than resolved.</param>
+    /// <returns>Hosts, ports, and script output; hosts with no IPv4 address are omitted.</returns>
     ParsedScanResult Parse(string xmlContent);
 }
 
@@ -215,6 +283,13 @@ public interface IScanResultParserService
 /// </summary>
 public class ScanResultParserService : IScanResultParserService
 {
+    /// <summary>
+    /// Reads one nmap XML document into <see cref="ParsedScanResult"/>. Hosts
+    /// without an IPv4 address are dropped, but they still count toward the
+    /// up/down totals — those are taken from the XML's own status elements.
+    /// </summary>
+    /// <param name="xmlContent">The complete XML text nmap wrote.</param>
+    /// <returns>The parsed hosts plus the up/down counts nmap reported.</returns>
     public ParsedScanResult Parse(string xmlContent)
     {
         var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore, XmlResolver = null };
@@ -341,6 +416,16 @@ public class ScanResultParserService : IScanResultParserService
 /// </summary>
 public static class DeviceClassifier
 {
+    /// <summary>
+    /// Picks the single best device type for a host. The checks are ordered
+    /// deliberately: the first one that matches wins, so a printer that also
+    /// serves a web UI is still a printer rather than a server.
+    /// </summary>
+    /// <param name="osGuess">OS fingerprint, when the profile ran -O. Matched case-insensitively.</param>
+    /// <param name="vendor">OUI vendor name. The weakest signal, checked last within each rule.</param>
+    /// <param name="hostname">Hostname, which in practice is the most reliable signal on a well-named estate ("rtr-", "sw-", "-fw").</param>
+    /// <param name="openPorts">Open port numbers. Management ports are the strongest signal available.</param>
+    /// <returns>router, switch, firewall, printer, server, workstation, camera, or unknown when nothing matched.</returns>
     public static string Classify(string? osGuess, string? vendor, string? hostname, IEnumerable<int> openPorts)
     {
         var ports = openPorts.ToHashSet();
