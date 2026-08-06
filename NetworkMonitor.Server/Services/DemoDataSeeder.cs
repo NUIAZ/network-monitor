@@ -475,10 +475,16 @@ public class DemoDataSeeder
     }
 
     /// <summary>
-    /// Hourly-ish per-device history for four devices per network over the last
-    /// seven days — enough for the device history chart to show availability and
-    /// latency texture, including short offline blips, without seeding a
-    /// snapshot for all 120 devices on every one of ~580 scans.
+    /// Per-device availability and latency history over the last seven days, for
+    /// every device.
+    ///
+    /// This used to cover only the first four devices on each network, which
+    /// left three quarters of the estate with an empty chart on its detail page
+    /// — and a visitor clicking a device at random was far more likely to land
+    /// on a blank one than a populated one. Sampling roughly every 90 minutes
+    /// for all 120 devices is around 13,000 rows: nothing for the database, and
+    /// the difference between a feature that demonstrates itself and one that
+    /// looks unfinished.
     /// </summary>
     private List<ScanDeviceSnapshot> CreateDeviceSnapshots(
         List<Network> networks, List<Device> devices,
@@ -488,7 +494,7 @@ public class DemoDataSeeder
 
         foreach (var network in networks)
         {
-            var netDevices = devices.Where(d => d.NetworkId == network.Id).Take(4).ToList();
+            var netDevices = devices.Where(d => d.NetworkId == network.Id).ToList();
             var netScans = scans
                 .Where(s => s.NetworkId == network.Id && s.Status == "completed")
                 .OrderBy(s => s.StartedAt)
@@ -553,7 +559,10 @@ public class DemoDataSeeder
                         RecordedAt = t,
                     });
 
-                    t = t.AddMinutes(55 + _rng.Next(0, 21));
+                    // ~90-minute cadence keeps a week of history smooth on the
+                    // chart while holding the whole table to a sane size now
+                    // that every device is covered rather than a handful.
+                    t = t.AddMinutes(85 + _rng.Next(0, 21));
                 }
             }
         }
@@ -808,7 +817,15 @@ public class DemoDataSeeder
     {
         const long OneGbps = 1_000_000_000L;
         const long TenGbps = 10_000_000_000L;
-        const int pollSpacingSeconds = 5 * 3600;
+
+        // Poll every 15 minutes for a full day. Five samples spread across 24
+        // hours technically satisfied "a day of history" but drew a chart with
+        // five points on it, which reads as missing data rather than as a
+        // utilization trend. 96 samples per interface is ~2,300 rows in total —
+        // nothing for the database, and the difference between a sparse
+        // polyline and a chart that looks like real telemetry.
+        const int pollSpacingSeconds = 15 * 60;
+        const int pollCount = 96;
 
         var snapshots = new List<InterfaceSnapshot>();
         foreach (var target in targets)
@@ -831,22 +848,35 @@ public class DemoDataSeeder
                 // plausible uptime-worth of traffic and grow it per poll.
                 var inOctets = (long)(_rng.NextDouble() * 4e11) + 1_000_000_000;
                 var outOctets = (long)(_rng.NextDouble() * 4e11) + 1_000_000_000;
-                var inErrors = down ? 0 : _rng.NextDouble() < 0.2 ? _rng.Next(1, 40) : 0;
+                // Error counters are cumulative on real equipment, so a flaky
+                // interface accrues errors across the day rather than reporting
+                // the same number at every poll.
+                var flaky = !down && _rng.NextDouble() < 0.25;
+                var inErrors = flaky ? (long)_rng.Next(1, 40) : 0L;
 
-                for (var poll = 0; poll < 5; poll++)
+                for (var poll = 0; poll < pollCount; poll++)
                 {
                     var recordedAt = _now.AddHours(-24)
-                        .AddSeconds(poll * pollSpacingSeconds + _rng.Next(0, 600));
+                        .AddSeconds(poll * pollSpacingSeconds + _rng.Next(0, 60));
+
+                    // Traffic follows the working day rather than wandering at
+                    // random: a trough overnight, a climb through the morning, a
+                    // peak mid-afternoon. A flat noisy band would fill the chart
+                    // without telling anyone anything.
+                    var hour = recordedAt.Hour + recordedAt.Minute / 60.0;
+                    var diurnal = 0.45 + 0.55 * Math.Max(0, Math.Sin((hour - 5.0) / 24.0 * 2 * Math.PI));
 
                     var utilization = down ? 0
-                        : Math.Clamp(baseUtil + (_rng.NextDouble() - 0.5) * (saturated ? 6 : 14),
-                                     saturated ? 88 : 2, saturated ? 96 : 95);
+                        : Math.Clamp(
+                            baseUtil * (saturated ? 1.0 : diurnal) + (_rng.NextDouble() - 0.5) * (saturated ? 5 : 7),
+                            saturated ? 88 : 1, saturated ? 97 : 95);
 
                     // Grow counters by roughly what that utilization moves in one
                     // poll interval, so the numbers cross-check if anyone looks.
                     var bytesMoved = (long)(utilization / 100.0 * (speed / 8.0) * pollSpacingSeconds);
                     inOctets += (long)(bytesMoved * 0.6);
                     outOctets += (long)(bytesMoved * 0.4);
+                    if (flaky && _rng.NextDouble() < 0.15) inErrors += _rng.Next(1, 6);
 
                     snapshots.Add(new InterfaceSnapshot
                     {
