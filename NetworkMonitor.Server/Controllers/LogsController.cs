@@ -29,7 +29,7 @@ public class LogsController : ControllerBase
 
     /// <summary>Returns logged errors, newest first.</summary>
     /// <param name="source">Optional tier filter: "server" or "client".</param>
-    /// <param name="level">Optional severity filter: "warning", "error", or "fatal".</param>
+    /// <param name="level">Optional severity filter: "info", "warning", "error", or "fatal".</param>
     /// <param name="search">Optional case-insensitive match against message, type, path, or correlation id.</param>
     /// <param name="resolved">Optional triage filter.</param>
     /// <param name="page">1-based page number.</param>
@@ -160,7 +160,7 @@ public class LogsController : ControllerBase
 /// <summary>One row of the error log as returned by the API.</summary>
 /// <param name="Id">Log entry id.</param>
 /// <param name="Source">"server" or "client".</param>
-/// <param name="Level">"warning", "error", or "fatal".</param>
+/// <param name="Level">"info", "warning", "error", or "fatal".</param>
 /// <param name="Message">What went wrong.</param>
 /// <param name="ExceptionType">CLR exception type, JavaScript error name, or the logging category when neither applies.</param>
 /// <param name="StackTrace">Full trace including inner exceptions, capped at 8000 characters.</param>

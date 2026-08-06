@@ -169,7 +169,7 @@ export default function Vulnerabilities() {
         </select>
       </div>
 
-      <div className="nm-card">
+      <div className="nm-card" data-tour="vuln-table">
         <DataTable
           columns={columns}
           rows={vulns.data?.items ?? []}

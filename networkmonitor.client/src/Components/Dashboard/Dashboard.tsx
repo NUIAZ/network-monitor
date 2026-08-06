@@ -94,7 +94,7 @@ export default function Dashboard() {
       )}
 
       {/* ---- stat tiles ---- */}
-      <div className="stat-grid">
+      <div className="stat-grid" data-tour="stat-tiles">
         <StatCard
           icon="bi-hdd-network"
           label="Total devices"
@@ -150,7 +150,7 @@ export default function Dashboard() {
       </div>
 
       {/* ---- charts row 1: device types + scan activity ---- */}
-      <div className="dash-row">
+      <div className="dash-row" data-tour="dash-charts">
         <div className="nm-card dash-donut-card">
           <div className="nm-card-header">
             Device types

@@ -44,7 +44,9 @@ const COLUMN_COUNT = 6;
 /** Level → badge modifier. Unknown levels fall back to a neutral chip. */
 function levelClass(level: string): string {
   const key = level.toLowerCase();
-  return key === 'fatal' || key === 'error' || key === 'warning' ? ` lvl-${key}` : '';
+  return key === 'fatal' || key === 'error' || key === 'warning' || key === 'info'
+    ? ` lvl-${key}`
+    : '';
 }
 
 /** Truncates a message for the table cell; the full text lives in the panel. */
@@ -143,9 +145,11 @@ export default function ErrorLogs() {
     <div data-testid="error-logs-page">
       <div className="page-title-row">
         <div>
-          <h2>Error Logs</h2>
+          <h2>Activity &amp; Error Logs</h2>
           <div className="page-subtitle">
-            Failures from the API and from browser sessions, newest first.
+            What the application is doing, and everything that has failed on either
+            tier — newest first. Server activity and failures arrive through the
+            standard logging pipeline; browser errors are reported back by the client.
           </div>
         </div>
         <div className="purge-control">
@@ -198,7 +202,7 @@ export default function ErrorLogs() {
         </div>
       )}
 
-      <div className="error-log-stats" data-testid="error-log-stats">
+      <div className="error-log-stats" data-testid="error-log-stats" data-tour="error-log-stats">
         <StatCard
           icon="bi-journal-text"
           label="Total logged"

@@ -4,6 +4,12 @@
  * all eight themes; nothing here is hardcoded.
  */
 
+/* Guided-tour replay button in the page header — never wraps or stretches. */
+.help-tour-button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .help-layout {
   display: grid;
   grid-template-columns: 244px minmax(0, 1fr);

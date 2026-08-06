@@ -38,7 +38,7 @@ export default function ThemePicker() {
   ];
 
   return (
-    <div className="theme-picker" ref={rootRef}>
+    <div className="theme-picker" ref={rootRef} data-tour="theme-picker">
       <button
         type="button"
         className="btn btn-ghost theme-picker-toggle"

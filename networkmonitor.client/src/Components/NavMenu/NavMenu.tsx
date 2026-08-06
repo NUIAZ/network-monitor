@@ -9,6 +9,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ThemePicker from '../ThemePicker/ThemePicker';
+import { startTour } from '../FeatureTour/FeatureTour';
 import './NavMenu.css';
 
 /** Longest-prefix-wins page titles for the header. */
@@ -82,6 +83,19 @@ export default function NavMenu({ onToggleSidebar }: { onToggleSidebar: () => vo
           <i className="bi bi-clock me-2" />
           {now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', second: '2-digit' })}
         </span>
+        {/* The guided tour auto-plays once; after that it lives here, beside
+            the help button, because "show me around again" and "explain this
+            page" are the same impulse. */}
+        <button
+          type="button"
+          className="btn btn-ghost tour-button"
+          onClick={() => startTour()}
+          aria-label="Take the guided tour"
+          title="Take the guided tour"
+          data-testid="tour-button"
+        >
+          <i className="bi bi-signpost-split" />
+        </button>
         {/* Documentation is one click from every page — an evaluator should
             never have to hunt the sidebar to find out what a screen does. */}
         <button

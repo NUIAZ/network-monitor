@@ -140,7 +140,7 @@ export default function Switches() {
   return (
     <div className="switches-layout" data-testid="switches-page">
       {/* ---- target rail ---- */}
-      <div className="target-rail">
+      <div className="target-rail" data-tour="snmp-targets">
         {(targets.data ?? []).map((t) => (
           <button
             type="button"

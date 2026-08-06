@@ -75,12 +75,26 @@ Base path `/api`. Swagger UI is served at `/swagger` in Development.
 
 ## Error logs
 
-Errors from both tiers land in one table. Server-side entries arrive two ways:
-the exception middleware records anything that escapes a controller, and a
-custom `ILoggerProvider` persists every `ILogger` call at or above
-`Logging:Database:MinimumLevel` (default `Warning`) — so `_logger.LogError(...)`
-anywhere in the codebase is reviewable in the UI. Browser failures are posted
-back by the client's error reporter.
+Application logging and errors from both tiers land in one table. Server-side
+entries arrive two ways: the exception middleware records anything that escapes
+a controller, and a custom `ILoggerProvider` persists `ILogger` calls — so any
+`_logger.LogInformation/LogWarning/LogError(...)` in the codebase is reviewable
+in the UI without shell access. Browser failures are posted back by the client's
+error reporter.
+
+The sink applies **two thresholds**, because "what is my application doing" and
+"what is the framework saying" want very different levels:
+
+| Setting | Default | Applies to |
+|---|---|---|
+| `Logging:Database:ApplicationMinimumLevel` | `Information` | Categories under `NetworkMonitor.Server` — scans starting and finishing, scheduler decisions, seeding |
+| `Logging:Database:MinimumLevel` | `Warning` | Everything else — ASP.NET logs every request at Information, and persisting that makes the table unreadable |
+
+EF Core, the SQLite/Npgsql providers, and the log writer's own categories are
+excluded outright: they sit on the path that writes the row, so logging them
+would feed the sink with its own output.
+
+`level` values are `info`, `warning`, `error`, and `fatal`.
 
 | Method | Route | Notes |
 |---|---|---|

@@ -14,6 +14,7 @@ import HelpGuide from '../Components/HelpGuide/HelpGuide';
 /** Every section the guide promises, in document order. */
 const SECTIONS: Array<[id: string, heading: string]> = [
   ['getting-started', 'Getting started'],
+  ['tour', 'Guided tour'],
   ['dashboard', 'Dashboard'],
   ['devices', 'Devices'],
   ['device-detail', 'Device detail'],

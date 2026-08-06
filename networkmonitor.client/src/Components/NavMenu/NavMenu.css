@@ -53,7 +53,8 @@
   gap: 0.75rem;
 }
 
-/* Icon-only affordance; sized to match the theme picker toggle beside it. */
+/* Icon-only affordances; sized to match the theme picker toggle beside them. */
+.nav-menu .tour-button,
 .nav-menu .help-button {
   display: inline-flex;
   align-items: center;

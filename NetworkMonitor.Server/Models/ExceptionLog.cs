@@ -25,7 +25,11 @@ public class ExceptionLog
     [Column("source")]
     public string Source { get; set; } = "server";
 
-    /// <summary>Severity: "error", "warning", or "fatal" (an unhandled failure that took a page or request down).</summary>
+    /// <summary>
+    /// Severity: "info" (routine activity — a scan started, the scheduler ran),
+    /// "warning", "error", or "fatal" (an unhandled failure that took a request
+    /// or a page down).
+    /// </summary>
     [Required, MaxLength(20)]
     [Column("level")]
     public string Level { get; set; } = "error";

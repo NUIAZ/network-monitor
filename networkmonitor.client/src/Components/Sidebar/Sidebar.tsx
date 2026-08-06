@@ -136,7 +136,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     <>
       {open && <div className="sidebar-overlay d-lg-none" onClick={onClose} data-testid="sidebar-overlay" />}
       <aside className={`sidebar${open ? ' open' : ''}`} data-testid="sidebar">
-        <div className="sidebar-brand">
+        <div className="sidebar-brand" data-tour="brand">
           <img src={logo} alt="NetworkMonitor" className="sidebar-logo" />
           <div>
             <div className="brand-name">NetworkMonitor</div>
@@ -144,7 +144,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           </div>
         </div>
 
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" data-tour="sidebar-nav">
           {NAV_GROUPS.map((group) => {
             const isCollapsed = collapsed.has(group.id);
             return (

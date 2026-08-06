@@ -411,11 +411,18 @@ export interface UtilizationSample {
 /** Which tier produced the entry — the API host or a browser session. */
 export type ErrorLogSource = 'server' | 'client';
 
-/** Severity the server persists. `fatal` is reserved for crashes that took a screen down. */
-export type ErrorLogLevel = 'warning' | 'error' | 'fatal';
+/**
+ * Severity the server persists.
+ *
+ * `info` is routine application activity — a scan starting, the scheduler
+ * deciding what is due — captured because the database sink applies a lower
+ * threshold to the application's own log categories than to the framework's.
+ * `fatal` is reserved for failures that took a request or a screen down.
+ */
+export type ErrorLogLevel = 'info' | 'warning' | 'error' | 'fatal';
 
-/** Filter options rendered by the Error Logs page, in the order they read best. */
-export const ERROR_LOG_LEVELS: ErrorLogLevel[] = ['fatal', 'error', 'warning'];
+/** Filter options rendered by the Activity & Errors page, most severe first. */
+export const ERROR_LOG_LEVELS: ErrorLogLevel[] = ['fatal', 'error', 'warning', 'info'];
 
 /**
  * One row of `exception_logs`. Most fields are request-scoped and therefore

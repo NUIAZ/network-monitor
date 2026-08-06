@@ -203,7 +203,7 @@ export default function DeviceList() {
         </select>
       </div>
 
-      <div className="nm-card">
+      <div className="nm-card" data-tour="device-table">
         <DataTable<Device>
           columns={columns}
           rows={devices.data?.items ?? []}

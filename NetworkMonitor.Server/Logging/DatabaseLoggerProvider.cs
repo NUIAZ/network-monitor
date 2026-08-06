@@ -16,10 +16,28 @@ public class DatabaseLoggingOptions
     public bool Enabled { get; set; } = true;
 
     /// <summary>
-    /// Lowest level persisted. Defaults to Warning: the database is for things
-    /// worth reviewing later, not a firehose of Information from every request.
+    /// Lowest level persisted for third-party categories — the framework, the
+    /// hosting layer, anything not this application. Defaults to Warning,
+    /// because ASP.NET logs every single request at Information and persisting
+    /// that turns the log table into a firehose nobody reads.
     /// </summary>
     public LogLevel MinimumLevel { get; set; } = LogLevel.Warning;
+
+    /// <summary>
+    /// Lowest level persisted for the application's own categories (those under
+    /// <see cref="ApplicationCategoryPrefix"/>). Defaults to Information, so
+    /// what the application itself is doing — scans starting and finishing,
+    /// scheduler decisions, seeding — is visible in the UI, while framework
+    /// chatter still has to clear the higher bar above.
+    ///
+    /// This split is the whole point: "what is my application doing" and "what
+    /// is the framework saying" want very different thresholds, and a single
+    /// level forces you to choose between an empty log and an unreadable one.
+    /// </summary>
+    public LogLevel ApplicationMinimumLevel { get; set; } = LogLevel.Information;
+
+    /// <summary>Category prefix treated as "this application" for the level split above.</summary>
+    public string ApplicationCategoryPrefix { get; set; } = "NetworkMonitor.Server";
 
     /// <summary>
     /// Maximum entries held in memory awaiting a write. When the queue is full
@@ -110,11 +128,19 @@ public sealed class DatabaseLoggerProvider : ILoggerProvider
     /// <summary>True when this category and level should be persisted.</summary>
     private bool ShouldPersist(string category, LogLevel level)
     {
-        if (!_options.Enabled || level < _options.MinimumLevel || level == LogLevel.None) return false;
+        if (!_options.Enabled || level == LogLevel.None) return false;
         if (_writing) return false;
+
         foreach (var prefix in ExcludedCategoryPrefixes)
             if (category.StartsWith(prefix, StringComparison.Ordinal)) return false;
-        return true;
+
+        // The application gets a lower bar than the framework — see the comments
+        // on the two level options.
+        var threshold = category.StartsWith(_options.ApplicationCategoryPrefix, StringComparison.Ordinal)
+            ? _options.ApplicationMinimumLevel
+            : _options.MinimumLevel;
+
+        return level >= threshold;
     }
 
     /// <summary>Queues an entry. Returns immediately; the write happens on the background reader.</summary>
@@ -225,7 +251,8 @@ public sealed class DatabaseLoggerProvider : ILoggerProvider
                     {
                         LogLevel.Critical => "fatal",
                         LogLevel.Error => "error",
-                        _ => "warning",
+                        LogLevel.Warning => "warning",
+                        _ => "info",   // Information, Debug, Trace
                     },
                     Message = Cap(message, 2000),
                     // The category is the practical way to find "everything the

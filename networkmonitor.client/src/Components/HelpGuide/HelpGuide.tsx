@@ -21,6 +21,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { startTour } from '../FeatureTour/FeatureTour';
 import './HelpGuide.css';
 
 // ---------------------------------------------------------------------------
@@ -100,6 +101,46 @@ const HELP_SECTIONS: HelpSection[] = [
         tone: 'info',
         text:
           'The background scan scheduler also ships disabled (Scanning:SchedulerEnabled = false), so a freshly cloned copy never starts probing whatever network it happens to have landed on. Enable it once you have pointed it at networks you are authorized to scan. On-demand scans from the Scans page work either way.',
+      },
+    ],
+  },
+  {
+    id: 'tour',
+    title: 'Guided tour',
+    icon: 'bi-signpost-split',
+    blocks: [
+      {
+        kind: 'p',
+        text:
+          'A spotlight walkthrough introduces the application in eleven steps: what it is and where its data comes from, the Dashboard tiles and charts, the sidebar groups, the device inventory and its drill-through, the network map, vulnerabilities and certificates, the SNMP switch view, the error log, this guide, and the theme picker. Each step dims the page, rings the element it is describing, and explains it in a couple of sentences.',
+      },
+      {
+        kind: 'p',
+        text:
+          'It plays by itself the first time you open the app — once the Dashboard has finished loading, so the first spotlight lands on real content rather than on a loading placeholder — and then never again, because the fact that you have seen it is remembered in this browser. It never starts on its own when you arrive on a deep link to some other page: a bookmarked device list is somebody who already knows their way around.',
+      },
+      {
+        kind: 'p',
+        text:
+          'Replay it whenever you like. The Take the tour button at the top of this page and the signpost button in the top bar, next to the question mark, both start it again from the beginning. A step whose target the current window cannot show — an element hidden at a narrow width, a panel with no data behind it — is skipped rather than stalling the walkthrough.',
+      },
+      {
+        kind: 'defs',
+        items: [
+          { term: 'Next step', text: 'Right arrow, Enter, or the Next button. On the last step the button reads Finish.' },
+          { term: 'Previous step', text: 'Left arrow, or the Back button. Both are inert on the first step.' },
+          {
+            term: 'Leave early',
+            text:
+              'Escape, or the Skip link in the corner of the card. Leaving counts as having seen the tour, so it will not reappear by itself on your next visit — use either replay button to bring it back.',
+          },
+        ],
+      },
+      {
+        kind: 'note',
+        tone: 'info',
+        text:
+          'Motion is optional: when your system asks for reduced motion the spotlight jumps between targets instead of sliding, and scrolling a target into view is instant.',
       },
     ],
   },
@@ -571,7 +612,7 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'list',
         items: [
-          'No custom keyboard shortcuts are bound. Escape closes a confirmation dialog, Enter activates a focused Dashboard tile, and everything else is standard browser navigation: Tab to move focus, Enter to follow a link, and browser back and forward through your history.',
+          'The only custom keyboard shortcuts belong to the guided tour, which takes the arrow keys, Enter and Escape while it is on screen. Otherwise: Escape closes a confirmation dialog, Enter activates a focused Dashboard tile, and everything else is standard browser navigation — Tab to move focus, Enter to follow a link, and browser back and forward through your history.',
           'Device-list filters live in the URL, so any filtered view can be bookmarked, refreshed, or pasted to someone else and land exactly as you left it.',
           'Dashboard stat tiles drill through to the filtered list behind their number rather than being read-only figures.',
           'Sidebar groups collapse to shorten the nav, and the group containing the page you are on always re-expands so the active item is never hidden.',
@@ -794,6 +835,18 @@ export default function HelpGuide() {
             What every page does, how the scanning works, and what this build will and will not do.
           </div>
         </div>
+        {/* Top of the page on purpose: someone who opened the guide because
+            they are lost is better served by the tour than by 5,000 words. */}
+        <button
+          type="button"
+          className="btn btn-accent help-tour-button"
+          onClick={() => startTour()}
+          data-testid="help-tour-button"
+          data-tour="tour-replay"
+        >
+          <i className="bi bi-signpost-split me-2" />
+          Take the tour
+        </button>
       </div>
 
       <div className="help-layout">

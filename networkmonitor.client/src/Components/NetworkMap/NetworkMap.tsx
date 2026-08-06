@@ -430,7 +430,7 @@ export default function NetworkMap() {
 
       {topology.error && <ErrorBanner message={topology.error} onRetry={topology.reload} />}
 
-      <div className="nm-card map-card" ref={wrapRef}>
+      <div className="nm-card map-card" ref={wrapRef} data-tour="network-map">
         {topology.loading ? (
           <LoadingSpinner label="Building topology…" />
         ) : layout.length === 0 ? (

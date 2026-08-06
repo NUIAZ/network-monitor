@@ -12,6 +12,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AlertCountProvider } from './context/AlertCountContext';
 import Sidebar from './Components/Sidebar/Sidebar';
 import NavMenu from './Components/NavMenu/NavMenu';
+import FeatureTour from './Components/FeatureTour/FeatureTour';
 import ErrorBoundary from './Components/Shared/ErrorBoundary';
 import LoadingSpinner from './Components/Shared/LoadingSpinner';
 
@@ -61,6 +62,11 @@ function Layout() {
           </ErrorBoundary>
         </main>
       </div>
+
+      {/* Deliberately not lazy: the tour has to be ready to auto-play on the
+          first visit, and waiting on a chunk would mean the dashboard is
+          already rendered before the overlay exists to spotlight it. */}
+      <FeatureTour />
     </div>
   );
 }

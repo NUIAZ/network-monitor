@@ -1,0 +1,181 @@
+/**
+ * Spotlight overlay styling. Every color is a design token so the tour reads
+ * correctly in all eight themes; nothing here is hardcoded.
+ *
+ * The "hole" is not a mask — it is one absolutely-positioned box carrying a
+ * 9999px box-shadow spread. Everything outside the box gets the wash, the box
+ * itself stays untouched, and the ring is a *border* rather than a second
+ * shadow because an outward spread would paint straight over an outer shadow.
+ */
+
+.tour-overlay {
+  /* The scrim must read as "dimmed" in light and dark themes alike.
+     --sidebar-bg-end is the only token that is dark in all eight (the light
+     themes keep a dark sidebar), so it is the honest source for a wash. */
+  --tour-scrim: color-mix(in srgb, var(--sidebar-bg-end) 68%, transparent);
+
+  position: fixed;
+  inset: 0;
+  /* Above the sidebar (1040) and the shared dialog layer (1200) — while the
+     tour is running it owns the screen. */
+  z-index: 1500;
+}
+
+/* Catches clicks so the page underneath cannot be navigated out from under the
+   tour. Transparent while a spotlight is drawn (the ring's shadow supplies the
+   wash); dim on its own while a step is still resolving. */
+.tour-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--tour-scrim);
+}
+
+.tour-overlay.has-spotlight .tour-scrim {
+  background: transparent;
+}
+
+/* ---- the hole ----------------------------------------------------------- */
+
+.tour-spotlight {
+  position: fixed;
+  box-sizing: border-box;
+  border: 2px solid var(--accent-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 9999px var(--tour-scrim);
+  /* The scrim beneath handles interaction; the ring must never eat a click. */
+  pointer-events: none;
+  transition:
+    top 0.25s ease,
+    left 0.25s ease,
+    width 0.25s ease,
+    height 0.25s ease;
+}
+
+/* ---- callout ------------------------------------------------------------ */
+
+.tour-callout {
+  position: fixed;
+  width: min(360px, calc(100vw - 24px));
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1rem 1.1rem 0.9rem;
+  color: var(--text-primary);
+  transition:
+    top 0.25s ease,
+    left 0.25s ease;
+}
+
+.tour-callout:focus {
+  /* Focus lands here on every step; the card is already the loudest thing on
+     screen, so a second focus ring would only be noise. */
+  outline: none;
+}
+
+.tour-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.tour-count {
+  font-size: var(--font-xs);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tour-skip {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.tour-skip:hover {
+  color: var(--text-primary);
+}
+
+.tour-title {
+  font-size: var(--font-lg);
+  font-weight: 650;
+  line-height: 1.35;
+  margin: 0 0 0.4rem;
+  color: var(--text-primary);
+}
+
+.tour-body {
+  font-size: var(--font-md);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 0.85rem;
+}
+
+/* ---- progress pips ------------------------------------------------------ */
+
+.tour-pips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 0.85rem;
+}
+
+.tour-pip {
+  height: 3px;
+  flex: 1 1 0;
+  min-width: 8px;
+  border-radius: 2px;
+  background: var(--card-border);
+  transition: background-color 0.2s ease;
+}
+
+.tour-pip.done {
+  background: color-mix(in srgb, var(--accent-color) 45%, transparent);
+}
+
+.tour-pip.current {
+  background: var(--accent-color);
+}
+
+/* ---- actions ------------------------------------------------------------ */
+
+.tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* ---- reduced motion ----------------------------------------------------- */
+/* The spotlight jumps between targets instead of sliding. Movement across the
+   whole viewport is exactly the kind of motion this setting exists to stop. */
+@media (prefers-reduced-motion: reduce) {
+  .tour-spotlight,
+  .tour-callout,
+  .tour-pip {
+    transition: none;
+  }
+}
+
+/* ---- narrow viewports --------------------------------------------------- */
+/* Below the tablet breakpoint there is no room to sit a card beside anything,
+   so it is docked to the bottom of the screen and the inline placement is
+   ignored. The spotlight itself still rings the target. */
+@media (max-width: 575.98px) {
+  .tour-callout {
+    top: auto !important;
+    left: 12px !important;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+  }
+}

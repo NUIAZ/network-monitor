@@ -90,6 +90,13 @@
   color: var(--text-secondary);
 }
 
+/* Routine application activity. Deliberately the quietest chip on the page: it
+   is by far the most common level, and it must not compete with the failures. */
+.log-level.lvl-info {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
 .log-level.lvl-warning {
   background: var(--warning-bg);
   color: var(--warning);
