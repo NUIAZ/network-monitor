@@ -117,36 +117,88 @@ function layoutTopology(sites: TopologySite[]): SitePos[] {
     });
 
     const radius = count === 0 ? 80 : orbit + maxR + 60;
-    return { site, networks, radius };
+
+    // Pack by what the site actually occupies, not by a bounding circle. A site
+    // with two clusters side by side is wide and short; one with a single
+    // cluster is narrow and tall. Reserving a square the size of the enclosing
+    // circle for both leaves large empty bands between rows, and every one of
+    // those wasted pixels comes straight off the final scale factor.
+    let minX = -46, maxX = 46;      // hub disc
+    let minY = -46, maxY = 60;      // hub disc, plus the site label beneath it
+    for (const n of networks) {
+      minX = Math.min(minX, n.x - n.radius);
+      maxX = Math.max(maxX, n.x + n.radius);
+      minY = Math.min(minY, n.y - n.radius - 30); // network name + CIDR sit above
+      maxY = Math.max(maxY, n.y + n.radius);
+    }
+
+    return { site, networks, radius, minX, maxX, minY, maxY, width: maxX - minX, height: maxY - minY };
   });
 
   // Second pass: pack sites into rows of three.
   const GAP = 90;
   // Aim for a squarish arrangement rather than a fixed three-wide row: four
-  // sites laid out 3+1 wastes most of the frame and shrinks every glyph once
-  // the whole thing is scaled to fit. A 2x2 grid uses the space evenly.
-  const perRow = prepared.length <= 4 ? Math.ceil(Math.sqrt(prepared.length)) : 3;
+  // Choose the row width whose resulting grid most closely matches the view
+  // space's own proportions. Everything is uniformly scaled to fit afterwards,
+  // so a grid shaped unlike the frame is scaled down by whichever axis runs out
+  // first and leaves the other axis empty — the arrangement decides how large
+  // the topology ends up being drawn.
+  // Try every row width and keep the arrangement whose overall proportions come
+  // closest to the view space. Everything is uniformly scaled to fit afterwards,
+  // so a grid shaped unlike the frame runs out of room on one axis while the
+  // other sits empty — the arrangement is what decides how large the topology
+  // is finally drawn.
+  const targetAspect = VIEW_W / VIEW_H;
+  const rowWidth = (row: typeof prepared) =>
+    row.reduce((sum, s) => sum + s.width, 0) + GAP * Math.max(row.length - 1, 0);
+
+  const groupInto = (n: number) => {
+    const out: (typeof prepared)[] = [];
+    for (let start = 0; start < prepared.length; start += n) out.push(prepared.slice(start, start + n));
+    return out;
+  };
+
+  let rows = groupInto(prepared.length);
+  let bestFit = Infinity;
+  for (let candidate = 1; candidate <= prepared.length; candidate++) {
+    const grouped = groupInto(candidate);
+    const w = Math.max(...grouped.map(rowWidth));
+    const h = grouped.reduce((sum, row) => sum + Math.max(...row.map((s) => s.height)), 0)
+      + GAP * Math.max(grouped.length - 1, 0);
+    // Log-ratio so being twice too wide and twice too tall score equally.
+    const fit = Math.abs(Math.log(w / h / targetAspect));
+    if (fit < bestFit) {
+      bestFit = fit;
+      rows = grouped;
+    }
+  }
+
+  const widestRow = Math.max(...rows.map(rowWidth));
+
   let rowY = 0;
-  for (let start = 0; start < prepared.length; start += perRow) {
-    const row = prepared.slice(start, start + perRow);
-    const rowHeight = Math.max(...row.map((s) => s.radius)) * 2;
-    let x = 0;
+  for (const row of rows) {
+    const rowHeight = Math.max(...row.map((s) => s.height));
+    // Centre short rows; a trailing row of one pinned to the left reads as a
+    // layout mistake rather than a deliberate arrangement.
+    let x = (widestRow - rowWidth(row)) / 2;
     for (const s of row) {
-      x += s.radius;
-      const cy = rowY + rowHeight / 2;
+      // A site's own coordinates are relative to its hub, which is not the
+      // centre of its bounding box — offset so the box lands where we packed it.
+      const originX = x - s.minX;
+      const originY = rowY + (rowHeight - s.height) / 2 - s.minY;
       laidOut.push({
         site: s.site,
-        x,
-        y: cy,
+        x: originX,
+        y: originY,
         radius: s.radius,
         networks: s.networks.map((n) => ({
           ...n,
-          x: n.x + x,
-          y: n.y + cy,
-          devices: n.devices.map((d) => ({ ...d, x: d.x + x, y: d.y + cy })),
+          x: n.x + originX,
+          y: n.y + originY,
+          devices: n.devices.map((d) => ({ ...d, x: d.x + originX, y: d.y + originY })),
         })),
       });
-      x += s.radius + GAP;
+      x += s.width + GAP;
     }
     rowY += rowHeight + GAP;
   }
@@ -157,15 +209,31 @@ function layoutTopology(sites: TopologySite[]): SitePos[] {
 /** Uniformly rescales the raw layout into the fixed 1400×800 view space. */
 function normalize(sites: SitePos[]): SitePos[] {
   if (sites.length === 0) return sites;
-  const minX = Math.min(...sites.map((s) => s.x - s.radius));
-  const maxX = Math.max(...sites.map((s) => s.x + s.radius));
-  const minY = Math.min(...sites.map((s) => s.y - s.radius));
-  const maxY = Math.max(...sites.map((s) => s.y + s.radius));
-  const margin = 30;
+
+  // Measure what is actually drawn — hubs, clusters and their labels — rather
+  // than each site's enclosing circle. The circle is far larger than the content
+  // for any site that is not a full ring, and padding the bounds with empty
+  // space shrinks the final scale for no benefit.
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const s of sites) {
+    minX = Math.min(minX, s.x - 46);
+    maxX = Math.max(maxX, s.x + 46);
+    minY = Math.min(minY, s.y - 46);
+    maxY = Math.max(maxY, s.y + 60); // the site label hangs below the hub
+    for (const n of s.networks) {
+      minX = Math.min(minX, n.x - n.radius);
+      maxX = Math.max(maxX, n.x + n.radius);
+      minY = Math.min(minY, n.y - n.radius - 30); // network name + CIDR above
+      maxY = Math.max(maxY, n.y + n.radius);
+    }
+  }
+  // Margin only has to clear the labels that hang below the outermost nodes;
+  // anything more is wasted drawing area.
+  const margin = 16;
   const scale = Math.min(
     (VIEW_W - margin * 2) / Math.max(maxX - minX, 1),
     (VIEW_H - margin * 2) / Math.max(maxY - minY, 1),
-    1.6, // don't blow a single tiny site up to cartoon size
+    2.4, // don't blow a single tiny site up to cartoon size
   );
   const offsetX = (VIEW_W - (maxX - minX) * scale) / 2 - minX * scale;
   const offsetY = (VIEW_H - (maxY - minY) * scale) / 2 - minY * scale;
@@ -458,31 +526,31 @@ export default function NetworkMap() {
               </div>
             )}
 
-            {/* legend */}
+            {/* Legend, as a strip beneath the canvas rather than an overlay on
+                it — see the note in NetworkMap.css. */}
             <div className="map-legend">
-              <div className="legend-title">Status</div>
-              <div><span className="dot" style={{ background: 'var(--success)' }} /> Online</div>
-              <div><span className="dot" style={{ background: 'var(--error)' }} /> Offline</div>
-              <div><span className="dot" style={{ background: 'var(--info)' }} /> New</div>
-              <div className="legend-title mt-2">Shape = type</div>
-              <svg width="150" height="92" viewBox="0 0 150 92" aria-hidden="true">
-                <DeviceGlyph type="server" x={12} y={14} fill="var(--text-muted)" />
-                <text x={28} y={18} className="legend-text">server</text>
-                <DeviceGlyph type="router" x={12} y={38} fill="var(--text-muted)" />
-                <text x={28} y={42} className="legend-text">router</text>
-                <DeviceGlyph type="switch" x={12} y={62} fill="var(--text-muted)" />
-                <text x={28} y={66} className="legend-text">switch</text>
-                <DeviceGlyph type="firewall" x={12} y={84} fill="var(--text-muted)" />
-                <text x={28} y={88} className="legend-text">firewall</text>
-                <DeviceGlyph type="workstation" x={84} y={14} fill="var(--text-muted)" />
-                <text x={98} y={18} className="legend-text">wkstn</text>
-                <DeviceGlyph type="printer" x={84} y={38} fill="var(--text-muted)" />
-                <text x={98} y={42} className="legend-text">printer</text>
-                <DeviceGlyph type="camera" x={84} y={62} fill="var(--text-muted)" />
-                <text x={98} y={66} className="legend-text">camera</text>
-                <DeviceGlyph type="unknown" x={84} y={84} fill="var(--text-muted)" />
-                <text x={98} y={88} className="legend-text">unknown</text>
-              </svg>
+              <div className="legend-group">
+                <span className="legend-title">Status</span>
+                <span><span className="dot" style={{ background: 'var(--success)' }} /> Online</span>
+                <span><span className="dot" style={{ background: 'var(--error)' }} /> Offline</span>
+                <span><span className="dot" style={{ background: 'var(--info)' }} /> New</span>
+              </div>
+              <div className="legend-group">
+                <span className="legend-title">Shape = type</span>
+                {/* Width must clear the last label; 8 slots at 59px plus room
+                    for "unknown" itself, or it clips at the right edge. */}
+                <svg width="512" height="22" viewBox="0 0 512 22" aria-hidden="true">
+                  {(['server', 'router', 'switch', 'firewall', 'workstation', 'printer', 'camera', 'unknown'] as const)
+                    .map((type, i) => (
+                      <g key={type}>
+                        <DeviceGlyph type={type} x={8 + i * 59} y={11} fill="var(--text-muted)" />
+                        <text x={20 + i * 59} y={15} className="legend-text">
+                          {type === 'workstation' ? 'wkstn' : type}
+                        </text>
+                      </g>
+                    ))}
+                </svg>
+              </div>
             </div>
           </>
         )}

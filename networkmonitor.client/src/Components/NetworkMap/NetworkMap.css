@@ -6,10 +6,21 @@
   min-height: 480px;
 }
 
+/* The SVG carries a 1400x800 viewBox with preserveAspectRatio="xMidYMid meet".
+   Any container whose own ratio differs letterboxes the drawing and shrinks it
+   to fit the tighter axis — a fixed pixel height did exactly that, wasting the
+   sides. Matching the container ratio to the viewBox means the topology always
+   fills the space it is given.
+
+   max-height keeps it inside the viewport on very wide monitors (where the
+   derived height would otherwise force a scroll); at that point a little
+   letterboxing is the correct trade. */
 .map-svg {
   display: block;
   width: 100%;
-  height: 640px;
+  aspect-ratio: 1400 / 800;
+  min-height: 560px;
+  max-height: calc(100vh - 168px);
   cursor: grab;
   touch-action: none; /* we own panning; don't fight the browser */
 }
@@ -20,7 +31,11 @@
 
 @media (max-width: 767.98px) {
   .map-svg {
-    height: 460px;
+    /* Narrow screens would derive a very short height from the ratio, so pin a
+       usable one and accept the letterboxing here. */
+    aspect-ratio: auto;
+    height: 520px;
+    min-height: 0;
   }
 }
 
@@ -130,18 +145,31 @@
   font-weight: 650;
 }
 
+/* The legend used to float over the bottom-right of the canvas, where it sat on
+   top of whichever cluster the layout happened to place there — and the larger
+   the map got, the more it covered. Reserving canvas space for it instead would
+   have given back the size just gained, so it moved out of the drawing and
+   became a strip beneath it. */
 .map-legend {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  background: color-mix(in srgb, var(--card-bg) 88%, transparent);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  padding: 0.6rem 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1.5rem;
+  border-top: 1px solid var(--card-border);
+  padding: 0.55rem 0.85rem;
   font-size: var(--font-xs);
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: 1.6;
+}
+
+.map-legend .legend-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.map-legend svg {
+  display: block;
 }
 
 .map-legend .legend-title {

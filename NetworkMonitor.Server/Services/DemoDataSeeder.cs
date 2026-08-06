@@ -107,6 +107,7 @@ public class DemoDataSeeder
         _db.InterfaceSnapshots.AddRange(interfaceSnapshots);
 
         _db.AppSettings.AddRange(CreateAppSettings());
+        _db.ExceptionLogs.AddRange(CreateExceptionLogs());
         await _db.SaveChangesAsync();
 
         _logger.LogInformation(
@@ -879,4 +880,107 @@ public class DemoDataSeeder
         new() { Key = "ui.default_theme", Value = "dark", Description = "Theme applied for first-time visitors.", UpdatedAt = _now },
         new() { Key = "scan.max_concurrent", Value = "1", Description = "Maximum scans allowed to run at once.", UpdatedAt = _now },
     ];
+
+    // ── Error log ────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// A believable few days of logged failures, so the Error Logs page shows
+    /// what it is for on first run instead of an empty table.
+    ///
+    /// The mix is deliberate. It covers all three ways an entry reaches the
+    /// table — an unhandled server exception, a routine warning captured from
+    /// the standard logging API, and a browser failure posted back — and one
+    /// pair shares a correlation id so the "find both halves of one incident"
+    /// behaviour is demonstrable rather than merely documented.
+    /// </summary>
+    private List<ExceptionLog> CreateExceptionLogs()
+    {
+        const string sharedCorrelation = "0HN8QK4M2P1RS";
+
+        return
+        [
+            // A server request that failed, and the browser error the user saw
+            // as a result. Same correlation id — search it to see both sides.
+            new()
+            {
+                Source = "server", Level = "fatal",
+                Message = "The SNMP agent at 203.0.113.2 did not respond within 5000 ms.",
+                ExceptionType = "System.TimeoutException",
+                StackTrace = "System.TimeoutException: The SNMP agent at 203.0.113.2 did not respond within 5000 ms.\n"
+                    + "   at NetworkMonitor.Server.Services.SnmpPoller.PollAsync(SnmpTarget target, CancellationToken ct)\n"
+                    + "   at NetworkMonitor.Server.Controllers.SnmpController.GetInterfaces(Int32 id)",
+                Path = "/api/snmp/targets/4/interfaces", Method = "GET", StatusCode = 500,
+                CorrelationId = sharedCorrelation,
+                OccurredAt = _now.AddHours(-3).AddMinutes(-12),
+            },
+            new()
+            {
+                Source = "client", Level = "error",
+                Message = "Request failed: 500 while loading switch interfaces",
+                ExceptionType = "ApiError",
+                StackTrace = "ApiError: Request failed\n    at request (api.ts:64:11)\n"
+                    + "    at async loadInterfaces (Switches.tsx:118:20)",
+                Path = "/network/switches",
+                UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36",
+                CorrelationId = sharedCorrelation,
+                OccurredAt = _now.AddHours(-3).AddMinutes(-12),
+            },
+
+            // Routine warnings picked up from the standard logging API. These
+            // carry the logging category in place of an exception type, which is
+            // how "everything the scheduler complained about" stays findable.
+            new()
+            {
+                Source = "server", Level = "warning",
+                Message = "Scan of 198.51.100.0/24 returned no hosts; the previous run found 18. "
+                    + "Devices were left online pending the missed-scan threshold.",
+                ExceptionType = "NetworkMonitor.Server.Services.ScanOrchestrator",
+                OccurredAt = _now.AddHours(-9).AddMinutes(-40),
+            },
+            new()
+            {
+                Source = "server", Level = "warning",
+                Message = "Nmap exited with code 1 for network 6: you requested a scan type which requires root privileges.",
+                ExceptionType = "NetworkMonitor.Server.Services.NmapExecutorService",
+                OccurredAt = _now.AddDays(-1).AddHours(-2),
+                IsResolved = true,
+            },
+            new()
+            {
+                Source = "server", Level = "error",
+                Message = "Certificate parse failed for 10.20.30.5:8443 — the ssl-cert script returned no notAfter field.",
+                ExceptionType = "System.FormatException",
+                StackTrace = "System.FormatException: String was not recognized as a valid DateTime.\n"
+                    + "   at NetworkMonitor.Server.Services.CertificateExtractor.Parse(ParsedScript script)",
+                Path = "/api/scans/run", Method = "POST", StatusCode = 500,
+                OccurredAt = _now.AddDays(-2).AddHours(-5),
+                IsResolved = true,
+            },
+
+            // A browser-side render failure of the kind the error boundary
+            // catches, recorded as fatal because it took the page down.
+            new()
+            {
+                Source = "client", Level = "fatal",
+                Message = "Cannot read properties of undefined (reading 'toFixed')",
+                ExceptionType = "TypeError",
+                StackTrace = "TypeError: Cannot read properties of undefined (reading 'toFixed')\n"
+                    + "    at UtilizationBar (Switches.tsx:206:38)\n"
+                    + "    at renderWithHooks (react-dom.js:11121:18)",
+                Path = "/network/switches",
+                UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15",
+                OccurredAt = _now.AddDays(-1).AddHours(-7),
+            },
+            new()
+            {
+                Source = "client", Level = "warning",
+                Message = "Chart series contained a null value and was skipped",
+                ExceptionType = "Warning",
+                Path = "/",
+                UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36",
+                OccurredAt = _now.AddDays(-3).AddHours(-1),
+                IsResolved = true,
+            },
+        ];
+    }
 }
