@@ -1,0 +1,53 @@
+/** Scan history + run panel styling. */
+
+.run-controls {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.run-controls > div {
+  min-width: 220px;
+  flex: 1 1 220px;
+  max-width: 340px;
+}
+
+.run-button {
+  height: 38px;
+  min-width: 150px;
+}
+
+.run-result {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin-bottom: 0.9rem;
+}
+
+.run-result .ok {
+  color: var(--success);
+}
+
+.run-result .bad {
+  color: var(--error);
+}
+
+.profile-chip {
+  display: inline-block;
+  padding: 0.12rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.new-devices {
+  color: var(--info);
+}

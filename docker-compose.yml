@@ -1,0 +1,43 @@
+services:
+  networkmonitor:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      # SQLite database file lives here; survives rebuilds.
+      # `docker compose down -v` deletes it and re-seeds the demo on next start.
+      - networkmonitor-data:/data
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # Defaults shown; uncomment to override.
+      # Demo__SeedOnFirstRun: "true"
+      # Scanning__SchedulerEnabled: "true"
+      #
+      # ── PostgreSQL instead of SQLite ─────────────────────────────────────
+      # Uncomment these two lines and the postgres service below.
+      # Database__Provider: postgres
+      # ConnectionStrings__Default: "Host=db;Port=5432;Database=networkmonitor;Username=netmon;Password=change-me"
+    restart: unless-stopped
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+
+  # ── Optional PostgreSQL provider ─────────────────────────────────────────
+  # db:
+  #   image: postgres:17
+  #   environment:
+  #     POSTGRES_DB: networkmonitor
+  #     POSTGRES_USER: netmon
+  #     POSTGRES_PASSWORD: change-me
+  #   volumes:
+  #     - networkmonitor-pgdata:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U netmon -d networkmonitor"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: unless-stopped
+
+volumes:
+  networkmonitor-data:
+  # networkmonitor-pgdata:

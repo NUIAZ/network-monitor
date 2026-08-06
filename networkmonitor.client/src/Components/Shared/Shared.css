@@ -1,0 +1,396 @@
+/**
+ * Styles for the shared component library (spinner, pills, badges, empty and
+ * error states, dialog, pagination, stat cards). Token-driven throughout —
+ * see index.css for the token contract.
+ */
+
+/* ---- loading ----------------------------------------------------------- */
+
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+}
+
+.loading-pulse {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.loading-pulse span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  animation: loading-pulse 1.1s ease-in-out infinite;
+}
+
+.loading-pulse span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.loading-pulse span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes loading-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.loading-pulse.sm span {
+  width: 6px;
+  height: 6px;
+}
+
+/* ---- stat card --------------------------------------------------------- */
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+}
+
+.stat-card.clickable {
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.stat-card.clickable:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+.stat-card .stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.stat-card.tone-accent .stat-icon {
+  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+  color: var(--accent-color);
+}
+
+.stat-card.tone-success .stat-icon {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.stat-card.tone-warning .stat-icon {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.stat-card.tone-error .stat-icon {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.stat-card .stat-value {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.stat-card .stat-label {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.stat-card .stat-sub {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* ---- pills & badges ---------------------------------------------------- */
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.status-pill .dot {
+  width: 7px;
+  height: 7px;
+}
+
+.status-pill.pill-success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.status-pill.pill-error {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.status-pill.pill-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.status-pill.pill-info {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.severity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.14rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  font-weight: 650;
+  white-space: nowrap;
+  text-transform: capitalize;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.severity-badge.sev-critical {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.severity-badge.sev-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.severity-badge.sev-info {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.severity-badge.sev-success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+/* ---- empty & error states ---------------------------------------------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-muted);
+}
+
+.empty-state .bi {
+  font-size: 2.2rem;
+  opacity: 0.6;
+  margin-bottom: 0.6rem;
+}
+
+.empty-state h5 {
+  color: var(--text-secondary);
+  font-size: var(--font-lg);
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+
+.empty-state p {
+  font-size: var(--font-sm);
+  margin: 0 0 0.75rem;
+  max-width: 420px;
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--error) 35%, transparent);
+  background: var(--error-bg);
+  color: var(--error);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  margin-bottom: 1rem;
+}
+
+.error-banner .bi {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.error-banner .flex-grow-1 {
+  color: var(--text-primary);
+}
+
+.warn-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 40%, transparent);
+  background: var(--warning-bg);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  margin-bottom: 1rem;
+}
+
+.warn-banner .bi {
+  color: var(--warning);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ---- confirm dialog ---------------------------------------------------- */
+
+.nm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  padding: 1rem;
+}
+
+.nm-modal {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 440px;
+  padding: 1.4rem;
+}
+
+.nm-modal h5 {
+  font-size: var(--font-lg);
+  font-weight: 650;
+  margin: 0 0 0.5rem;
+  color: var(--text-primary);
+}
+
+.nm-modal p {
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  margin: 0 0 1.2rem;
+}
+
+.nm-modal .nm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* ---- pagination -------------------------------------------------------- */
+
+.nm-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--card-border);
+  font-size: var(--font-sm);
+  color: var(--text-muted);
+}
+
+.nm-pagination .page-buttons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.nm-pagination button {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 0.5rem;
+  border: 1px solid var(--input-border);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+}
+
+.nm-pagination button:hover:not(:disabled):not(.active) {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.nm-pagination button.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+  font-weight: 600;
+}
+
+.nm-pagination button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ---- utilization bars (switches + device panels) ----------------------- */
+
+.util-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  overflow: hidden;
+  min-width: 70px;
+}
+
+.util-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--success);
+  transition: width 0.3s ease;
+}
+
+.util-bar.util-warn > span {
+  background: var(--warning);
+}
+
+.util-bar.util-hot > span {
+  background: var(--error);
+}

@@ -1,0 +1,28 @@
+/** Certificates page styling. */
+
+.expiry {
+  font-weight: 650;
+  font-size: var(--font-sm);
+  white-space: nowrap;
+}
+
+.expiry.expired {
+  color: var(--error);
+}
+
+.expiry.soon {
+  color: var(--warning);
+}
+
+.expiry.ok {
+  color: var(--success);
+}
+
+.cert-name {
+  display: inline-block;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}

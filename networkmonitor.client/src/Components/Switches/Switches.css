@@ -1,0 +1,64 @@
+/** Switches (SNMP) page: target rail + detail column. */
+
+.switches-layout {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+@media (max-width: 991.98px) {
+  .switches-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.target-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.target-card {
+  text-align: left;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 0.75rem 0.9rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.target-card:hover {
+  border-color: var(--text-muted);
+}
+
+.target-card.active {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+
+.target-name {
+  font-weight: 650;
+  font-size: var(--font-md);
+}
+
+.target-meta {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+}
+
+.util-value {
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+  min-width: 44px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.error-count {
+  color: var(--error);
+  font-weight: 600;
+}

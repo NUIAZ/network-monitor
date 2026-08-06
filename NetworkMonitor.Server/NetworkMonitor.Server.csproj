@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SpaRoot>..\networkmonitor.client</SpaRoot>
+    <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
+    <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
+    <Version>1.0.0</Version>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <UserSecretsId>networkmonitor-server</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!-- PostgreSQL is optional: the demo runs on SQLite with no server at all.
+         See INSTALL.md "Switching to PostgreSQL" to use this provider instead. -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+    <PackageReference Include="Lextm.SharpSnmpLib" Version="12.5.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="10.*-*" />
+
+    <!-- Transitive pins: the versions pulled in by Swashbuckle and EF Core Sqlite
+         carry published advisories (GHSA-v5pm-xwqc-g5wc, GHSA-2m69-gcr7-jv3q).
+         Declaring them directly promotes the resolved version to a patched one.
+         Drop these lines once the parent packages ship updated dependencies. -->
+    <PackageReference Include="Microsoft.OpenApi" Version="2.11.0" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
+  </ItemGroup>
+
+  <!-- The client is referenced so Visual Studio / local builds start the Vite
+       dev server via the SPA proxy. Docker builds the SPA in a separate Node
+       stage and copies it into wwwroot, so they pass -p:SkipSpaBuild=true
+       (the .NET SDK image has no Node). -->
+  <ItemGroup Condition="'$(SkipSpaBuild)' != 'true'">
+    <ProjectReference Include="..\networkmonitor.client\networkmonitor.client.esproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="NetworkMonitor.Tests" />
+  </ItemGroup>
+
+</Project>

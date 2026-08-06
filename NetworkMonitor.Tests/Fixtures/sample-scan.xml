@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<!-- Representative nmap XML used by the parser tests. Hand-trimmed from a real
+     scan of a lab network and re-addressed onto RFC 5737 documentation space.
+     Deliberately exercises the awkward cases: a host with a MAC + vendor, a host
+     with no MAC (off-subnet), a down host, NSE script output both per-port and
+     host-level, a <table> nested script (ssl-cert), and a traceroute. -->
+<nmaprun scanner="nmap" args="nmap -sT -sV -T3 -oX scan.xml 203.0.113.0/24" start="1785000000" startstr="Wed Aug  5 09:00:00 2026" version="7.95" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="50" services="22,80,443,3306,9100"/>
+<verbose level="0"/>
+<debugging level="0"/>
+
+<host starttime="1785000001" endtime="1785000042">
+<status state="up" reason="syn-ack" reason_ttl="64"/>
+<address addr="203.0.113.10" addrtype="ipv4"/>
+<address addr="00:1A:2B:3C:4D:5E" addrtype="mac" vendor="Cisco Systems"/>
+<hostnames>
+<hostname name="dal-sw-core01" type="PTR"/>
+</hostnames>
+<ports>
+<port protocol="tcp" portid="22">
+<state state="open" reason="syn-ack" reason_ttl="64"/>
+<service name="ssh" product="OpenSSH" version="8.4" extrainfo="protocol 2.0" method="probed" conf="10"/>
+<script id="ssh-hostkey" output="2048 aa:bb:cc:dd:ee:ff (RSA)"/>
+</port>
+<port protocol="tcp" portid="443">
+<state state="open" reason="syn-ack" reason_ttl="64"/>
+<service name="https" product="nginx" version="1.24.0" method="probed" conf="10"/>
+<script id="ssl-cert" output="Subject: commonName=dal-sw-core01.example.com">
+<table key="subject">
+<elem key="commonName">dal-sw-core01.example.com</elem>
+<elem key="organizationName">Northwind Logistics</elem>
+</table>
+<table key="issuer">
+<elem key="commonName">Northwind Internal CA</elem>
+</table>
+<elem key="pubkey.type">rsa</elem>
+<elem key="pubkey.bits">2048</elem>
+</script>
+</port>
+<port protocol="tcp" portid="23">
+<state state="filtered" reason="no-response" reason_ttl="0"/>
+<service name="telnet" method="table" conf="3"/>
+</port>
+</ports>
+<hostscript>
+<script id="smb-os-discovery" output="OS: Cisco IOS 15.2"/>
+</hostscript>
+<times srtt="1420" rttvar="300" to="100000"/>
+</host>
+
+<host starttime="1785000002" endtime="1785000050">
+<status state="up" reason="syn-ack" reason_ttl="122"/>
+<address addr="203.0.113.25" addrtype="ipv4"/>
+<hostnames>
+<hostname name="dal-srv-wms01" type="PTR"/>
+</hostnames>
+<ports>
+<port protocol="tcp" portid="80">
+<state state="open" reason="syn-ack" reason_ttl="122"/>
+<service name="http" product="Apache httpd" version="2.4.52" extrainfo="(Ubuntu)" method="probed" conf="10"/>
+</port>
+<port protocol="tcp" portid="3306">
+<state state="open" reason="syn-ack" reason_ttl="122"/>
+<service name="mysql" product="MySQL" version="8.0.35" method="probed" conf="10"/>
+</port>
+</ports>
+<os>
+<osmatch name="Linux 5.15 - 5.19" accuracy="96" line="65535">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="5.X" accuracy="96"/>
+</osmatch>
+<osmatch name="Linux 4.15 - 5.8" accuracy="92" line="62000"/>
+</os>
+<trace port="80" proto="tcp">
+<hop ttl="1" ipaddr="203.0.113.1" rtt="0.45" host="dal-rtr-edge01"/>
+<hop ttl="2" ipaddr="203.0.113.25" rtt="1.20" host="dal-srv-wms01"/>
+</trace>
+<times srtt="2100" rttvar="450" to="100000"/>
+</host>
+
+<host starttime="1785000003" endtime="1785000012">
+<status state="up" reason="echo-reply" reason_ttl="60"/>
+<address addr="203.0.113.60" addrtype="ipv4"/>
+<address addr="00:80:77:11:22:33" addrtype="mac" vendor="Brother Industries"/>
+<hostnames>
+<hostname name="dal-prn-ship01" type="PTR"/>
+</hostnames>
+<ports>
+<port protocol="tcp" portid="9100">
+<state state="open" reason="syn-ack" reason_ttl="60"/>
+<service name="jetdirect" method="table" conf="3"/>
+</port>
+<port protocol="tcp" portid="631">
+<state state="open" reason="syn-ack" reason_ttl="60"/>
+<service name="ipp" product="CUPS" version="2.3" method="probed" conf="10"/>
+</port>
+</ports>
+<times srtt="880" rttvar="200" to="100000"/>
+</host>
+
+<host>
+<status state="down" reason="no-response" reason_ttl="0"/>
+<address addr="203.0.113.99" addrtype="ipv4"/>
+</host>
+
+<runstats>
+<finished time="1785000060" timestr="Wed Aug  5 09:01:00 2026" elapsed="60.12" summary="Nmap done at Wed Aug  5 09:01:00 2026; 4 IP addresses (3 hosts up) scanned in 60.12 seconds" exit="success"/>
+<hosts up="3" down="1" total="4"/>
+</runstats>
+</nmaprun>

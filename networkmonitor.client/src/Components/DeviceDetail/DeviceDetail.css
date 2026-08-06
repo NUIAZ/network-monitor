@@ -1,0 +1,90 @@
+/** Device detail layout: two-column cards, identity list, operator form. */
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+@media (max-width: 991.98px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.identity-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.45rem 1.2rem;
+  margin: 0;
+  font-size: var(--font-sm);
+}
+
+.identity-list dt {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.identity-list dd {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.operator-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.operator-form .operator-notes,
+.operator-form .operator-checks {
+  grid-column: 1 / -1;
+}
+
+.operator-checks {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.saved-note {
+  color: var(--success);
+  font-size: var(--font-sm);
+  font-weight: 600;
+}
+
+.history-chart-label {
+  font-size: var(--font-xs);
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.device-alert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+.device-alert-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--card-border);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+.device-alert-list li:last-child {
+  border-bottom: none;
+}
+
+.device-alert-list .vuln-desc {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}

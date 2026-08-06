@@ -1,0 +1,166 @@
+/**
+ * Sidebar styling. The sidebar keeps its own text tokens (--sidebar-text /
+ * --sidebar-muted) because light themes deliberately pair a bright content
+ * area with a dark navigation rail.
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--sidebar-bg-start), var(--sidebar-bg-end));
+  color: var(--sidebar-text);
+  z-index: 1040;
+  overflow-y: auto;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1035;
+}
+
+@media (max-width: 991.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--shadow-md);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* ---- brand ------------------------------------------------------------- */
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  height: var(--header-height);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: var(--font-lg);
+  color: #fff;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.brand-tagline {
+  font-size: var(--font-xs);
+  color: var(--sidebar-muted);
+}
+
+/* ---- nav --------------------------------------------------------------- */
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0.75rem 0.7rem;
+}
+
+.nav-group {
+  margin-bottom: 0.35rem;
+}
+
+.nav-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--sidebar-muted);
+  font-size: var(--font-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 0.55rem 0.5rem 0.35rem;
+  cursor: pointer;
+}
+
+.nav-group-header:hover {
+  color: var(--sidebar-text);
+}
+
+.nav-group-header .bi {
+  font-size: 0.65rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.6rem;
+  margin: 1px 0;
+  border-radius: var(--radius-sm);
+  color: var(--sidebar-text);
+  font-size: var(--font-md);
+  text-decoration: none;
+}
+
+.nav-item .bi {
+  width: 1.2rem;
+  text-align: center;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.nav-item.active {
+  background: var(--accent-color);
+  color: #fff;
+  font-weight: 600;
+}
+
+.nav-item.active .bi {
+  opacity: 1;
+}
+
+.alert-badge {
+  background: var(--error);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.05rem 0.42rem;
+  line-height: 1.4;
+}
+
+/* When the item is active (accent background) the red badge needs a ring to
+   stay legible against arbitrary accent colors. */
+.nav-item.active .alert-badge {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
+}
+
+/* ---- footer ------------------------------------------------------------ */
+
+.sidebar-footer {
+  padding: 0.8rem 1.1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: var(--font-xs);
+  color: var(--sidebar-muted);
+  flex-shrink: 0;
+}

@@ -1,0 +1,457 @@
+/**
+ * NetworkMonitor design-token stylesheet.
+ *
+ * Single source of truth for color, spacing, radius, and typography tokens.
+ * The :root block below is the *fallback* (Slate Light) so the first paint —
+ * before ThemeContext hydrates — is already presentable; the active theme
+ * then overwrites every custom property on <html> at runtime.
+ *
+ * Rule for all component CSS in this app: reference tokens, never hardcode a
+ * color. That single discipline is what makes eight themes possible.
+ */
+
+:root {
+  /* ---- surfaces & text (Slate Light fallback values) ------------------- */
+  --bg-primary: #f1f5f9;
+  --bg-secondary: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
+  --sidebar-bg-start: #1e293b;
+  --sidebar-bg-end: #0f172a;
+  --sidebar-text: #cbd5e1;
+  --sidebar-muted: #7c8ba1;
+  --nav-bg: #ffffff;
+  --hover-bg: rgba(15, 23, 42, 0.05);
+
+  /* ---- status ---------------------------------------------------------- */
+  --success: #15803d;
+  --success-bg: rgba(21, 128, 61, 0.12);
+  --warning: #b45309;
+  --warning-bg: rgba(180, 83, 9, 0.12);
+  --error: #dc2626;
+  --error-bg: rgba(220, 38, 38, 0.1);
+  --info: #2563eb;
+  --info-bg: rgba(37, 99, 235, 0.1);
+
+  /* ---- chart series (validated categorical palette, light steps) ------- */
+  --chart-1: #2a78d6;
+  --chart-2: #eb6834;
+  --chart-3: #1baf7a;
+  --chart-4: #eda100;
+  --chart-5: #e87ba4;
+  --chart-6: #008300;
+  --chart-7: #4a3aa7;
+  --chart-8: #e34948;
+  --chart-grid: #e2e8f0;
+
+  /* ---- static tokens (identical across themes) ------------------------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --font-xs: 0.75rem;
+  --font-sm: 0.8125rem;
+  --font-md: 0.875rem;
+  --font-lg: 1rem;
+  --font-xl: 1.25rem;
+  --header-height: 64px;
+  --sidebar-width: 262px;
+}
+
+/* ---- Bootstrap bridge -------------------------------------------------- */
+/* Bootstrap 5.3 reads its own custom properties; pointing them at ours means
+   any Bootstrap utility or component that sneaks in still lands on-theme. */
+[data-bs-theme],
+:root {
+  --bs-body-bg: var(--bg-primary);
+  --bs-body-color: var(--text-primary);
+  --bs-secondary-color: var(--text-secondary);
+  --bs-tertiary-color: var(--text-muted);
+  --bs-border-color: var(--card-border);
+  --bs-link-color: var(--accent-color);
+  --bs-link-hover-color: var(--accent-hover);
+  --bs-emphasis-color: var(--text-primary);
+  --bs-secondary-bg: var(--bg-secondary);
+  --bs-tertiary-bg: var(--card-bg);
+  --bs-body-font-size: var(--font-md);
+}
+
+/* ---- base -------------------------------------------------------------- */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--font-md);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--input-border);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ---- app shell --------------------------------------------------------- */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0; /* lets tables/charts shrink instead of forcing overflow */
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 991.98px) {
+  .app-main {
+    margin-left: 0;
+  }
+
+  .page-content {
+    padding: 1rem;
+  }
+}
+
+/* ---- page headers & toolbars ------------------------------------------ */
+
+.page-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.page-title-row h2 {
+  font-size: var(--font-xl);
+  font-weight: 650;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  margin-top: 0.25rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.filter-row .form-select,
+.filter-row .form-control {
+  width: auto;
+  min-width: 150px;
+}
+
+/* ---- cards ------------------------------------------------------------- */
+
+.nm-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.nm-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--card-border);
+  font-weight: 600;
+  font-size: var(--font-md);
+}
+
+.nm-card-header .bi {
+  color: var(--text-muted);
+}
+
+.nm-card-body {
+  padding: 1.1rem;
+}
+
+.nm-card-body.p-0 {
+  padding: 0;
+}
+
+/* ---- forms (token-driven Bootstrap controls) --------------------------- */
+
+.form-control,
+.form-select {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+  font-size: var(--font-md);
+  border-radius: var(--radius-sm);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--input-bg);
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-label {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.form-check-input:checked {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.form-text {
+  color: var(--text-muted);
+  font-size: var(--font-xs);
+}
+
+.invalid-feedback {
+  color: var(--error);
+}
+
+.form-control.is-invalid {
+  border-color: var(--error);
+}
+
+/* ---- buttons ----------------------------------------------------------- */
+
+.btn {
+  font-size: var(--font-md);
+  border-radius: var(--radius-sm);
+}
+
+.btn-accent {
+  background: var(--accent-color);
+  border: 1px solid var(--accent-color);
+  color: #fff;
+}
+
+.btn-accent:hover:not(:disabled),
+.btn-accent:focus-visible {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: #fff;
+}
+
+.btn-accent:disabled {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+  opacity: 0.55;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--hover-bg);
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+.btn-danger-soft {
+  background: var(--error-bg);
+  border: 1px solid transparent;
+  color: var(--error);
+}
+
+.btn-danger-soft:hover:not(:disabled) {
+  background: var(--error);
+  color: #fff;
+}
+
+/* ---- tables ------------------------------------------------------------ */
+
+.nm-table-wrap {
+  overflow-x: auto;
+}
+
+.nm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-sm);
+}
+
+.nm-table th {
+  text-align: left;
+  padding: 0.65rem 0.9rem;
+  color: var(--text-muted);
+  font-size: var(--font-xs);
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--card-border);
+  white-space: nowrap;
+  background: var(--card-bg);
+}
+
+.nm-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.nm-table th.sortable:hover {
+  color: var(--text-primary);
+}
+
+.nm-table th .sort-arrow {
+  margin-left: 0.3rem;
+  font-size: 0.65rem;
+}
+
+.nm-table td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.nm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.nm-table tbody tr.clickable {
+  cursor: pointer;
+}
+
+.nm-table tbody tr.clickable:hover {
+  background: var(--hover-bg);
+}
+
+.nm-table .cell-primary {
+  color: var(--text-primary);
+  font-weight: 550;
+}
+
+.nm-table .cell-mono {
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: var(--font-xs);
+}
+
+/* ---- misc utilities ---------------------------------------------------- */
+
+.text-muted-token {
+  color: var(--text-muted) !important;
+}
+
+.mono {
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+  align-items: center;
+}
+
+/* Recharts chrome: keep grid/axis recessive and on-theme. */
+.recharts-cartesian-axis-tick text {
+  fill: var(--text-muted);
+  font-size: var(--font-xs);
+}
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.chart-tooltip {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: 0.55rem 0.75rem;
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+}
+
+.chart-tooltip .tooltip-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.chart-tooltip .tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  line-height: 1.5;
+}

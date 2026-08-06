@@ -1,0 +1,16 @@
+/**
+ * 404 catch-all route.
+ */
+import { Link } from 'react-router-dom';
+import EmptyState from '../Shared/EmptyState';
+
+export default function NotFound() {
+  return (
+    <EmptyState icon="bi-signpost-split" title="Page not found" message="That address doesn't map to anything here.">
+      <Link to="/" className="btn btn-accent">
+        <i className="bi bi-speedometer2 me-1" />
+        Back to dashboard
+      </Link>
+    </EmptyState>
+  );
+}

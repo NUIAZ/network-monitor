@@ -1,0 +1,45 @@
+/** Vulnerability page styling. */
+
+.vuln-search {
+  min-width: 240px;
+  flex: 1 1 240px;
+  max-width: 340px;
+}
+
+.cvss-chip {
+  display: inline-block;
+  min-width: 42px;
+  text-align: center;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--font-xs);
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.cvss-chip.cvss-critical {
+  background: var(--error);
+  color: #fff;
+}
+
+.cvss-chip.cvss-high {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.cvss-chip.cvss-medium {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.cvss-chip.cvss-low {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.status-select {
+  min-width: 140px;
+  font-size: var(--font-xs);
+}

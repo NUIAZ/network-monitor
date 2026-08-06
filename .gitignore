@@ -1,0 +1,36 @@
+# ── .NET ─────────────────────────────────────────────────────────────────────
+bin/
+obj/
+publish/
+TestResults/
+*.user
+*.suo
+
+# ── Node / SPA ───────────────────────────────────────────────────────────────
+node_modules/
+dist/
+coverage/
+npm-debug.log*
+
+# ── SQLite (created at first run; delete to reset the demo) ──────────────────
+*.db
+*.db-shm
+*.db-wal
+
+# ── Playwright ───────────────────────────────────────────────────────────────
+test-results/
+playwright-report/
+.auth/
+
+# ── IDE ──────────────────────────────────────────────────────────────────────
+.vs/
+.idea/
+.vscode/
+
+# ── OS files ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# SPA build output copied into the server for local full-stack runs
+NetworkMonitor.Server/wwwroot/

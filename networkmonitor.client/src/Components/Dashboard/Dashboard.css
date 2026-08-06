@@ -1,0 +1,140 @@
+/** Dashboard grid + donut + recent-alert list styling. */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.1rem;
+}
+
+.dash-row {
+  display: grid;
+  grid-template-columns: minmax(320px, 5fr) minmax(380px, 7fr);
+  gap: 0.9rem;
+  margin-bottom: 1.1rem;
+}
+
+.dash-row:nth-of-type(2) {
+  grid-template-columns: minmax(380px, 7fr) minmax(320px, 5fr);
+}
+
+@media (max-width: 1099.98px) {
+  .dash-row,
+  .dash-row:nth-of-type(2) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- donut ------------------------------------------------------------- */
+
+.donut-layout {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.donut-chart {
+  position: relative;
+  flex: 1 1 200px;
+  min-width: 190px;
+}
+
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.donut-total {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.donut-caption {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.donut-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1 1 150px;
+  min-width: 150px;
+}
+
+.donut-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.28rem 0;
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+.donut-legend .bi {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.donut-legend strong {
+  color: var(--text-primary);
+}
+
+/* ---- recent alerts ------------------------------------------------------ */
+
+.recent-alert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.3rem 0;
+}
+
+.recent-alert-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.recent-alert-list li:last-child {
+  border-bottom: none;
+}
+
+.recent-alert-list li:hover {
+  background: var(--hover-bg);
+}
+
+.recent-alert-list .alert-message {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+}
+
+.recent-alert-list .alert-time {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ---- footer meta -------------------------------------------------------- */
+
+.dash-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  font-size: var(--font-sm);
+}

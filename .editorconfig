@@ -1,0 +1,33 @@
+# EditorConfig — https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# C#
+[*.cs]
+indent_size = 4
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_prefer_braces = when_multiline:suggestion
+dotnet_sort_system_directives_first = true
+
+# Web / config
+[*.{ts,tsx,js,jsx,css,html,json,yml,yaml}]
+indent_size = 2
+
+# Markdown: trailing spaces are hard line breaks
+[*.md]
+trim_trailing_whitespace = false
+
+# MSBuild / solution files keep Visual Studio conventions
+[*.{csproj,esproj,props,targets}]
+indent_size = 2
+
+[*.sln]
+indent_style = tab

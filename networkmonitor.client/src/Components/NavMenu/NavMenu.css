@@ -1,0 +1,73 @@
+/** Top bar styling — sticky, token-driven, shares height with the sidebar brand. */
+
+.nav-menu {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: var(--header-height);
+  padding: 0 1.25rem;
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.nav-menu .hamburger {
+  padding: 0.3rem 0.55rem;
+  font-size: 1.15rem;
+}
+
+.nav-menu .page-title {
+  font-size: var(--font-xl);
+  font-weight: 650;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.global-search {
+  position: relative;
+  flex: 1;
+  max-width: 420px;
+  margin-left: auto;
+}
+
+.global-search .bi-search {
+  position: absolute;
+  left: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.global-search .form-control {
+  padding-left: 2.1rem;
+  height: 38px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.live-clock {
+  align-items: center;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+  .nav-menu {
+    gap: 0.6rem;
+    padding: 0 0.85rem;
+  }
+
+  .nav-menu .page-title {
+    font-size: var(--font-lg);
+  }
+}

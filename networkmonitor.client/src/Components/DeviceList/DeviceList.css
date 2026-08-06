@@ -1,0 +1,25 @@
+/** Device list page styling. */
+
+.device-search {
+  min-width: 240px;
+  flex: 1 1 240px;
+  max-width: 340px;
+}
+
+.device-type-icon {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.text-flag {
+  color: var(--warning);
+}
+
+.os-cell {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
