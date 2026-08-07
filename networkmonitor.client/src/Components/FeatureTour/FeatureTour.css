@@ -3,9 +3,14 @@
  * correctly in all eight themes; nothing here is hardcoded.
  *
  * The "hole" is not a mask — it is one absolutely-positioned box carrying a
- * 9999px box-shadow spread. Everything outside the box gets the wash, the box
+ * large box-shadow spread. Everything outside the box gets the wash, the box
  * itself stays untouched, and the ring is a *border* rather than a second
  * shadow because an outward spread would paint straight over an outer shadow.
+ *
+ * The spread is 200vmax rather than a flat 9999px. A 9999px spread asks the
+ * compositor to rasterise a roughly 20000x20000px shadow on every step
+ * transition, which is visible as a stall on a wide display. 200vmax still
+ * covers the viewport twice over in both axes while rasterising far less area.
  */
 
 .tour-overlay {
@@ -41,7 +46,8 @@
   box-sizing: border-box;
   border: 2px solid var(--accent-color);
   border-radius: var(--radius-md);
-  box-shadow: 0 0 0 9999px var(--tour-scrim);
+  /* See the file header — 200vmax, not 9999px, to keep the rasterised area sane. */
+  box-shadow: 0 0 0 200vmax var(--tour-scrim);
   /* The scrim beneath handles interaction; the ring must never eat a click. */
   pointer-events: none;
   transition:
