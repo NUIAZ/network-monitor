@@ -23,6 +23,12 @@ interface ChartTooltipProps {
   formatLabel?: (label: string | number) => string;
 }
 
+/**
+ * Every prop is optional because recharts owns the call: this is handed to a
+ * `<Tooltip content={…} />` and invoked with whatever the chart has, including
+ * while inactive. Hence the null return rather than an empty shell — recharts
+ * keeps the element mounted between hovers.
+ */
 export default function ChartTooltip({ active, label, payload, formatValue, formatLabel }: ChartTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
   return (

@@ -11,6 +11,14 @@ interface ErrorBannerProps {
   onDismiss?: () => void;
 }
 
+/**
+ * Carries `role="alert"`, so it is announced the moment it appears — mount it
+ * when the failure happens rather than rendering it hidden and revealing it,
+ * which would announce nothing.
+ *
+ * Both buttons are opt-in: a retry that cannot succeed and a dismiss that hides
+ * an unresolved failure are each worse than no button.
+ */
 export default function ErrorBanner({ message, onRetry, onDismiss }: ErrorBannerProps) {
   return (
     <div className="error-banner" role="alert" data-testid="error-banner">

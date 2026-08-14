@@ -21,7 +21,7 @@ A raw nmap scan tells you what is on the network *right now*. That is rarely the
 - **Change control evidence** — every device keeps a port/service inventory; a service that starts or stops listening raises an alert. "Who opened RDP on the warehouse server?" becomes a timestamped record instead of an argument.
 - **Vulnerability triage** — service versions found by scans are matched against CVEs and ranked by CVSS score, with a workflow status (`open` / `remediated` / `accepted_risk`) so the list shrinks instead of scrolling forever. TLS certificates are tracked too, so nothing expires unnoticed.
 - **Uptime evidence** — per-device snapshots are recorded on every scan (status, open port count, response time), so you can show exactly when a device was reachable and when it wasn't.
-- **Switch capacity** — switches and routers are polled over SNMP for per-interface throughput, errors, and utilization, so link saturation is a chart, not a guess.
+- **Switch capacity** — per-interface throughput, errors, and utilization for switches and routers, so link saturation is a chart rather than a guess. **Note:** this build ships the schema, API, and UI for it, populated from the demo dataset; the SNMP *collector* is not implemented here. See [Scope](#scope) below.
 
 ## Features by page
 
@@ -98,7 +98,6 @@ Devices are classified (`router`, `switch`, `firewall`, `printer`, `server`, `wo
 | API | ASP.NET Core (.NET 10), controllers + Swagger/OpenAPI |
 | ORM | EF Core 10 — SQLite by default, PostgreSQL via config |
 | Scanning | nmap (external process), XML output parsed XXE-safe |
-| SNMP | SharpSnmpLib (v2c interface polling) |
 | Background work | `BackgroundService` scheduler (in-process in this build) |
 | Front end | React 19, TypeScript, Vite |
 | Tests | xUnit (server), Vitest (client), Playwright (E2E) |
@@ -126,6 +125,33 @@ network-monitor/
 ├── Dockerfile
 └── docker-compose.yml
 ```
+
+## Scope
+
+This is a scaled-down showcase, and it is worth being explicit about where the
+line falls so nothing here reads as a claim it cannot support.
+
+**Fully implemented and live:** nmap execution and XML parsing, device
+classification, the change-detection and reconciliation pipeline, alerting,
+scan profiles and scheduling, the REST API, and every screen in the UI. Install
+nmap, point it at a network you are authorized to scan, and it genuinely scans.
+
+**Schema, API and UI only — populated from the demo dataset:**
+
+- **SNMP interface statistics.** `SnmpTarget` and `InterfaceSnapshot` are real
+  tables with real endpoints and a working Switches page, but nothing polls a
+  device: the seeder is the only writer. A collector would be a hosted service
+  walking `ifDescr`/`ifHighSpeed`/`ifOperStatus`/`ifIn|OutOctets` and converting
+  counter deltas to a utilization percentage — the storage and presentation it
+  would need already exist.
+- **CVE matching.** Vulnerabilities are seeded against plausible service
+  versions rather than resolved from a live feed such as NVD.
+- **Certificate collection.** Certificates are seeded; harvesting them would
+  mean running nmap's `ssl-cert` script and parsing its output, which the parser
+  already supports.
+
+**Not present at all:** authentication (see below), and the syslog, NetFlow, WAN
+and inventory/contract modules of the system this derives from.
 
 ## Security model
 

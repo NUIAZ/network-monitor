@@ -29,6 +29,15 @@ function cvssBand(score: number | null): string {
   return 'low';
 }
 
+/**
+ * Opens filtered to `status: 'open'` rather than showing everything, because
+ * this is a work queue: the default view is what is still outstanding, and a
+ * setting changed to remediated should leave the list.
+ *
+ * Status changes reload the whole page of results instead of patching the row
+ * in place — a row that no longer matches the filter has to disappear, and
+ * re-reading is simpler than reconciling that locally.
+ */
 export default function Vulnerabilities() {
   const navigate = useNavigate();
   const [severity, setSeverity] = useState('');

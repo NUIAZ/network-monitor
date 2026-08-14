@@ -292,6 +292,15 @@ interface HoverState {
 const MIN_ZOOM = 0.35;
 const MAX_ZOOM = 6;
 
+/**
+ * Owns the pan/zoom transform and the hover/selection state; the layout itself
+ * is not state at all — it is derived from the topology response in a single
+ * memoized pass, so panning and zooming never recompute a node position.
+ *
+ * Because layout is deterministic and unseeded, the same estate always draws
+ * identically, which is what makes the picture worth comparing against
+ * yesterday's. It also means a single added device can reflow a whole ring.
+ */
 export default function NetworkMap() {
   const navigate = useNavigate();
   const [siteFilter, setSiteFilter] = useState('');

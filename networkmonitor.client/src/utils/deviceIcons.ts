@@ -16,6 +16,12 @@ const TYPE_ICONS: Record<string, string> = {
   unknown: 'bi-question-circle',
 };
 
+/**
+ * Case-insensitive, and falls through to the "unknown" glyph for anything it
+ * does not recognise — including null. The classifier's vocabulary can grow on
+ * the server before this map catches up, and an unfamiliar type should render
+ * as a question mark rather than as a hole in the table.
+ */
 export function deviceTypeIcon(deviceType: string | null | undefined): string {
   return TYPE_ICONS[(deviceType ?? 'unknown').toLowerCase()] ?? TYPE_ICONS.unknown;
 }
@@ -35,6 +41,11 @@ const TYPE_CHART_VARS: Record<string, string> = {
   unknown: 'var(--chart-8)',
 };
 
+/**
+ * Returns a `var(--chart-N)` reference rather than a literal colour, so the
+ * donut and the map re-skin themselves along with the rest of the page when the
+ * theme changes. Unrecognised types share the last slot with "unknown".
+ */
 export function deviceTypeColor(deviceType: string | null | undefined): string {
   return TYPE_CHART_VARS[(deviceType ?? 'unknown').toLowerCase()] ?? 'var(--chart-8)';
 }

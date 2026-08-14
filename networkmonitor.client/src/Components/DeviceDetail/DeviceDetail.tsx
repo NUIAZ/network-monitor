@@ -71,6 +71,16 @@ function shortTime(value: string | number): string {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
+/**
+ * Fetches the device and its history as two independent requests, so a history
+ * query that fails or is slow still leaves the identity and operator form
+ * usable — the chart is the least important thing on the page.
+ *
+ * The form is re-hydrated from every fresh device response, which means a
+ * reload after saving discards any edit made in the meantime. That is fine
+ * because saves are explicit and immediately followed by a reload, but it does
+ * make this a form that must not be left open across a background refresh.
+ */
 export default function DeviceDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();

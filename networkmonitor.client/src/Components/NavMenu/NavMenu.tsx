@@ -32,6 +32,15 @@ function titleForPath(pathname: string): string {
   return match ? match[1] : 'NetworkMonitor';
 }
 
+/**
+ * Re-renders once a second for the clock, so keep it out of any expensive
+ * subtree — everything below it in the shell is a sibling, not a child, for
+ * exactly that reason.
+ *
+ * The search box holds its own draft text and only navigates on submit; it does
+ * not read ?search= back out of the URL, so the field is empty after a search
+ * even though the results are filtered.
+ */
 export default function NavMenu({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();

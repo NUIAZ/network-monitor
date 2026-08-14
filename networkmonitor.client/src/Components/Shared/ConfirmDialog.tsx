@@ -19,6 +19,14 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
+/**
+ * Kept mounted and gated on `open` rather than conditionally rendered by the
+ * caller, so the Escape listener can be wired to the same lifecycle as the
+ * dialog. While `busy`, both the backdrop click and the buttons are inert —
+ * a destructive action already in flight must not be cancellable or repeatable.
+ *
+ * Nothing here traps focus, so it is a confirm prompt rather than a full modal.
+ */
 export default function ConfirmDialog({
   open,
   title,

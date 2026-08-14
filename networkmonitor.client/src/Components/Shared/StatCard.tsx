@@ -19,14 +19,33 @@ interface StatCardProps {
   testId?: string;
 }
 
+/**
+ * Passing `onClick` does more than attach a handler: it promotes the tile to
+ * `role="button"` and puts it in the tab order. A tile without one stays inert
+ * text, which is why the decorative and the drill-through variants look
+ * identical here but not to a screen reader.
+ *
+ * Taking `role="button"` obliges the tile to behave like one, which means
+ * answering BOTH Enter and Space (WCAG 2.1.1 Keyboard). Space additionally has
+ * to have its default suppressed, or activating a tile also scrolls the page —
+ * the browser only skips that for real `<button>` elements.
+ */
 export default function StatCard({ icon, label, value, sub, tone = 'accent', onClick, testId }: StatCardProps) {
+  const handleKeyDown = onClick
+    ? (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        onClick();
+      }
+    : undefined;
+
   return (
     <div
       className={`stat-card tone-${tone}${onClick ? ' clickable' : ''}`}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
+      onKeyDown={handleKeyDown}
       data-testid={testId ?? 'stat-card'}
     >
       <div className="stat-icon">

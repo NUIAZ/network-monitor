@@ -536,6 +536,15 @@ function ProfileEditor({ networks }: { networks: NetworkInfo[] }) {
 // Page
 // ---------------------------------------------------------------------------
 
+/**
+ * Composes the independent panels above and owns only what spans them: the
+ * sites and networks lists, and the modal/confirm state for editing both.
+ *
+ * Any mutation reloads sites *and* networks together, because the two are
+ * coupled — a network can move between sites, and deleting a site cascades to
+ * its networks, so refreshing one without the other leaves the page showing a
+ * parent that no longer has the children listed under it.
+ */
 export default function Settings() {
   const sites = useAsync<Site[]>(() => api.get<Site[]>('/api/sites'), []);
   const networks = useAsync<NetworkInfo[]>(() => api.get<NetworkInfo[]>(`/api/networks${buildQuery({})}`), []);

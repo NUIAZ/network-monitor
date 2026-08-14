@@ -1,3 +1,21 @@
+// Application entry point and composition root.
+//
+// The ordering here is deliberate in three places and worth reading before
+// rearranging anything:
+//
+//   1. The database log sink is registered on the logging builder BEFORE the
+//      host is built, so start-up messages are captured too.
+//   2. The exception middleware is the FIRST thing in the request pipeline, so
+//      it wraps everything downstream of it. Anything registered above it would
+//      throw past the handler and return a bodyless 500.
+//   3. The schema is created and the demo data seeded after the host is built
+//      but before it starts serving, so no request can observe an empty
+//      database mid-seed.
+//
+// The database provider is chosen from configuration rather than compiled in:
+// the demo runs on SQLite with no server at all, and a real deployment points
+// the same model at PostgreSQL. See INSTALL.md.
+
 using Microsoft.EntityFrameworkCore;
 using NetworkMonitor.Server.Configuration;
 using NetworkMonitor.Server.Context;

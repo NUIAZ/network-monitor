@@ -18,6 +18,14 @@ const AlertCountContext = createContext<AlertCountContextValue>({ count: 0, refr
 
 const POLL_MS = 60_000;
 
+/**
+ * Owns the badge count and the one-minute poll behind it. Must sit above both
+ * the sidebar and the routed pages, since the point is that a page which
+ * acknowledges alerts can push the badge down without waiting for the poll.
+ *
+ * Re-renders its subtree whenever the count changes, so keep it near the shell
+ * rather than wrapping it around a single page.
+ */
 export function AlertCountProvider({ children }: { children: ReactNode }) {
   const [count, setCount] = useState(0);
 
@@ -41,6 +49,12 @@ export function AlertCountProvider({ children }: { children: ReactNode }) {
   return <AlertCountContext.Provider value={{ count, refresh }}>{children}</AlertCountContext.Provider>;
 }
 
+/**
+ * Reads the shared count, and hands back the `refresh` any page should call
+ * after acknowledging alerts. Falls back to a count of 0 and a no-op refresh
+ * when used outside the provider, so an isolated component (or a test) renders
+ * rather than throwing — the badge is not worth a crash.
+ */
 export function useAlertCount(): AlertCountContextValue {
   return useContext(AlertCountContext);
 }

@@ -5,9 +5,17 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+/**
+ * What a page gets back from useAsync. `T` is whatever the fetch function
+ * resolves to — usually a DTO from types.ts, or a Paged<> envelope of one.
+ */
 export interface AsyncState<T> {
+  /** Null until the first fetch resolves, and *retained* across a reload so a
+   *  refresh does not blank the screen back to a spinner. */
   data: T | null;
+  /** True during the very first load and during every reload. */
   loading: boolean;
+  /** The ApiError message, already human-readable — safe to put straight on screen. */
   error: string | null;
   /** Re-runs the fetch (used by retry buttons and after mutations). */
   reload: () => void;

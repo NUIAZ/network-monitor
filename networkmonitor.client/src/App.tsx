@@ -71,6 +71,12 @@ function Layout() {
   );
 }
 
+/**
+ * Nothing but provider nesting, and the nesting order is the point: the theme
+ * must be applied before anything paints, the alert count is polled for the
+ * whole session rather than per route, and the router sits inside both so a
+ * navigation never remounts either and restarts their timers.
+ */
 export default function App() {
   return (
     <ThemeProvider>

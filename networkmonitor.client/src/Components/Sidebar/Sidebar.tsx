@@ -96,6 +96,15 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+/**
+ * Owns which groups are collapsed and the server version in the footer. Neither
+ * is persisted: collapse state is a within-session convenience, and persisting
+ * it would fight the route-based auto-expand on every reload.
+ *
+ * Must be rendered under both the router and AlertCountProvider — it reads the
+ * current pathname to decide what to highlight and re-expand, and the badge
+ * count comes from context rather than its own request.
+ */
 export default function Sidebar({ open, onClose }: SidebarProps) {
   const location = useLocation();
   const { count: alertCount } = useAlertCount();

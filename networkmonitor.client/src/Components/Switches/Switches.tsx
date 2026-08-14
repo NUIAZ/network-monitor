@@ -76,6 +76,16 @@ function shortClock(value: string | number): string {
   return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 }
 
+/**
+ * Auto-selects the first target once the list arrives, so the page never sits
+ * on an empty detail pane waiting to be clicked. The guard is on `selectedId`
+ * being null rather than on first load, which means an explicit selection is
+ * never overridden by a later refresh of the rail.
+ *
+ * The two detail requests resolve to empty arrays while nothing is selected
+ * instead of being skipped, so the panes render their empty states through the
+ * same path as a target that genuinely has no interfaces.
+ */
 export default function Switches() {
   const targets = useAsync<SnmpTargetSummary[]>(() => api.get<SnmpTargetSummary[]>('/api/snmp/targets'), []);
   const [selectedId, setSelectedId] = useState<number | null>(null);

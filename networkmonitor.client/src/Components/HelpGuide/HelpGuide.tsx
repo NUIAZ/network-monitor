@@ -755,6 +755,15 @@ function BlockView({ block, query }: { block: HelpBlock; query: string }) {
 // Page
 // ---------------------------------------------------------------------------
 
+/**
+ * Purely local: it fetches nothing, so the guide is readable even when the API
+ * is down — which is exactly when someone is most likely to open it.
+ *
+ * Searching filters whole sections rather than individual blocks, so a hit
+ * keeps its surrounding context instead of stranding one matched sentence.
+ * Note that filtering also removes sections from the DOM, so a `/help#anchor`
+ * deep link will not scroll anywhere while a query is active.
+ */
 export default function HelpGuide() {
   const navigate = useNavigate();
   const { hash } = useLocation();

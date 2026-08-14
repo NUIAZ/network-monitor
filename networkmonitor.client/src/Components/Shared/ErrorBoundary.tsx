@@ -23,6 +23,18 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
+/**
+ * A class component because error boundaries have no hook equivalent — React
+ * exposes this behaviour only through getDerivedStateFromError and
+ * componentDidCatch, so this is not a style choice that can be modernised away.
+ *
+ * It only catches exceptions thrown during render, lifecycle and constructors
+ * of its subtree. Errors inside event handlers and promise rejections never
+ * reach it; those go through the api layer and errorLogger instead.
+ *
+ * Once tripped it stays tripped: nothing here clears `error`, so recovery is
+ * either the Reload button or App remounting it on a route change.
+ */
 export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { error: null };
 

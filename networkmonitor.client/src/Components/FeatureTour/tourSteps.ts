@@ -22,12 +22,14 @@
  *  preferred side would push the card off-screen. */
 export type TourPlacement = 'top' | 'bottom' | 'left' | 'right';
 
+/** One stop on the walkthrough: what to ring, what to say, and where to say it. */
 export interface TourStep {
   /** Stable id — used for React keys and the callout's aria-labelledby. */
   id: string;
   /** CSS selector for the element to spotlight. */
   target: string;
   title: string;
+  /** Plain prose, not JSX — see the file header on why the copy stays reviewable. */
   body: string;
   /**
    * Route this step lives on. The tour navigates there first and waits for the
@@ -35,6 +37,7 @@ export interface TourStep {
    * sidebar) leave this undefined and run wherever the reader already is.
    */
   route?: string;
+  /** Defaults to 'bottom' at the overlay. Only a hint — see TourPlacement. */
   placement?: TourPlacement;
 }
 
@@ -50,6 +53,17 @@ export const TOUR_VERSION = 1;
 /** First-run gate. Versioned so a bump re-plays the tour — see TOUR_VERSION. */
 export const TOUR_SEEN_KEY = `netmon_tour_seen_v${TOUR_VERSION}`;
 
+/**
+ * The walkthrough, in reading order — array position *is* the step order, and
+ * the progress pips count entries here.
+ *
+ * The route sequence is intentionally a tour of the app rather than the
+ * shortest path: dashboard → devices → map → security → switches → logs → help,
+ * ending back on shell chrome that is reachable from anywhere. Reordering these
+ * changes what the reader is navigated through, not just the words, so a step
+ * moved across routes should be re-walked rather than assumed to still work.
+ * Adding, removing or rewriting steps warrants a TOUR_VERSION bump.
+ */
 export const TOUR_STEPS: TourStep[] = [
   {
     id: 'welcome',

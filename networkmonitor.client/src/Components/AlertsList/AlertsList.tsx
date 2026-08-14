@@ -28,6 +28,15 @@ const PAGE_SIZE = 25;
 /** Identity recorded on acknowledgments in this unauthenticated build. */
 const ACK_BY = 'operator';
 
+/**
+ * Unlike the device list, filter state here is component-local rather than in
+ * the URL, so an alerts view cannot be bookmarked or shared — the trade is that
+ * nothing deep-links into this page with filters the way the dashboard tiles do.
+ *
+ * "Acknowledge all" applies the *current severity filter*, not the visible
+ * page, so with no severity selected it acknowledges every open alert — which
+ * is why it is the one action behind a confirm dialog.
+ */
 export default function AlertsList() {
   const navigate = useNavigate();
   const { refresh: refreshBadge } = useAlertCount();

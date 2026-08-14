@@ -15,6 +15,11 @@ interface EmptyStateProps {
   children?: ReactNode;
 }
 
+/**
+ * `title` is required on purpose: the whole point is saying which nothing this
+ * is — "no devices yet" and "no devices match these filters" call for different
+ * next actions, and a generic placeholder would blur them together.
+ */
 export default function EmptyState({ icon = 'bi-inbox', title, message, children }: EmptyStateProps) {
   return (
     <div className="empty-state" data-testid="empty-state">

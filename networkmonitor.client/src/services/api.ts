@@ -100,6 +100,11 @@ async function request<T>(method: string, url: string, body?: unknown): Promise<
   return JSON.parse(text) as T;
 }
 
+/**
+ * The four verbs every page calls. `del` defaults its type parameter to void
+ * because the API answers deletes with 204; the others need an explicit `T`,
+ * which is the DTO from types.ts that the endpoint documents.
+ */
 export const api = {
   get: <T>(url: string) => request<T>('GET', url),
   post: <T>(url: string, body?: unknown) => request<T>('POST', url, body),

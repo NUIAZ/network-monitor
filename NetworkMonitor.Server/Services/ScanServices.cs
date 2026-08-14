@@ -1,3 +1,16 @@
+// The scanner-facing half of the pipeline: run nmap, read what it said, and
+// classify what was found. Everything in this file is site-local work — it
+// needs a network to probe and a binary to run, but no database and no global
+// state.
+//
+// That boundary is deliberate rather than incidental. Reconciliation — which
+// devices are new, which stopped answering, which ports changed — lives in
+// ScanOrchestrator because it needs the whole inventory to decide anything;
+// the concerns here need only the host in front of them. Keeping the seam at
+// this line is what makes the distributed-agent topology described in
+// docs/ARCHITECTURE.md an incremental change rather than a rewrite: a per-site
+// agent ships this file and nothing else.
+
 using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;

@@ -17,6 +17,14 @@ function swatchColors(theme: ThemeDefinition): string[] {
   ];
 }
 
+/**
+ * Reads the theme list from context rather than importing THEMES, so the menu
+ * cannot drift from the set the provider will actually accept — selecting a
+ * name the provider does not know is silently ignored there.
+ *
+ * The outside-close listener is only attached while the menu is open, so the
+ * closed picker adds no document-level handler to every page.
+ */
 export default function ThemePicker() {
   const { theme, themes, setTheme } = useTheme();
   const [open, setOpen] = useState(false);

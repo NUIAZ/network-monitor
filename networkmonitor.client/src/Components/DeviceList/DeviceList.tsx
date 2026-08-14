@@ -31,6 +31,16 @@ function parseSort(raw: string | null): SortState | undefined {
   return raw.startsWith('-') ? { key: raw.slice(1), dir: 'desc' } : { key: raw, dir: 'asc' };
 }
 
+/**
+ * Holds almost no state of its own: the URL is the state, and the only local
+ * value is the debounced echo of the search box (kept so the input stays
+ * responsive between the keystroke and the URL catching up 300ms later).
+ *
+ * Filter changes reset to page 1 — staying on page 7 of a result set that just
+ * shrank to two pages would show an empty table and look like a failure.
+ * Params are written with `replace`, so a filter tweak is not a Back-button
+ * step; Back leaves the page rather than undoing one keystroke at a time.
+ */
 export default function DeviceList() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();

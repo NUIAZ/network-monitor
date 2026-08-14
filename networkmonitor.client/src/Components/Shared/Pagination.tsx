@@ -23,6 +23,14 @@ function pageWindow(page: number, totalPages: number): number[] {
   return Array.from({ length: size }, (_, i) => start + i);
 }
 
+/**
+ * Renders nothing at all when there are no results, so callers can drop it
+ * under any list without guarding — the empty state below the table is already
+ * saying it. With exactly one page the summary still shows (the count is useful
+ * on its own) but the buttons do not.
+ *
+ * `page` is 1-based, matching the API's paging envelope.
+ */
 export default function Pagination({ page, totalPages, total, onPageChange, noun = 'result' }: PaginationProps) {
   if (total <= 0) return null;
   const plural = total === 1 ? noun : `${noun}s`;

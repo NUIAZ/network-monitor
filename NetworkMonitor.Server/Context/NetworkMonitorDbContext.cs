@@ -24,7 +24,13 @@ public class NetworkMonitorDbContext : DbContext
     /// <summary>Everything discovery has ever found, one row per IP per network.</summary>
     public DbSet<Device> Devices => Set<Device>();
 
-    /// <summary>Ports observed on devices, including ones that have since closed — a closed port is a fact worth keeping.</summary>
+    /// <summary>
+    /// Currently-open ports per device. Reconciliation DELETES rows for ports
+    /// that stopped answering rather than marking them closed, so this table is
+    /// a snapshot of what is listening now, not a history of what ever did.
+    /// The disappearance is still recorded — as a <c>port_closed</c> alert — so
+    /// the event survives even though the row does not.
+    /// </summary>
     public DbSet<Port> Ports => Set<Port>();
 
     /// <summary>The scan evidence trail: one row per run, including failures and the raw XML.</summary>

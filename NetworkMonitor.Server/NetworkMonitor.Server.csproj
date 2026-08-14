@@ -32,7 +32,9 @@
     <!-- PostgreSQL is optional: the demo runs on SQLite with no server at all.
          See INSTALL.md "Switching to PostgreSQL" to use this provider instead. -->
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
-    <PackageReference Include="Lextm.SharpSnmpLib" Version="12.5.7" />
+    <!-- No SNMP library is referenced: this build stores and presents interface
+         statistics but does not collect them (see README "Scope"). Add one back
+         alongside the collector rather than shipping an unused dependency. -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="10.*-*" />
 

@@ -247,6 +247,10 @@ export function placeCallout(
 // Component
 // ---------------------------------------------------------------------------
 
+/**
+ * Every prop is a test seam. The app mounts this with no props at all, and the
+ * defaults are the real behaviour — nothing in the UI configures a tour.
+ */
 export interface FeatureTourProps {
   /** Step list. Overridable so tests can drive small, purpose-built fixtures. */
   steps?: TourStep[];
@@ -262,6 +266,12 @@ export interface FeatureTourProps {
   autoStartTimeoutMs?: number;
 }
 
+/**
+ * Renders null unless a tour is running, so it costs nothing to leave mounted —
+ * which it must be, since startTour() only reaches mounted instances. Mount it
+ * once, inside the router (it navigates between steps) and outside the routed
+ * pages (a step that changes route would otherwise unmount the tour driving it).
+ */
 export default function FeatureTour({
   steps = TOUR_STEPS,
   resolveTimeoutMs = DEFAULT_RESOLVE_TIMEOUT_MS,

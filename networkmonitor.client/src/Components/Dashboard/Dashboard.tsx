@@ -57,6 +57,16 @@ function shortDate(value: string | number): string {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
+/**
+ * Loads its five endpoints as one all-or-nothing unit, so a single failure
+ * shows one retryable banner instead of a page half-populated with tiles that
+ * disagree with the charts beside them.
+ *
+ * Renders `data-testid="dashboard"` only once real content is on screen, never
+ * during the spinner — the tour's auto-start polls for that element to decide
+ * the app is ready, so moving it onto the loading branch would make the first
+ * spotlight land on a skeleton.
+ */
 export default function Dashboard() {
   const navigate = useNavigate();
 

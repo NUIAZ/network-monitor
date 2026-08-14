@@ -32,6 +32,15 @@ function scanDuration(scan: ScanResult): string {
   return scan.status === 'running' ? 'running…' : '—';
 }
 
+/**
+ * Two features sharing a screen, and the run panel is the awkward half: because
+ * the run endpoint blocks until nmap exits, `running` can stay true for minutes
+ * and there is no way to cancel it — navigating away abandons the request but
+ * not the scan, which finishes server-side and shows up in the table on return.
+ *
+ * The elapsed-seconds ticker exists purely so a long profile does not look
+ * hung; it is display state and has no bearing on the request.
+ */
 export default function ScanHistory() {
   const [page, setPage] = useState(1);
   const [networkFilter, setNetworkFilter] = useState('');

@@ -20,8 +20,13 @@ const STORAGE_KEY = 'netmon_theme';
 /** Falls back to this when storage is empty or names a theme we removed. */
 const DEFAULT_THEME = 'Midnight';
 
+/** A complete token set. Themes are whole palettes, never partial overrides —
+ *  there is no merging against a base, so every theme defines every token. */
 export interface ThemeDefinition {
+  /** Also the persisted identity: this string is what goes into localStorage,
+   *  so renaming a theme silently resets everyone who had it selected. */
   name: string;
+  /** Selects the Bootstrap light/dark family as well as the palette. */
   mode: 'light' | 'dark';
   /** Every value is written as a CSS custom property (key = property name). */
   colors: Record<string, string>;
@@ -323,6 +328,16 @@ function resolveInitial(): ThemeDefinition {
   return THEMES.find((t) => t.name === stored) ?? THEMES.find((t) => t.name === DEFAULT_THEME)!;
 }
 
+/**
+ * Owns the selected theme and its persistence. The initial value is resolved
+ * lazily during the first render rather than in an effect, so a returning
+ * visitor's saved theme is applied before the app body paints instead of
+ * flashing the default first.
+ *
+ * Its side effect is global — tokens are written onto <html>, not scoped to
+ * this subtree — so mounting two providers means the last one to render wins.
+ * Mount it once, at the root, above anything that reads a design token.
+ */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeDefinition>(resolveInitial);
 

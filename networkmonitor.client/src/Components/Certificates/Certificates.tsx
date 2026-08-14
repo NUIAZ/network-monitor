@@ -50,6 +50,15 @@ function ExpiryCell({ cert }: { cert: SslCertificate }) {
   return <span className="expiry ok">{days}d left</span>;
 }
 
+/**
+ * The expiry column sorts on days-remaining rather than on the `validTo` date
+ * string, so certificates with no known expiry sink instead of sorting as if
+ * they expired in 1970.
+ *
+ * Sorting is client-side and therefore only orders the current page; the
+ * server's own "soonest expiry first" ordering is what makes page 1 the urgent
+ * one, so a horizon filter matters more here than paging does.
+ */
 export default function Certificates() {
   const navigate = useNavigate();
   const [horizon, setHorizon] = useState('');

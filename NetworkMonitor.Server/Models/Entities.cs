@@ -389,7 +389,18 @@ public class ScanDeviceSnapshot
     [Column("device_id")]
     public int DeviceId { get; set; }
 
-    /// <summary>What this scan saw: "online" or "offline". Never "new" — that is a device-level lifecycle state, not an observation.</summary>
+    /// <summary>
+    /// What this scan saw. Three values, not two:
+    /// <list type="bullet">
+    ///   <item><c>online</c> — the device answered.</item>
+    ///   <item><c>missed</c> — the scan covered it and it did not answer, but it
+    ///     has not yet missed enough consecutive scans to be declared down.</item>
+    ///   <item><c>offline</c> — it did not answer and the device is now offline.</item>
+    /// </list>
+    /// A consumer switching on only online/offline silently mis-renders every
+    /// <c>missed</c> row, which is most of a flaky device's history. Never
+    /// <c>new</c> — that is a device-level lifecycle state, not an observation.
+    /// </summary>
     [Required, MaxLength(20)]
     [Column("status")]
     public string Status { get; set; } = "online";

@@ -17,14 +17,27 @@ import LoadingSpinner from './LoadingSpinner';
 import EmptyState from './EmptyState';
 import './Shared.css';
 
+/**
+ * Which column is sorted, and which way. In controlled mode this travels
+ * straight into the query string the parent sends the server, so `key` has to
+ * be a name the API accepts for sorting — not just a column id that happens to
+ * look right in the header.
+ */
 export interface SortState {
   key: string;
   dir: 'asc' | 'desc';
 }
 
+/** A column definition. `T` is the row type the table is rendering. */
 export interface Column<T> {
+  /**
+   * Doubles as the property name read off the row when no `render`/`sortValue`
+   * is given, and as the sort key reported to the parent. A key that matches no
+   * property is fine as long as `render` covers it.
+   */
   key: string;
   header: string;
+  /** Header clicks do nothing unless this is set, in either sorting mode. */
   sortable?: boolean;
   /** Custom cell renderer; defaults to the raw field value for the key. */
   render?: (row: T) => ReactNode;
@@ -59,6 +72,15 @@ function rawValue<T>(row: T, column: Column<T>): string | number | null {
   return null;
 }
 
+/**
+ * The sorting mode is decided by `onSortChange` alone, not by `sort`: supply
+ * the callback and the table hands every header click to the parent and renders
+ * `rows` in exactly the order given, because in server mode re-sorting the
+ * current page would silently lie about the rest of the result set.
+ *
+ * `T` is the row type; it is never inspected, so rows can be any shape as long
+ * as `rowKey` yields something stable across renders.
+ */
 export default function DataTable<T>({
   columns,
   rows,

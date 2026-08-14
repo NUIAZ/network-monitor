@@ -54,6 +54,18 @@ function truncate(value: string, max = 140): string {
   return value.length > max ? `${value.slice(0, max)}…` : value;
 }
 
+/**
+ * Keeps the search box's raw text and the debounced query as two separate
+ * pieces of state on purpose: only the debounced one is a fetch dependency, so
+ * typing re-renders the input without re-running the request.
+ *
+ * `expandedId` allows one open detail panel at a time, and it is not cleared
+ * when the list reloads — an id that is no longer on the page simply matches
+ * nothing, so a background refresh cannot collapse the trace you are reading.
+ *
+ * An empty table here is the correct, healthy state, which is why the page
+ * leads with summary tiles rather than with the list.
+ */
 export default function ErrorLogs() {
   const [source, setSource] = useState('');
   const [level, setLevel] = useState('');
