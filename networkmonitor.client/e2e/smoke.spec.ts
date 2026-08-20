@@ -28,7 +28,7 @@ test('sidebar navigates to every page', async ({ page }) => {
   for (const [testId, title] of routes) {
     await page.getByTestId(testId).click();
     await expect(page.getByTestId('page-title')).toHaveText(title);
-    // The page body must never be blank — some card, table, empty state, or
+    // The page body must never be blank: some card, table, empty state, or
     // error banner has to be present.
     await expect(page.locator('.page-content > *').first()).toBeVisible();
   }

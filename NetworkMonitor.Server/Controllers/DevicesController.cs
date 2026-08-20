@@ -14,7 +14,7 @@ namespace NetworkMonitor.Server.Controllers;
 [Route("api/[controller]")]
 public class DevicesController : ControllerBase
 {
-    /// <summary>The classifier's full vocabulary — the only values a manual re-type may use.</summary>
+    /// <summary>The classifier's full vocabulary: the only values a manual re-type may use.</summary>
     private static readonly HashSet<string> ValidDeviceTypes =
         ["router", "switch", "firewall", "printer", "server", "workstation", "camera", "unknown"];
 
@@ -162,7 +162,7 @@ public class DevicesController : ControllerBase
 
     /// <summary>
     /// Updates the operator-owned fields only. Discovery-owned fields are not
-    /// accepted here on purpose — the next scan would clobber them, and a field
+    /// accepted here on purpose: the next scan would clobber them, and a field
     /// that silently reverts is worse than one that cannot be edited.
     /// </summary>
     [HttpPut("{id:int}")]

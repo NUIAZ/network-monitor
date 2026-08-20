@@ -16,7 +16,7 @@ public class DatabaseLoggingOptions
     public bool Enabled { get; set; } = true;
 
     /// <summary>
-    /// Lowest level persisted for third-party categories — the framework, the
+    /// Lowest level persisted for third-party categories, the framework, the
     /// hosting layer, anything not this application. Defaults to Warning,
     /// because ASP.NET logs every single request at Information and persisting
     /// that turns the log table into a firehose nobody reads.
@@ -26,8 +26,8 @@ public class DatabaseLoggingOptions
     /// <summary>
     /// Lowest level persisted for the application's own categories (those under
     /// <see cref="ApplicationCategoryPrefix"/>). Defaults to Information, so
-    /// what the application itself is doing — scans starting and finishing,
-    /// scheduler decisions, seeding — is visible in the UI, while framework
+    /// what the application itself is doing, scans starting and finishing,
+    /// scheduler decisions, seeding, is visible in the UI, while framework
     /// chatter still has to clear the higher bar above.
     ///
     /// This split is the whole point: "what is my application doing" and "what
@@ -41,7 +41,7 @@ public class DatabaseLoggingOptions
 
     /// <summary>
     /// Maximum entries held in memory awaiting a write. When the queue is full
-    /// the oldest entry is dropped rather than blocking the caller — logging must
+    /// the oldest entry is dropped rather than blocking the caller; logging must
     /// never become the reason a request stalls.
     /// </summary>
     public int QueueCapacity { get; set; } = 1000;
@@ -134,7 +134,7 @@ public sealed class DatabaseLoggerProvider : ILoggerProvider
         foreach (var prefix in ExcludedCategoryPrefixes)
             if (category.StartsWith(prefix, StringComparison.Ordinal)) return false;
 
-        // The application gets a lower bar than the framework — see the comments
+        // The application gets a lower bar than the framework; see the comments
         // on the two level options.
         var threshold = category.StartsWith(_options.ApplicationCategoryPrefix, StringComparison.Ordinal)
             ? _options.ApplicationMinimumLevel
@@ -205,7 +205,7 @@ public sealed class DatabaseLoggerProvider : ILoggerProvider
         }
         catch
         {
-            // Ignored — the process is going away regardless.
+            // Ignored: the process is going away regardless.
         }
         _shutdown.Cancel();
         _shutdown.Dispose();

@@ -1,7 +1,7 @@
 /**
  * Alerts: the triage queue. Filterable by severity, type, and acknowledgment
  * state; acknowledge one, or everything matching the current severity filter
- * at once (behind a confirm — "acknowledge all" is the kind of button people
+ * at once (behind a confirm: "acknowledge all" is the kind of button people
  * hit by accident).
  *
  * Acknowledging refreshes the shared alert-count context so the sidebar
@@ -30,11 +30,11 @@ const ACK_BY = 'operator';
 
 /**
  * Unlike the device list, filter state here is component-local rather than in
- * the URL, so an alerts view cannot be bookmarked or shared — the trade is that
+ * the URL, so an alerts view cannot be bookmarked or shared; the trade is that
  * nothing deep-links into this page with filters the way the dashboard tiles do.
  *
  * "Acknowledge all" applies the *current severity filter*, not the visible
- * page, so with no severity selected it acknowledges every open alert — which
+ * page, so with no severity selected it acknowledges every open alert, which
  * is why it is the one action behind a confirm dialog.
  */
 export default function AlertsList() {
@@ -78,7 +78,7 @@ export default function AlertsList() {
     setAckAllBusy(true);
     setAckError(null);
     try {
-      // Scoped to the active severity filter when one is set — "ack all
+      // Scoped to the active severity filter when one is set, "ack all
       // criticals" is a deliberate workflow; "ack the entire queue" is opt-in.
       await api.post('/api/alerts/acknowledge-all', {
         severity: severity || undefined,

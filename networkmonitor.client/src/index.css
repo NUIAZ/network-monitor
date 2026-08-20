@@ -2,8 +2,8 @@
  * NetworkMonitor design-token stylesheet.
  *
  * Single source of truth for color, spacing, radius, and typography tokens.
- * The :root block below is the *fallback* (Slate Light) so the first paint —
- * before ThemeContext hydrates — is already presentable; the active theme
+ * The :root block below is the *fallback* (Slate Light) so the first paint
+ * (before ThemeContext hydrates) is already presentable; the active theme
  * then overwrites every custom property on <html> at runtime.
  *
  * Rule for all component CSS in this app: reference tokens, never hardcode a

@@ -6,7 +6,7 @@ using NetworkMonitor.Server.Models;
 namespace NetworkMonitor.Server.Controllers;
 
 /// <summary>
-/// CVE findings from security scans. The only mutation is the triage status —
+/// CVE findings from security scans. The only mutation is the triage status;
 /// findings themselves come from the scan pipeline, and "remediated" rows are
 /// kept rather than deleted so the security page can show progress over time.
 /// </summary>
@@ -21,7 +21,7 @@ public class VulnerabilitiesController : ControllerBase
     /// <summary>Creates the controller.</summary>
     public VulnerabilitiesController(NetworkMonitorDbContext db) => _db = db;
 
-    /// <summary>Paged findings, highest CVSS first — triage order is the default order.</summary>
+    /// <summary>Paged findings, highest CVSS first, triage order is the default order.</summary>
     [HttpGet]
     public async Task<ActionResult<PagedResult<VulnerabilityDto>>> GetAll(
         [FromQuery] string? severity, [FromQuery] string? status, [FromQuery] int? siteId,

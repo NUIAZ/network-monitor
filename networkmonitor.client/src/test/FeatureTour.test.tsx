@@ -5,7 +5,7 @@
  * The component is driven with small fixture steps rather than the real
  * TOUR_STEPS, so these tests exercise the machinery and never break when the
  * walkthrough copy is rewritten. Targets are plain divs rendered beside the
- * overlay; jsdom reports zero-sized boxes for all of them, which is fine —
+ * overlay; jsdom reports zero-sized boxes for all of them, which is fine;
  * placement is arithmetic on numbers and does not care that they are zeros.
  *
  * Auto-play is suppressed under a test runner by default (see

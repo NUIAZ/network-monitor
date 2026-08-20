@@ -3,20 +3,20 @@
  *
  * The content is *data*, not JSX. Every section is a list of typed blocks
  * (paragraph, list, definition list, table, callout) whose text lives in plain
- * strings — which is what makes the search box genuinely useful rather than
+ * strings, which is what makes the search box genuinely useful rather than
  * decorative: one flat index per section is built at module load, filtering is
  * a substring test against it, and every rendered string is passed through
  * `highlight()` so the matched run is marked wherever it appears. Rendering
  * hand-written JSX instead would mean the search could only ever match titles.
  *
  * Layout is a sticky section index beside the content column, collapsing to a
- * single column under 900px. Scroll-spy uses IntersectionObserver (guarded —
+ * single column under 900px. Scroll-spy uses IntersectionObserver (guarded;
  * jsdom doesn't ship one, and the page must still render in unit tests) and
  * every section carries a stable id so `/help#change-detection` deep-links.
  *
  * Content rule: everything here is verified against the README, docs/API.md,
  * and the components it describes. This app has no authentication, no syslog,
- * no NetFlow — do not document features that do not exist.
+ * no NetFlow: do not document features that do not exist.
  */
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -40,7 +40,7 @@ interface ListBlock {
   items: string[];
 }
 
-/** Term/description pairs — used for "what each field means" runs. */
+/** Term/description pairs: used for "what each field means" runs. */
 interface DefsBlock {
   kind: 'defs';
   items: Array<{ term: string; text: string }>;
@@ -63,7 +63,7 @@ interface NoteBlock {
 type HelpBlock = ParagraphBlock | ListBlock | DefsBlock | TableBlock | NoteBlock;
 
 interface HelpSection {
-  /** Stable anchor id — `/help#devices` must keep working. */
+  /** Stable anchor id: `/help#devices` must keep working. */
   id: string;
   title: string;
   /** bootstrap-icons class, matching the icon the page uses in the sidebar. */
@@ -94,7 +94,7 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'nmap itself is optional. Without it the app runs entirely on stored data, the Dashboard shows an "nmap not detected" banner, and on-demand scans return HTTP 503. Install nmap on the API host and put it on the PATH and it is picked up automatically — the Settings system panel then reports the detected version, the Dashboard banner disappears, and scans of your own networks work from the Scans page.',
+          'nmap itself is optional. Without it the app runs entirely on stored data, the Dashboard shows an "nmap not detected" banner, and on-demand scans return HTTP 503. Install nmap on the API host and put it on the PATH and it is picked up automatically, the Settings system panel then reports the detected version, the Dashboard banner disappears, and scans of your own networks work from the Scans page.',
       },
       {
         kind: 'note',
@@ -117,12 +117,12 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'It plays by itself the first time you open the app — once the Dashboard has finished loading, so the first spotlight lands on real content rather than on a loading placeholder — and then never again, because the fact that you have seen it is remembered in this browser. It never starts on its own when you arrive on a deep link to some other page: a bookmarked device list is somebody who already knows their way around.',
+          'It plays by itself the first time you open the app (once the Dashboard has finished loading, so the first spotlight lands on real content rather than on a loading placeholder), and then never again, because the fact that you have seen it is remembered in this browser. It never starts on its own when you arrive on a deep link to some other page: a bookmarked device list is somebody who already knows their way around.',
       },
       {
         kind: 'p',
         text:
-          'Replay it whenever you like. The Take the tour button at the top of this page and the signpost button in the top bar, next to the question mark, both start it again from the beginning. A step whose target the current window cannot show — an element hidden at a narrow width, a panel with no data behind it — is skipped rather than stalling the walkthrough.',
+          'Replay it whenever you like. The Take the tour button at the top of this page and the signpost button in the top bar, next to the question mark, both start it again from the beginning. A step whose target the current window cannot show, an element hidden at a narrow width, a panel with no data behind it, is skipped rather than stalling the walkthrough.',
       },
       {
         kind: 'defs',
@@ -132,7 +132,7 @@ const HELP_SECTIONS: HelpSection[] = [
           {
             term: 'Leave early',
             text:
-              'Escape, or the Skip link in the corner of the card. Leaving counts as having seen the tour, so it will not reappear by itself on your next visit — use either replay button to bring it back.',
+              'Escape, or the Skip link in the corner of the card. Leaving counts as having seen the tour, so it will not reappear by itself on your next visit; use either replay button to bring it back.',
           },
         ],
       },
@@ -188,7 +188,7 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'The device-type donut breaks the fleet down by classification — one arc per type, colored consistently with the icons used elsewhere, with the fleet total in the middle and a legend listing exact counts. It answers "what kind of estate is this" at a glance; a sudden slice of unknown devices usually means a scan profile stopped collecting port or OS data.',
+          'The device-type donut breaks the fleet down by classification: one arc per type, colored consistently with the icons used elsewhere, with the fleet total in the middle and a legend listing exact counts. It answers "what kind of estate is this" at a glance; a sudden slice of unknown devices usually means a scan profile stopped collecting port or OS data.',
       },
       {
         kind: 'p',
@@ -198,7 +198,7 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'Alert trend charts the same 14 days as bars stacked by severity — info, warning, then critical on top. Read the stack height for total noise and the critical band for what actually mattered. Below it, the recent-alerts panel lists the newest unacknowledged alerts; clicking one jumps straight to the device it concerns.',
+          'Alert trend charts the same 14 days as bars stacked by severity (info, warning, then critical on top). Read the stack height for total noise and the critical band for what actually mattered. Below it, the recent-alerts panel lists the newest unacknowledged alerts; clicking one jumps straight to the device it concerns.',
       },
       {
         kind: 'p',
@@ -244,7 +244,7 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'Device type is classified automatically from the strongest signal available: open management ports, the OS fingerprint, the MAC address vendor (OUI), and hostname conventions. The rules are ordered and the first match wins, so a printer that also serves a web interface is still a printer. Ports 9100, 515 and 631 mean printer; 554 suggests a camera; database, web, SSH and mail ports mean server; vendor names and prefixes like "rtr-", "sw-" or "-fw" resolve routers, switches and firewalls. Anything nothing matched is left as unknown. The classification is a starting point, not a verdict — you can override it by hand on the device page.',
+          'Device type is classified automatically from the strongest signal available: open management ports, the OS fingerprint, the MAC address vendor (OUI), and hostname conventions. The rules are ordered and the first match wins, so a printer that also serves a web interface is still a printer. Ports 9100, 515 and 631 mean printer; 554 suggests a camera; database, web, SSH and mail ports mean server; vendor names and prefixes like "rtr-", "sw-" or "-fw" resolve routers, switches and firewalls. Anything nothing matched is left as unknown. The classification is a starting point, not a verdict, you can override it by hand on the device page.',
       },
       {
         kind: 'p',
@@ -267,22 +267,22 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'The detail page separates the two kinds of truth about a device. The Identity card is read-only and holds what scans discovered: IP address, MAC address, vendor, OS guess, first seen, last seen, last scanned, and the current missed-scan count. The Operator fields card next to it is the editable half — hostname, device type, hardware, physical location, assigned-to, notes, and the flag and exclude switches. Saving sends only the operator fields.',
+          'The detail page separates the two kinds of truth about a device. The Identity card is read-only and holds what scans discovered: IP address, MAC address, vendor, OS guess, first seen, last seen, last scanned, and the current missed-scan count. The Operator fields card next to it is the editable half, hostname, device type, hardware, physical location, assigned-to, notes, and the flag and exclude switches. Saving sends only the operator fields.',
       },
       {
         kind: 'p',
         text:
-          'The open-ports table lists every port currently recorded as listening, with protocol, state, service name, service version and when the port was last seen. It is populated by a scan that actually probes ports — a quick ping sweep leaves it untouched, so an empty table on a live host usually means only quick scans have run.',
+          'The open-ports table lists every port currently recorded as listening, with protocol, state, service name, service version and when the port was last seen. It is populated by a scan that actually probes ports, a quick ping sweep leaves it untouched, so an empty table on a live host usually means only quick scans have run.',
       },
       {
         kind: 'p',
         text:
-          'Availability and latency for the last 7 days render as two stacked charts sharing one time axis. The top chart is a step showing up or down; the bottom is response time in milliseconds. They are deliberately not combined onto a dual axis — the scales are unrelated, and overlaying them would invite reading a slope that is not there. History appears once the device has been covered by a few scans.',
+          'Availability and latency for the last 7 days render as two stacked charts sharing one time axis. The top chart is a step showing up or down; the bottom is response time in milliseconds. They are deliberately not combined onto a dual axis, the scales are unrelated, and overlaying them would invite reading a slope that is not there. History appears once the device has been covered by a few scans.',
       },
       {
         kind: 'p',
         text:
-          'Below that, three panels tie the device to the rest of the app: its recent alerts, its known vulnerabilities with CVE id and CVSS score, and every TLS certificate observed on its ports with subject, issuer, validity, key type and a self-signed badge. Deleting a device removes it along with its ports, history, alerts, vulnerabilities and certificates — it will reappear as new if a future scan finds it again.',
+          'Below that, three panels tie the device to the rest of the app: its recent alerts, its known vulnerabilities with CVE id and CVSS score, and every TLS certificate observed on its ports with subject, issuer, validity, key type and a self-signed badge. Deleting a device removes it along with its ports, history, alerts, vulnerabilities and certificates, it will reappear as new if a future scan finds it again.',
       },
     ],
   },
@@ -302,7 +302,7 @@ const HELP_SECTIONS: HelpSection[] = [
         rows: [
           [
             'quick',
-            'Host discovery only — a ping and TCP-probe sweep cheap enough to run constantly. Returns no port data.',
+            'Host discovery only: a ping and TCP-probe sweep cheap enough to run constantly. Returns no port data.',
             '5 minutes',
             'Yes',
           ],
@@ -313,7 +313,7 @@ const HELP_SECTIONS: HelpSection[] = [
             'Weekly',
             'No',
           ],
-          ['full_port', 'Every TCP port with version detection. Slow — run it deliberately.', 'Weekly', 'No'],
+          ['full_port', 'Every TCP port with version detection. Slow; run it deliberately.', 'Weekly', 'No'],
           ['udp', 'UDP services on the top 100 ports. Requires raw-socket privileges on the host.', 'Weekly', 'No'],
         ],
       },
@@ -325,12 +325,12 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'A run that comes back as 503 means nmap is not installed on the API host. That is a server configuration problem rather than a failed scan, so it gets its own banner instead of an error — install nmap on the machine running the API and it will be picked up on the next attempt without a restart of the app.',
+          'A run that comes back as 503 means nmap is not installed on the API host. That is a server configuration problem rather than a failed scan, so it gets its own banner instead of an error: install nmap on the machine running the API and it will be picked up on the next attempt without a restart of the app.',
       },
       {
         kind: 'p',
         text:
-          'The history table below lists every scan with its network, profile, duration, hosts up, hosts down, new devices, and status. A failed row carries an info icon whose tooltip is the exact failure reason recorded by the server. Every scan record also stores the precise command line that ran and the raw nmap XML, so a surprising result can always be reproduced by hand. The scheduler checks every 60 seconds for profiles that are due and runs them one at a time — nmap will happily saturate a link, and a monitoring tool that degrades the network it watches is worse than no monitoring at all.',
+          'The history table below lists every scan with its network, profile, duration, hosts up, hosts down, new devices, and status. A failed row carries an info icon whose tooltip is the exact failure reason recorded by the server. Every scan record also stores the precise command line that ran and the raw nmap XML, so a surprising result can always be reproduced by hand. The scheduler checks every 60 seconds for profiles that are due and runs them one at a time, nmap will happily saturate a link, and a monitoring tool that degrades the network it watches is worse than no monitoring at all.',
       },
     ],
   },
@@ -350,7 +350,7 @@ const HELP_SECTIONS: HelpSection[] = [
           {
             term: 'First sighting',
             text:
-              'An address that has never been seen on that network becomes a device with status new, classified from whatever the scan learned, and raises a new_device alert at warning severity carrying its MAC vendor, hostname and open-port count. Shadow devices — an unauthorized access point, a forgotten test box, a personal laptop — surface within one scan interval instead of at the next audit.',
+              'An address that has never been seen on that network becomes a device with status new, classified from whatever the scan learned, and raises a new_device alert at warning severity carrying its MAC vendor, hostname and open-port count. Shadow devices, an unauthorized access point, a forgotten test box, a personal laptop, surface within one scan interval instead of at the next audit.',
           },
           {
             term: 'Known device seen again',
@@ -365,7 +365,7 @@ const HELP_SECTIONS: HelpSection[] = [
           {
             term: 'Missed-scan debounce',
             text:
-              'A device that does not answer is not immediately offline. Its missed-scan counter increments, and only when it reaches the configured threshold (Alerts:OfflineAfterMissedScans, default 3 consecutive misses) does the status flip to offline and raise a device_offline alert at critical severity. A laptop went to sleep, a probe got dropped, a switch was busy — one unanswered scan is noise, and one dropped packet should never page anyone.',
+              'A device that does not answer is not immediately offline. Its missed-scan counter increments, and only when it reaches the configured threshold (Alerts:OfflineAfterMissedScans, default 3 consecutive misses) does the status flip to offline and raise a device_offline alert at critical severity. A laptop went to sleep, a probe got dropped, a switch was busy, one unanswered scan is noise, and one dropped packet should never page anyone.',
           },
         ],
       },
@@ -378,12 +378,12 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'One snapshot row is written per device per scan — status, open-port count and response time — including for devices that were covered but did not answer. That is what makes the availability and latency history on the device page continuous: there are no gaps to interpolate across, because a non-response is recorded as explicitly as a response.',
+          'One snapshot row is written per device per scan (status, open-port count and response time), including for devices that were covered but did not answer. That is what makes the availability and latency history on the device page continuous: there are no gaps to interpolate across, because a non-response is recorded as explicitly as a response.',
       },
       {
         kind: 'p',
         text:
-          'Two nmap details are handled in the executor because both would otherwise corrupt the diff. Nmap\'s host discovery is all-or-nothing — naming any -P flag replaces the entire default probe set — so when a profile expresses no discovery opinion the default probe set is injected, and every profile sees the same hosts instead of the deep scan reporting a fraction of what the quick scan found. And --open is always stripped from profile arguments, because it omits hosts with no open ports from the XML entirely; downstream that reads as "the host disappeared" and manufactures false offline alerts.',
+          'Two nmap details are handled in the executor because both would otherwise corrupt the diff. Nmap\'s host discovery is all-or-nothing: naming any -P flag replaces the entire default probe set, so when a profile expresses no discovery opinion the default probe set is injected, and every profile sees the same hosts instead of the deep scan reporting a fraction of what the quick scan found. And --open is always stripped from profile arguments, because it omits hosts with no open ports from the XML entirely; downstream that reads as "the host disappeared" and manufactures false offline alerts.',
       },
     ],
   },
@@ -413,12 +413,12 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'Severities are info, warning and critical, and they are fixed per type by the reconciler rather than being editable — the severity of "a device went offline" is not a matter of taste. Three filters narrow the queue: acknowledgment state (unacknowledged, acknowledged, or all), severity, and alert type.',
+          'Severities are info, warning and critical, and they are fixed per type by the reconciler rather than being editable; the severity of "a device went offline" is not a matter of taste. Three filters narrow the queue: acknowledgment state (unacknowledged, acknowledged, or all), severity, and alert type.',
       },
       {
         kind: 'p',
         text:
-          'Acknowledge a single alert from the button in its row. The Acknowledge all button handles the bulk case and is scoped to the active severity filter when one is set — "acknowledge all criticals" is a deliberate workflow, while clearing the entire queue is opt-in — and it sits behind a confirmation, because it is exactly the kind of button people hit by accident. Acknowledgments are recorded against the identity "operator", since this build has no user accounts. The unacknowledged count in the sidebar drops immediately when you acknowledge rather than waiting for its next poll.',
+          'Acknowledge a single alert from the button in its row. The Acknowledge all button handles the bulk case and is scoped to the active severity filter when one is set: "acknowledge all criticals" is a deliberate workflow, while clearing the entire queue is opt-in, and it sits behind a confirmation, because it is exactly the kind of button people hit by accident. Acknowledgments are recorded against the identity "operator", since this build has no user accounts. The unacknowledged count in the sidebar drops immediately when you acknowledge rather than waiting for its next poll.',
       },
     ],
   },
@@ -435,7 +435,7 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'Each finding carries a workflow status you set inline from the row: open, remediated, or accepted_risk. Those are the three outcomes a finding eventually gets, and having all three means the queue shrinks over time instead of scrolling forever — accepted risk is a decision that was made, not an item that was ignored. Filter by severity, by status, or search across CVE id, service and device. CVE ids link out to the matching NVD entry for the full write-up.',
+          'Each finding carries a workflow status you set inline from the row: open, remediated, or accepted_risk. Those are the three outcomes a finding eventually gets, and having all three means the queue shrinks over time instead of scrolling forever, accepted risk is a decision that was made, not an item that was ignored. Filter by severity, by status, or search across CVE id, service and device. CVE ids link out to the matching NVD entry for the full write-up.',
       },
       {
         kind: 'p',
@@ -458,7 +458,7 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'Switches and routers are polled over SNMP for per-interface counters, which is the one thing a port scan cannot tell you: how much traffic a link is actually carrying. The page is a master-detail — a rail of polled targets on the left, the selected target\'s data on the right.',
+          'Switches and routers are polled over SNMP for per-interface counters, which is the one thing a port scan cannot tell you: how much traffic a link is actually carrying. The page is a master-detail, a rail of polled targets on the left, the selected target\'s data on the right.',
       },
       {
         kind: 'p',
@@ -468,12 +468,12 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'Utilization is the share of an interface\'s negotiated speed actually in use over the sample period. The bar is green below 60 percent, switches to the warning color at 60, and to the error color at 85. A brief touch of the top band is normal — a backup window, a large file copy. Sustained time above it is saturation: the link has no headroom left, which is where queueing, latency and drops begin, and the fix is either more capacity or less traffic rather than more monitoring.',
+          'Utilization is the share of an interface\'s negotiated speed actually in use over the sample period. The bar is green below 60 percent, switches to the warning color at 60, and to the error color at 85. A brief touch of the top band is normal, a backup window, a large file copy. Sustained time above it is saturation: the link has no headroom left, which is where queueing, latency and drops begin, and the fix is either more capacity or less traffic rather than more monitoring.',
       },
       {
         kind: 'p',
         text:
-          'Error counters are cumulative since the interface last reset and are highlighted when non-zero. Errors climbing while utilization stays low usually points at a physical problem — a duplex mismatch, a bad cable or transceiver — rather than at load. The 24-hour chart plots one line per interface and caps itself at the six busiest, because a 48-port switch drawn as 48 lines is noise and six is where the categorical color palette stays honest.',
+          'Error counters are cumulative since the interface last reset and are highlighted when non-zero. Errors climbing while utilization stays low usually points at a physical problem: a duplex mismatch, a bad cable or transceiver, rather than at load. The 24-hour chart plots one line per interface and caps itself at the six busiest, because a 48-port switch drawn as 48 lines is noise and six is where the categorical color palette stays honest.',
       },
     ],
   },
@@ -506,7 +506,7 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'The CIDR field is validated as you type and again on the server, and the server\'s objection is surfaced verbatim if it still refuses — a bad CIDR here becomes a bad nmap command line later, and the range you enter is exactly what nmap will target. Ranges above the configured maximum address count are rejected outright.',
+          'The CIDR field is validated as you type and again on the server, and the server\'s objection is surfaced verbatim if it still refuses; a bad CIDR here becomes a bad nmap command line later, and the range you enter is exactly what nmap will target. Ranges above the configured maximum address count are rejected outright.',
       },
       {
         kind: 'p',
@@ -530,7 +530,7 @@ const HELP_SECTIONS: HelpSection[] = [
         items: [
           {
             term: 'Server',
-            text: 'Two sources. Anything that escapes a controller is caught by the exception middleware, and any call to the standard logging API at Warning or above is persisted by a database logging sink — so existing log statements throughout the codebase appear here without extra work.',
+            text: 'Two sources. Anything that escapes a controller is caught by the exception middleware, and any call to the standard logging API at Warning or above is persisted by a database logging sink, so existing log statements throughout the codebase appear here without extra work.',
           },
           {
             term: 'Client',
@@ -564,12 +564,12 @@ const HELP_SECTIONS: HelpSection[] = [
         kind: 'note',
         tone: 'warning',
         text:
-          'This build has NO authentication. Every endpoint is open to anyone who can reach the port. Run it on localhost or an isolated lab network only — do not expose it to an untrusted network, and especially not to the internet. An unauthenticated tool that can launch port scans and edit inventory is a liability, not a feature.',
+          'This build has NO authentication. Every endpoint is open to anyone who can reach the port. Run it on localhost or an isolated lab network only; do not expose it to an untrusted network, and especially not to the internet. An unauthenticated tool that can launch port scans and edit inventory is a liability, not a feature.',
       },
       {
         kind: 'p',
         text:
-          'The seam where authentication plugs in is deliberately clean — standard ASP.NET Core authentication middleware plus authorization policies or a global action filter, with mutating endpoints restricted to an operator role and read endpoints left to viewers. Nothing in the request pipeline assumes anonymity. But until that is wired up, treat the deployment as trusted-network-only.',
+          'The seam where authentication plugs in is deliberately clean: standard ASP.NET Core authentication middleware plus authorization policies or a global action filter, with mutating endpoints restricted to an operator role and read endpoints left to viewers. Nothing in the request pipeline assumes anonymity. But until that is wired up, treat the deployment as trusted-network-only.',
       },
       {
         kind: 'p',
@@ -602,22 +602,22 @@ const HELP_SECTIONS: HelpSection[] = [
       {
         kind: 'p',
         text:
-          'The search box in the header always routes to the device list filtered by what you typed — IP address, hostname, MAC or vendor — because "find this address" is the query people actually type into a network monitor. It does not search alerts or CVEs; those pages have their own filters.',
+          'The search box in the header always routes to the device list filtered by what you typed (IP address, hostname, MAC or vendor), because "find this address" is the query people actually type into a network monitor. It does not search alerts or CVEs; those pages have their own filters.',
       },
       {
         kind: 'p',
         text:
-          'The theme picker beside it offers eight themes, four light and four dark, and remembers your choice in the browser. Every color in the interface — including the chart series, the status pills and the scrollbars — comes from a single design-token set, so switching theme re-skins the charts along with the page instead of leaving them stranded on a light background.',
+          'The theme picker beside it offers eight themes, four light and four dark, and remembers your choice in the browser. Every color in the interface, including the chart series, the status pills and the scrollbars, comes from a single design-token set, so switching theme re-skins the charts along with the page instead of leaving them stranded on a light background.',
       },
       {
         kind: 'list',
         items: [
-          'The only custom keyboard shortcuts belong to the guided tour, which takes the arrow keys, Enter and Escape while it is on screen. Otherwise: Escape closes a confirmation dialog, Enter activates a focused Dashboard tile, and everything else is standard browser navigation — Tab to move focus, Enter to follow a link, and browser back and forward through your history.',
+          'The only custom keyboard shortcuts belong to the guided tour, which takes the arrow keys, Enter and Escape while it is on screen. Otherwise: Escape closes a confirmation dialog, Enter activates a focused Dashboard tile, and everything else is standard browser navigation. Tab to move focus, Enter to follow a link, and browser back and forward through your history.',
           'Device-list filters live in the URL, so any filtered view can be bookmarked, refreshed, or pasted to someone else and land exactly as you left it.',
           'Dashboard stat tiles drill through to the filtered list behind their number rather than being read-only figures.',
           'Sidebar groups collapse to shorten the nav, and the group containing the page you are on always re-expands so the active item is never hidden.',
           'Table headers marked as sortable toggle ascending and descending on click; the device list sorts on the server, so sorting applies across every page of results and not just the one on screen.',
-          'Sections of this guide have stable anchors — /help#change-detection or /help#safety will open the page scrolled to that section.',
+          'Sections of this guide have stable anchors: /help#change-detection or /help#safety will open the page scrolled to that section.',
         ],
       },
     ],
@@ -645,7 +645,7 @@ function blockText(block: HelpBlock): string {
 
 /**
  * One lowercased haystack per section, built once at module load. Filtering is
- * then a substring test — cheap enough to run on every keystroke without any
+ * then a substring test: cheap enough to run on every keystroke without any
  * debouncing, which is what makes the box feel instant.
  */
 const SEARCH_INDEX: Record<string, string> = Object.fromEntries(
@@ -657,7 +657,7 @@ const SEARCH_INDEX: Record<string, string> = Object.fromEntries(
 
 /**
  * Wraps every occurrence of `query` in the given text with a <mark>. Uses
- * indexOf rather than a RegExp so the user's query needs no escaping — a
+ * indexOf rather than a RegExp so the user's query needs no escaping, a
  * search for "9100/tcp" or "--exclude" must not blow up the page.
  */
 function highlight(text: string, query: string): ReactNode {
@@ -757,7 +757,7 @@ function BlockView({ block, query }: { block: HelpBlock; query: string }) {
 
 /**
  * Purely local: it fetches nothing, so the guide is readable even when the API
- * is down — which is exactly when someone is most likely to open it.
+ * is down, which is exactly when someone is most likely to open it.
  *
  * Searching filters whole sections rather than individual blocks, so a hit
  * keeps its surrounding context instead of stranding one matched sentence.
@@ -783,7 +783,7 @@ export default function HelpGuide() {
   // the *set* of rendered sections changes, not on every re-render.
   const visibleIds = visible.map((section) => section.id).join(',');
 
-  // Scroll-spy. Guarded because jsdom has no IntersectionObserver — the page
+  // Scroll-spy. Guarded because jsdom has no IntersectionObserver, the page
   // still has to render (and be testable) without one, just without spying.
   useEffect(() => {
     const ids = visibleIds.length > 0 ? visibleIds.split(',') : [];
@@ -909,7 +909,7 @@ export default function HelpGuide() {
                 <i className="bi bi-search" />
                 <h3>Nothing in the guide matches “{query}”</h3>
                 <p className="text-muted-token">
-                  Try a shorter phrase, or a term from the app itself — “offline”, “profile”, “CVSS”, “SNMP”.
+                  Try a shorter phrase, or a term from the app itself: “offline”, “profile”, “CVSS”, “SNMP”.
                 </p>
                 <button type="button" className="btn btn-ghost btn-sm" onClick={() => setRawQuery('')}>
                   Clear search

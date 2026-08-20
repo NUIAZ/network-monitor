@@ -6,7 +6,7 @@ namespace NetworkMonitor.Server.Context;
 /// <summary>
 /// EF Core context for the whole application. Defaults to SQLite so the demo
 /// runs with no database server at all; point the connection string at
-/// PostgreSQL (see INSTALL.md) for a real deployment — the model is provider
+/// PostgreSQL (see INSTALL.md) for a real deployment; the model is provider
 /// agnostic, with snake_case table and column names applied via attributes.
 /// </summary>
 public class NetworkMonitorDbContext : DbContext
@@ -15,7 +15,7 @@ public class NetworkMonitorDbContext : DbContext
     /// <param name="options">Carries the configured provider, so nothing in this class needs to know whether it is talking to SQLite or PostgreSQL.</param>
     public NetworkMonitorDbContext(DbContextOptions<NetworkMonitorDbContext> options) : base(options) { }
 
-    /// <summary>Facilities that own networks — the top of the inventory hierarchy.</summary>
+    /// <summary>Facilities that own networks: the top of the inventory hierarchy.</summary>
     public DbSet<Site> Sites => Set<Site>();
 
     /// <summary>Scannable IP ranges, each with its own cadence and scan profiles.</summary>
@@ -28,7 +28,7 @@ public class NetworkMonitorDbContext : DbContext
     /// Currently-open ports per device. Reconciliation DELETES rows for ports
     /// that stopped answering rather than marking them closed, so this table is
     /// a snapshot of what is listening now, not a history of what ever did.
-    /// The disappearance is still recorded — as a <c>port_closed</c> alert — so
+    /// The disappearance is still recorded: as a <c>port_closed</c> alert, so
     /// the event survives even though the row does not.
     /// </summary>
     public DbSet<Port> Ports => Set<Port>();
@@ -42,7 +42,7 @@ public class NetworkMonitorDbContext : DbContext
     /// <summary>The alert feed. Rows are raised by the scan pipeline only, never created by hand.</summary>
     public DbSet<Alert> Alerts => Set<Alert>();
 
-    /// <summary>Per-network scan configuration — five rows per network, one per profile type.</summary>
+    /// <summary>Per-network scan configuration, five rows per network, one per profile type.</summary>
     public DbSet<ScanProfile> ScanProfiles => Set<ScanProfile>();
 
     /// <summary>CVEs matched against discovered service versions, with their triage status.</summary>
@@ -109,7 +109,7 @@ public class NetworkMonitorDbContext : DbContext
 
         // The error log is queried newest-first and filtered by tier, which is
         // exactly the shape this index serves. It also grows fastest of any
-        // table when something is misbehaving — precisely when someone is
+        // table when something is misbehaving: precisely when someone is
         // trying to read it.
         b.Entity<ExceptionLog>().HasIndex(e => e.OccurredAt).HasDatabaseName("ix_exception_logs_occurred");
         b.Entity<ExceptionLog>().HasIndex(e => new { e.Source, e.Level }).HasDatabaseName("ix_exception_logs_source_level");

@@ -1,4 +1,4 @@
-/** Topology map styling — SVG chrome, legend, tooltip. */
+/** Topology map styling: SVG chrome, legend, tooltip. */
 
 .map-card {
   position: relative;
@@ -8,7 +8,7 @@
 
 /* The SVG carries a 1400x800 viewBox with preserveAspectRatio="xMidYMid meet".
    Any container whose own ratio differs letterboxes the drawing and shrinks it
-   to fit the tighter axis — a fixed pixel height did exactly that, wasting the
+   to fit the tighter axis: a fixed pixel height did exactly that, wasting the
    sides. Matching the container ratio to the viewBox means the topology always
    fills the space it is given.
 
@@ -146,7 +146,7 @@
 }
 
 /* The legend used to float over the bottom-right of the canvas, where it sat on
-   top of whichever cluster the layout happened to place there — and the larger
+   top of whichever cluster the layout happened to place there, and the larger
    the map got, the more it covered. Reserving canvas space for it instead would
    have given back the size just gained, so it moved out of the drawing and
    became a strip beneath it. */

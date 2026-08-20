@@ -3,7 +3,7 @@
  * per-network scan-profile editor.
  *
  * The sites/networks editors are deliberately modal-based rather than inline
- * grids: create/edit is a deliberate act with validation (CIDR especially —
+ * grids: create/edit is a deliberate act with validation (CIDR especially;
  * a bad CIDR here becomes a bad nmap command line later, so it's checked
  * client-side before the server sees it, and the server's own rejection is
  * surfaced verbatim if it still objects).
@@ -428,7 +428,7 @@ function ProfileEditor({ networks }: { networks: NetworkInfo[] }) {
     [networkId],
   );
 
-  // Reset drafts when switching networks — stale edits must not bleed across.
+  // Reset drafts when switching networks: stale edits must not bleed across.
   useEffect(() => setDrafts({}), [networkId]);
 
   const profiles: ScanProfile[] = detail.data?.scanProfiles ?? [];
@@ -541,7 +541,7 @@ function ProfileEditor({ networks }: { networks: NetworkInfo[] }) {
  * sites and networks lists, and the modal/confirm state for editing both.
  *
  * Any mutation reloads sites *and* networks together, because the two are
- * coupled — a network can move between sites, and deleting a site cascades to
+ * coupled: a network can move between sites, and deleting a site cascades to
  * its networks, so refreshing one without the other leaves the page showing a
  * parent that no longer has the children listed under it.
  */
@@ -616,7 +616,7 @@ export default function Settings() {
         ) : sites.error ? (
           <div className="nm-card-body"><ErrorBanner message={sites.error} onRetry={sites.reload} /></div>
         ) : (sites.data ?? []).length === 0 ? (
-          <EmptyState icon="bi-buildings" title="No sites yet" message="A site is a place that owns networks — add one to start scanning." />
+          <EmptyState icon="bi-buildings" title="No sites yet" message="A site is a place that owns networks, add one to start scanning." />
         ) : (
           <div className="nm-table-wrap">
             <table className="nm-table" data-testid="sites-table">
@@ -635,9 +635,9 @@ export default function Settings() {
                   <tr key={site.id}>
                     <td><span className="profile-chip">{site.siteKey}</span></td>
                     <td className="cell-primary">{site.name}</td>
-                    <td>{site.city ? `${site.city}${site.state ? `, ${site.state}` : ''}` : '—'}</td>
-                    <td>{site.networkCount ?? '—'}</td>
-                    <td>{site.deviceCount ?? '—'}</td>
+                    <td>{site.city ? `${site.city}${site.state ? `, ${site.state}` : ''}` : '-'}</td>
+                    <td>{site.networkCount ?? '-'}</td>
+                    <td>{site.deviceCount ?? '-'}</td>
                     <td className="actions-col">
                       <button type="button" className="btn btn-sm btn-ghost me-1" onClick={() => setSiteModal({ open: true, site })}
                         aria-label={`Edit ${site.name}`}>
@@ -701,7 +701,7 @@ export default function Settings() {
                     <td className="cell-mono">{network.cidr}</td>
                     <td>{network.isEnabled ? <StatusPill status="enabled" /> : <StatusPill status="down" />}</td>
                     <td>{formatDuration(network.scanIntervalSeconds)} / {formatDuration(network.deepScanIntervalSeconds)}</td>
-                    <td>{network.deviceCount ?? '—'}</td>
+                    <td>{network.deviceCount ?? '-'}</td>
                     <td className="actions-col">
                       <button type="button" className="btn btn-sm btn-ghost me-1" onClick={() => setNetworkModal({ open: true, network })}
                         aria-label={`Edit ${network.name}`}>

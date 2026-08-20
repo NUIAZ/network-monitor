@@ -6,7 +6,7 @@
  *
  * A render crash is reported at level "fatal" because it is categorically
  * worse than a failed request: the user saw nothing at all. Reporting happens
- * in componentDidCatch — the commit-phase hook — rather than in
+ * in componentDidCatch: the commit-phase hook, rather than in
  * getDerivedStateFromError, which React may call more than once and which must
  * stay side-effect free.
  */
@@ -24,7 +24,7 @@ interface ErrorBoundaryState {
 }
 
 /**
- * A class component because error boundaries have no hook equivalent — React
+ * A class component because error boundaries have no hook equivalent. React
  * exposes this behaviour only through getDerivedStateFromError and
  * componentDidCatch, so this is not a style choice that can be modernised away.
  *
@@ -43,7 +43,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    // The component stack says *which* subtree died — far more actionable than
+    // The component stack says *which* subtree died, far more actionable than
     // the JS stack alone, which usually bottoms out inside React internals.
     // errorLogger is fire-and-forget, so this never delays the fallback paint.
     reportError(error, {

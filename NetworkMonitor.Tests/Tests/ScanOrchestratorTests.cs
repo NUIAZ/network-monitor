@@ -10,7 +10,7 @@ using Xunit;
 namespace NetworkMonitor.Tests.Tests;
 
 /// <summary>
-/// Tests for the reconciliation logic — the part that decides what actually
+/// Tests for the reconciliation logic: the part that decides what actually
 /// changed between two scans. nmap itself is replaced by a stub that returns
 /// canned XML, so these run anywhere with no scanner installed and no packets
 /// on the wire.
@@ -197,7 +197,7 @@ public class ScanOrchestratorTests : IDisposable
 
         using var verify = _db.NewContext();
 
-        // 2 devices x 2 scans — one row per device per scan, no gaps.
+        // 2 devices x 2 scans: one row per device per scan, no gaps.
         verify.ScanDeviceSnapshots.Should().HaveCount(4);
         verify.ScanDeviceSnapshots.Count(s => s.Status == "online").Should().Be(3);
         verify.ScanDeviceSnapshots.Count(s => s.Status == "missed").Should().Be(1);
@@ -289,7 +289,7 @@ public class ScanOrchestratorTests : IDisposable
     public async Task An_oversized_target_is_refused_before_any_packets_are_sent()
     {
         // A mistyped /8 is 16.7M addresses. The guard must reject it, record the
-        // reason, and — critically — never invoke the scanner at all.
+        // reason, and, critically, never invoke the scanner at all.
         var site = new Site { SiteKey = "BIG", Name = "Oversized" };
         _db.Context.Sites.Add(site);
         await _db.Context.SaveChangesAsync();

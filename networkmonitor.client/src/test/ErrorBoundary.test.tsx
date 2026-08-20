@@ -1,6 +1,6 @@
 /**
  * ErrorBoundary: a page that throws during render must degrade into a
- * recoverable card — and must be reported, because a white screen the user
+ * recoverable card, and must be reported, because a white screen the user
  * never mentions is a bug nobody fixes.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

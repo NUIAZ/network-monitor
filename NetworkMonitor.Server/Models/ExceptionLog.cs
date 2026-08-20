@@ -26,7 +26,7 @@ public class ExceptionLog
     public string Source { get; set; } = "server";
 
     /// <summary>
-    /// Severity: "info" (routine activity — a scan started, the scheduler ran),
+    /// Severity: "info" (routine activity, a scan started, the scheduler ran),
     /// "warning", "error", or "fatal" (an unhandled failure that took a request
     /// or a page down).
     /// </summary>

@@ -3,10 +3,10 @@
  *
  * Read-only identity (what scans discovered) is deliberately separated from
  * the operator-owned fields (what a human knows: hardware, location, owner,
- * notes, flag/exclude) — the PUT only ever sends the operator fields, so a
+ * notes, flag/exclude), the PUT only ever sends the operator fields, so a
  * form save can never fight the scanner over discovered facts.
  *
- * The 7-day history renders as two stacked charts sharing a time axis —
+ * The 7-day history renders as two stacked charts sharing a time axis;
  * availability (a 0/1 step) and latency (ms) are different scales, and a
  * dual-axis chart would invite reading a slope that isn't there.
  */
@@ -40,7 +40,7 @@ import ConfirmDialog from '../Shared/ConfirmDialog';
 import ChartTooltip from '../Shared/ChartTooltip';
 import './DeviceDetail.css';
 
-/** Operator form state — mirrors DeviceUpdatePayload with string inputs. */
+/** Operator form state: mirrors DeviceUpdatePayload with string inputs. */
 interface OperatorForm {
   hostname: string;
   hardware: string;
@@ -74,7 +74,7 @@ function shortTime(value: string | number): string {
 /**
  * Fetches the device and its history as two independent requests, so a history
  * query that fails or is slow still leaves the identity and operator form
- * usable — the chart is the least important thing on the page.
+ * usable: the chart is the least important thing on the page.
  *
  * The form is re-hydrated from every fresh device response, which means a
  * reload after saving discards any edit made in the meantime. That is fine
@@ -156,8 +156,8 @@ export default function DeviceDetail() {
       { key: 'portNumber', header: 'Port', sortable: true, className: 'cell-mono' },
       { key: 'protocol', header: 'Protocol', sortable: true },
       { key: 'state', header: 'State', render: (p) => <StatusPill status={p.state} /> },
-      { key: 'serviceName', header: 'Service', sortable: true, render: (p) => p.serviceName ?? '—' },
-      { key: 'serviceVersion', header: 'Version', render: (p) => p.serviceVersion ?? '—' },
+      { key: 'serviceName', header: 'Service', sortable: true, render: (p) => p.serviceName ?? '-' },
+      { key: 'serviceVersion', header: 'Version', render: (p) => p.serviceVersion ?? '-' },
       { key: 'lastSeen', header: 'Last seen', sortable: true, render: (p) => relativeTime(p.lastSeen) },
     ],
     [],
@@ -205,17 +205,17 @@ export default function DeviceDetail() {
               <dt>IP address</dt>
               <dd className="mono">{d.ipAddress}</dd>
               <dt>MAC address</dt>
-              <dd className="mono">{d.macAddress ?? '—'}</dd>
+              <dd className="mono">{d.macAddress ?? '-'}</dd>
               <dt>Vendor</dt>
-              <dd>{d.vendor ?? '—'}</dd>
+              <dd>{d.vendor ?? '-'}</dd>
               <dt>OS guess</dt>
-              <dd>{d.osGuess ?? '—'}</dd>
+              <dd>{d.osGuess ?? '-'}</dd>
               <dt>First seen</dt>
               <dd>{formatDateTime(d.firstSeen)}</dd>
               <dt>Last seen</dt>
               <dd>{formatDateTime(d.lastSeen)} ({relativeTime(d.lastSeen)})</dd>
               <dt>Last scanned</dt>
-              <dd>{d.lastScannedAt ? formatDateTime(d.lastScannedAt) : '—'}</dd>
+              <dd>{d.lastScannedAt ? formatDateTime(d.lastScannedAt) : '-'}</dd>
               <dt>Missed scans</dt>
               <dd>{formatNumber(d.missedScans)}</dd>
             </dl>
@@ -436,10 +436,10 @@ export default function DeviceDetail() {
                   {(d.certificates ?? []).map((cert) => (
                     <tr key={cert.id}>
                       <td className="cell-mono">{cert.portNumber}</td>
-                      <td className="cell-primary">{cert.subject ?? '—'}</td>
-                      <td>{cert.issuer ?? '—'}</td>
+                      <td className="cell-primary">{cert.subject ?? '-'}</td>
+                      <td>{cert.issuer ?? '-'}</td>
                       <td>{formatDateTime(cert.validTo)}</td>
-                      <td>{cert.keyType ? `${cert.keyType} ${cert.keyBits ?? ''}`.trim() : '—'}</td>
+                      <td>{cert.keyType ? `${cert.keyType} ${cert.keyBits ?? ''}`.trim() : '-'}</td>
                       <td>{cert.isSelfSigned ? <span className="severity-badge sev-warning"><i className="bi bi-exclamation-triangle-fill" />Yes</span> : 'No'}</td>
                     </tr>
                   ))}

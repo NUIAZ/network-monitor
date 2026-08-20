@@ -2,7 +2,7 @@
  * HelpGuide: section rendering, the search filter, the no-results state, and
  * the stable section ids that make /help#<section> deep-links work.
  *
- * The page fetches nothing — its content is static data — so these tests need
+ * The page fetches nothing: its content is static data, so these tests need
  * no fetch mock, only a router for the useLocation/useNavigate hash handling.
  */
 import { describe, expect, it } from 'vitest';

@@ -35,7 +35,7 @@ export function AlertCountProvider({ children }: { children: ReactNode }) {
       .get<Paged<Alert>>('/api/alerts?acknowledged=false&pageSize=1')
       .then((page) => setCount(page.total))
       .catch(() => {
-        // A failed badge poll is not worth an error banner — leave the last
+        // A failed badge poll is not worth an error banner; leave the last
         // known count and let the next poll self-heal.
       });
   }, []);
@@ -53,7 +53,7 @@ export function AlertCountProvider({ children }: { children: ReactNode }) {
  * Reads the shared count, and hands back the `refresh` any page should call
  * after acknowledging alerts. Falls back to a count of 0 and a no-op refresh
  * when used outside the provider, so an isolated component (or a test) renders
- * rather than throwing — the badge is not worth a crash.
+ * rather than throwing: the badge is not worth a crash.
  */
 export function useAlertCount(): AlertCountContextValue {
   return useContext(AlertCountContext);

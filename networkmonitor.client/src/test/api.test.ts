@@ -1,5 +1,5 @@
 /**
- * api wrapper: verb behavior, body/header handling, and — most importantly —
+ * api wrapper: verb behavior, body/header handling, and, most importantly,
  * that server error messages actually surface on the thrown ApiError.
  */
 import { describe, expect, it, vi } from 'vitest';

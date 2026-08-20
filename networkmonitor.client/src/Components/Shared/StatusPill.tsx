@@ -28,8 +28,8 @@ const TONE_MAP: Record<string, string> = {
 /**
  * Takes the raw server string rather than a union, because it has to cover
  * three unrelated vocabularies at once and the server is free to add a word to
- * any of them. An unmapped or null status still renders — humanized, in the
- * neutral tone — so a new status word shows up as plain text instead of
+ * any of them. An unmapped or null status still renders (humanized, in the
+ * neutral tone), so a new status word shows up as plain text instead of
  * vanishing from the row.
  */
 export default function StatusPill({ status }: { status: string | null | undefined }) {

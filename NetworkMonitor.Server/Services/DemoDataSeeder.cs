@@ -8,13 +8,13 @@ namespace NetworkMonitor.Server.Services;
 
 /// <summary>
 /// Seeds a believable, fully fictional estate for "Northwind Logistics" so the
-/// app demos itself the moment it starts — every page has data, every chart has
+/// app demos itself the moment it starts: every page has data, every chart has
 /// a story, and none of it belongs to anyone real. IP ranges are strictly
 /// RFC 5737 documentation blocks and RFC 1918 private space, hostnames and
 /// people are invented, and the domain is under .example.
 ///
 /// The generator is seeded with a fixed value, so two people running the demo
-/// see the same estate — screenshots, docs, and bug reports all line up.
+/// see the same estate: screenshots, docs, and bug reports all line up.
 /// Timestamps are relative to "now" so the dashboards always look live.
 /// </summary>
 public class DemoDataSeeder
@@ -44,7 +44,7 @@ public class DemoDataSeeder
     /// <summary>
     /// Seeds the demo estate when the database is empty. "Empty" is judged by
     /// Sites alone: it is the root of the hierarchy, so its presence means either
-    /// a previous seed or real data — and in both cases we must not touch anything.
+    /// a previous seed or real data, and in both cases we must not touch anything.
     /// </summary>
     public async Task SeedIfEmptyAsync()
     {
@@ -61,7 +61,7 @@ public class DemoDataSeeder
         }
 
         _now = DateTime.UtcNow;
-        _logger.LogInformation("Empty database — seeding the {Company} demo estate", _options.CompanyName);
+        _logger.LogInformation("Empty database; seeding the {Company} demo estate", _options.CompanyName);
 
         var sites = CreateSites();
         _db.Sites.AddRange(sites);
@@ -130,7 +130,7 @@ public class DemoDataSeeder
 
     /// <summary>
     /// One or two networks per site. Public-looking ranges use only the RFC 5737
-    /// documentation blocks (203.0.113.0/24, 198.51.100.0/24) — addresses that
+    /// documentation blocks (203.0.113.0/24, 198.51.100.0/24), addresses that
     /// can never collide with a real network someone might accidentally scan.
     /// </summary>
     private List<Network> CreateNetworks(List<Site> sites)
@@ -142,7 +142,7 @@ public class DemoDataSeeder
             new() { SiteId = dal.Id, Name = "Server VLAN", Cidr = "10.10.20.0/24", Description = "WMS, database, and virtualization hosts", CreatedAt = dal.CreatedAt.AddDays(1) },
             new() { SiteId = chi.Id, Name = "Cold Storage Ops", Cidr = "198.51.100.0/24", Description = "Freezer floor equipment and monitoring", CreatedAt = chi.CreatedAt.AddDays(2) },
             new() { SiteId = chi.Id, Name = "Office", Cidr = "10.20.30.0/24", Description = "Front-office workstations and printers", CreatedAt = chi.CreatedAt.AddDays(2) },
-            new() { SiteId = atl.Id, Name = "Hub Core", Cidr = "192.168.40.0/24", Description = "Regional hub — routing, servers, and yard cameras", CreatedAt = atl.CreatedAt.AddDays(1) },
+            new() { SiteId = atl.Id, Name = "Hub Core", Cidr = "192.168.40.0/24", Description = "Regional hub, routing, servers, and yard cameras", CreatedAt = atl.CreatedAt.AddDays(1) },
             new() { SiteId = phx.Id, Name = "Fulfillment Floor", Cidr = "10.40.10.0/24", Description = "Pick/pack floor equipment", CreatedAt = phx.CreatedAt.AddDays(3) },
             new() { SiteId = phx.Id, Name = "Cameras & IoT", Cidr = "192.168.50.0/24", Description = "Dock and yard cameras, NVR", CreatedAt = phx.CreatedAt.AddDays(3) },
         ];
@@ -281,7 +281,7 @@ public class DemoDataSeeder
     };
 
     /// <summary>
-    /// Stamps out every device and remembers each one's port profile — the port
+    /// Stamps out every device and remembers each one's port profile, the port
     /// list is reused by snapshots (open port counts), certificates (443 only),
     /// and alerts, so it is returned alongside rather than re-derived.
     /// </summary>
@@ -303,7 +303,7 @@ public class DemoDataSeeder
                 {
                     var hostname = string.Format(spec.HostPattern, i);
 
-                    // Core infrastructure never goes offline in the demo — the
+                    // Core infrastructure never goes offline in the demo, the
                     // SNMP page polls the core switches and a dead core would
                     // make every chart on it empty.
                     var isInfra = hostname.Contains("core") || hostname.Contains("-fw-") || hostname.Contains("-rtr-");
@@ -358,7 +358,7 @@ public class DemoDataSeeder
     {
         var prefix = vendor != null && VendorOui.TryGetValue(vendor, out var oui)
             ? oui
-            : "02:42:AC"; // locally administered — the "no real vendor" lane
+            : "02:42:AC"; // locally administered, the "no real vendor" lane
         return $"{prefix}:{_rng.Next(256):X2}:{_rng.Next(256):X2}:{_rng.Next(256):X2}";
     }
 
@@ -479,8 +479,8 @@ public class DemoDataSeeder
     /// every device.
     ///
     /// This used to cover only the first four devices on each network, which
-    /// left three quarters of the estate with an empty chart on its detail page
-    /// — and a visitor clicking a device at random was far more likely to land
+    /// left three quarters of the estate with an empty chart on its detail page,
+    /// and a visitor clicking a device at random was far more likely to land
     /// on a blank one than a populated one. Sampling roughly every 90 minutes
     /// for all 120 devices is around 13,000 rows: nothing for the database, and
     /// the difference between a feature that demonstrates itself and one that
@@ -523,7 +523,7 @@ public class DemoDataSeeder
                 while (t <= _now)
                 {
                     // Attach each sample to the nearest scan that had already
-                    // started — snapshots must reference a real scan row.
+                    // started: snapshots must reference a real scan row.
                     while (scanIdx + 1 < netScans.Count && netScans[scanIdx + 1].StartedAt <= t) scanIdx++;
 
                     bool offline;
@@ -573,7 +573,7 @@ public class DemoDataSeeder
 
     /// <summary>
     /// ~60 alerts over the 14-day window, weighted toward the types a real floor
-    /// produces. Older alerts are mostly acknowledged, recent ones mostly not —
+    /// produces. Older alerts are mostly acknowledged, recent ones mostly not;
     /// that gradient is what makes the feed read as "in use" rather than staged.
     /// </summary>
     private List<Alert> CreateAlerts(List<Network> networks, List<Device> devices, Dictionary<Device, int[]> portsByDevice)
@@ -582,7 +582,7 @@ public class DemoDataSeeder
         var operators = new[] { "j.moreno", "s.patel", "d.okafor" };
         var certCandidates = devices.Where(d => portsByDevice[d].Contains(443)).ToList();
 
-        // (type, severity, count) — severity is fixed per type, matching what the
+        // (type, severity, count), severity is fixed per type, matching what the
         // orchestrator raises at runtime.
         var plan = new (string Type, string Severity, int Count)[]
         {
@@ -809,7 +809,7 @@ public class DemoDataSeeder
 
     /// <summary>
     /// Five polls of four interfaces per target across the last 24 hours (20
-    /// rows each) — enough points for the utilization chart to draw real lines.
+    /// rows each): enough points for the utilization chart to draw real lines.
     /// The Dallas core's 10G uplink runs saturated so the page has its "there's
     /// the problem" moment, and one Chicago access port is down.
     /// </summary>
@@ -821,7 +821,7 @@ public class DemoDataSeeder
         // Poll every 15 minutes for a full day. Five samples spread across 24
         // hours technically satisfied "a day of history" but drew a chart with
         // five points on it, which reads as missing data rather than as a
-        // utilization trend. 96 samples per interface is ~2,300 rows in total —
+        // utilization trend. 96 samples per interface is ~2,300 rows in total:
         // nothing for the database, and the difference between a sparse
         // polyline and a chart that looks like real telemetry.
         const int pollSpacingSeconds = 15 * 60;
@@ -832,9 +832,9 @@ public class DemoDataSeeder
         {
             var interfaces = new (int IfIndex, string Name, string? Alias, long Speed)[]
             {
-                (1, "GigabitEthernet1/0/1", "Access — floor equipment", OneGbps),
-                (2, "GigabitEthernet1/0/2", "Access — floor equipment", OneGbps),
-                (3, "GigabitEthernet1/0/3", "Access — floor equipment", OneGbps),
+                (1, "GigabitEthernet1/0/1", "Access, floor equipment", OneGbps),
+                (2, "GigabitEthernet1/0/2", "Access, floor equipment", OneGbps),
+                (3, "GigabitEthernet1/0/3", "Access, floor equipment", OneGbps),
                 (49, "TenGigabitEthernet1/1/1", "Uplink to distribution", TenGbps),
             };
 
@@ -918,8 +918,8 @@ public class DemoDataSeeder
     /// what it is for on first run instead of an empty table.
     ///
     /// The mix is deliberate. It covers all three ways an entry reaches the
-    /// table — an unhandled server exception, a routine warning captured from
-    /// the standard logging API, and a browser failure posted back — and one
+    /// table: an unhandled server exception, a routine warning captured from
+    /// the standard logging API, and a browser failure posted back, and one
     /// pair shares a correlation id so the "find both halves of one incident"
     /// behaviour is demonstrable rather than merely documented.
     /// </summary>
@@ -930,7 +930,7 @@ public class DemoDataSeeder
         return
         [
             // A server request that failed, and the browser error the user saw
-            // as a result. Same correlation id — search it to see both sides.
+            // as a result. Same correlation id, search it to see both sides.
             new()
             {
                 Source = "server", Level = "fatal",
@@ -978,7 +978,7 @@ public class DemoDataSeeder
             new()
             {
                 Source = "server", Level = "error",
-                Message = "Certificate parse failed for 10.20.30.5:8443 — the ssl-cert script returned no notAfter field.",
+                Message = "Certificate parse failed for 10.20.30.5:8443, the ssl-cert script returned no notAfter field.",
                 ExceptionType = "System.FormatException",
                 StackTrace = "System.FormatException: String was not recognized as a valid DateTime.\n"
                     + "   at NetworkMonitor.Server.Services.CertificateExtractor.Parse(ParsedScript script)",

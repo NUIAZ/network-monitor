@@ -10,7 +10,7 @@ namespace NetworkMonitor.Tests;
 /// SQLite in-memory rather than the EF in-memory provider on purpose: the EF
 /// provider is not a relational database and will happily accept duplicate keys,
 /// ignore cascade rules, and let broken queries pass. Several behaviours under
-/// test here — the unique (network, ip) device constraint and cascade deletes —
+/// test here, the unique (network, ip) device constraint and cascade deletes,
 /// only exist at the relational layer, so the tests have to run against one.
 ///
 /// The connection is held open for the lifetime of the instance because SQLite

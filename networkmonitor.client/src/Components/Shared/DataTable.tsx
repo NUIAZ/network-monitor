@@ -8,8 +8,8 @@
  *    using `sortValue` (or the raw field when the column key matches a
  *    primitive property).
  *
- * Loading and empty states render inside the table body so the header —
- * and therefore the layout — never jumps while data changes underneath.
+ * Loading and empty states render inside the table body so the header
+ * (and therefore the layout) never jumps while data changes underneath.
  */
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -20,7 +20,7 @@ import './Shared.css';
 /**
  * Which column is sorted, and which way. In controlled mode this travels
  * straight into the query string the parent sends the server, so `key` has to
- * be a name the API accepts for sorting — not just a column id that happens to
+ * be a name the API accepts for sorting, not just a column id that happens to
  * look right in the header.
  */
 export interface SortState {
@@ -109,7 +109,7 @@ export default function DataTable<T>({
     else setLocalSort(next);
   };
 
-  // Client-side sort only applies in uncontrolled mode — in controlled mode
+  // Client-side sort only applies in uncontrolled mode, in controlled mode
   // the server already returned rows in order and re-sorting would lie about it.
   const displayRows = useMemo(() => {
     if (controlled || !localSort) return rows;
@@ -179,7 +179,7 @@ export default function DataTable<T>({
                   <td key={column.key} className={column.className}>
                     {column.render
                       ? column.render(row)
-                      : ((row as Record<string, unknown>)[column.key] as ReactNode) ?? '—'}
+                      : ((row as Record<string, unknown>)[column.key] as ReactNode) ?? '-'}
                   </td>
                 ))}
               </tr>

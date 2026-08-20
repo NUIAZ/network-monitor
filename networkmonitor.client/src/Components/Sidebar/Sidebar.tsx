@@ -3,7 +3,7 @@
  * badge, and a footer with the running server version.
  *
  * Groups collapse manually but auto-expand whenever the current route lives
- * inside them — deep-linking into /security/certificates must never land the
+ * inside them: deep-linking into /security/certificates must never land the
  * user in a sidebar where the active item is hidden. On mobile the sidebar
  * becomes an overlay drawer; the hamburger in NavMenu opens it and any
  * navigation closes it.
@@ -22,7 +22,7 @@ interface NavItem {
   icon: string;
   /** Marks the item that renders the alert-count badge. */
   showAlertBadge?: boolean;
-  /** NavLink `end` matching — true for "/" so it isn't active everywhere. */
+  /** NavLink `end` matching: true for "/" so it isn't active everywhere. */
   end?: boolean;
 }
 
@@ -101,7 +101,7 @@ interface SidebarProps {
  * is persisted: collapse state is a within-session convenience, and persisting
  * it would fight the route-based auto-expand on every reload.
  *
- * Must be rendered under both the router and AlertCountProvider — it reads the
+ * Must be rendered under both the router and AlertCountProvider, it reads the
  * current pathname to decide what to highlight and re-expand, and the badge
  * count comes from context rather than its own request.
  */
@@ -124,7 +124,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     });
   }, [location.pathname]);
 
-  // Version for the footer — best-effort; the sidebar renders fine without it.
+  // Version for the footer: best-effort; the sidebar renders fine without it.
   useEffect(() => {
     api
       .get<SystemInfo>('/api/settings/system')

@@ -3,7 +3,7 @@
  *
  * This is a public showcase repo, so the first ninety seconds matter more than
  * anything else in the UI. The tour dims the page, rings one element at a time,
- * and explains it — content lives in tourSteps.ts, this file is only the
+ * and explains it: content lives in tourSteps.ts, this file is only the
  * machinery.
  *
  * Three design decisions worth knowing about:
@@ -17,8 +17,8 @@
  *    feature feel broken, and it is far worse than a step nobody saw.
  *
  * 2. **`startTour()` is a module-level function, not context.** The two replay
- *    entry points sit in different trees — the top bar is in the shell, the
- *    help page is lazily loaded — and a tiny subscriber set is less plumbing
+ *    entry points sit in different trees (the top bar is in the shell, the
+ *    help page is lazily loaded), and a tiny subscriber set is less plumbing
  *    than a provider that would have to wrap both.
  *
  * 3. **The scrim is derived from `--sidebar-bg-end`.** A scrim must read as
@@ -50,7 +50,7 @@ const DEFAULT_RESOLVE_TIMEOUT_MS = 2500;
 const DEFAULT_AUTOSTART_TIMEOUT_MS = 8000;
 /**
  * Presence of this element means the dashboard rendered its *content* rather
- * than its loading spinner — auto-starting any earlier lands the very first
+ * than its loading spinner; auto-starting any earlier lands the very first
  * spotlight on a skeleton.
  */
 const DASHBOARD_READY_SELECTOR = '[data-testid="dashboard"]';
@@ -93,7 +93,7 @@ export function hasSeenTour(): boolean {
   }
 }
 
-/** Records that the tour has been seen. Skipping counts — see hasSeenTour. */
+/** Records that the tour has been seen. Skipping counts, see hasSeenTour. */
 export function markTourSeen(): void {
   try {
     localStorage.setItem(TOUR_SEEN_KEY, new Date().toISOString());
@@ -233,7 +233,7 @@ export function placeCallout(
     if (fits(position)) return position;
   }
 
-  // Nothing fit cleanly — keep the preferred side but pull the card fully into
+  // Nothing fit cleanly: keep the preferred side but pull the card fully into
   // view. Overlapping the target beats hanging off the edge of the screen.
   const fallback = candidate(preferred);
   return {
@@ -249,7 +249,7 @@ export function placeCallout(
 
 /**
  * Every prop is a test seam. The app mounts this with no props at all, and the
- * defaults are the real behaviour — nothing in the UI configures a tour.
+ * defaults are the real behaviour: nothing in the UI configures a tour.
  */
 export interface FeatureTourProps {
   /** Step list. Overridable so tests can drive small, purpose-built fixtures. */
@@ -267,7 +267,7 @@ export interface FeatureTourProps {
 }
 
 /**
- * Renders null unless a tour is running, so it costs nothing to leave mounted —
+ * Renders null unless a tour is running, so it costs nothing to leave mounted,
  * which it must be, since startTour() only reaches mounted instances. Mount it
  * once, inside the router (it navigates between steps) and outside the routed
  * pages (a step that changes route would otherwise unmount the tour driving it).
@@ -286,7 +286,7 @@ export default function FeatureTour({
   const [rect, setRect] = useState<SpotRect | null>(null);
   const [position, setPosition] = useState<CalloutPosition>({ top: 0, left: 0, placement: 'center' });
 
-  /** Which way the reader is travelling — decides where a skipped step lands. */
+  /** Which way the reader is travelling; it decides where a skipped step lands. */
   const directionRef = useRef<1 | -1>(1);
   /** The element the current step resolved to, kept for re-measuring. */
   const targetRef = useRef<Element | null>(null);
@@ -336,7 +336,7 @@ export default function FeatureTour({
     if (!active) return;
 
     const current = steps[index];
-    // Walked off either end (including "Next" on the last step) — that is a
+    // Walked off either end (including "Next" on the last step), that is a
     // finished tour.
     if (!current) {
       endTour();

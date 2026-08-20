@@ -2,7 +2,7 @@
  * Top bar: hamburger (mobile), current page title, global device search,
  * live clock, and the theme picker.
  *
- * The search box is intentionally simple — it always routes to the device
+ * The search box is intentionally simple, it always routes to the device
  * list with ?search=, because "find this IP/hostname" is the query people
  * actually type into a network monitor.
  */
@@ -34,7 +34,7 @@ function titleForPath(pathname: string): string {
 
 /**
  * Re-renders once a second for the clock, so keep it out of any expensive
- * subtree — everything below it in the shell is a sibling, not a child, for
+ * subtree: everything below it in the shell is a sibling, not a child, for
  * exactly that reason.
  *
  * The search box holds its own draft text and only navigates on submit; it does
@@ -47,7 +47,7 @@ export default function NavMenu({ onToggleSidebar }: { onToggleSidebar: () => vo
   const [query, setQuery] = useState('');
   const [now, setNow] = useState(() => new Date());
 
-  // Live clock — a monitoring screen without the current time makes every
+  // Live clock: a monitoring screen without the current time makes every
   // "last seen 5m ago" hard to trust on a wall display.
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
@@ -105,7 +105,7 @@ export default function NavMenu({ onToggleSidebar }: { onToggleSidebar: () => vo
         >
           <i className="bi bi-signpost-split" />
         </button>
-        {/* Documentation is one click from every page — an evaluator should
+        {/* Documentation is one click from every page, an evaluator should
             never have to hunt the sidebar to find out what a screen does. */}
         <button
           type="button"

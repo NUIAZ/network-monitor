@@ -19,7 +19,7 @@ import './Certificates.css';
 const PAGE_SIZE = 25;
 
 /**
- * Derives days-until-expiry client-side when the API row didn't carry it —
+ * Derives days-until-expiry client-side when the API row didn't carry it;
  * the number drives the entire page, so it must always exist.
  */
 function daysLeft(cert: SslCertificate): number | null {
@@ -30,7 +30,7 @@ function daysLeft(cert: SslCertificate): number | null {
 
 function ExpiryCell({ cert }: { cert: SslCertificate }) {
   const days = daysLeft(cert);
-  if (days === null) return <span className="text-muted-token">—</span>;
+  if (days === null) return <span className="text-muted-token">-</span>;
   if (days < 0) {
     return (
       <span className="expiry expired" data-testid="expiry-expired">
@@ -94,7 +94,7 @@ export default function Certificates() {
         key: 'subject',
         header: 'Subject',
         sortable: true,
-        render: (c) => <span className="cert-name" title={c.subject ?? undefined}>{c.subject ?? '—'}</span>,
+        render: (c) => <span className="cert-name" title={c.subject ?? undefined}>{c.subject ?? '-'}</span>,
       },
       {
         key: 'issuer',
@@ -102,7 +102,7 @@ export default function Certificates() {
         sortable: true,
         render: (c) => (
           <span className="cert-name" title={c.issuer ?? undefined}>
-            {c.issuer ?? '—'}
+            {c.issuer ?? '-'}
             {c.isSelfSigned && (
               <span className="severity-badge sev-warning ms-2">
                 <i className="bi bi-exclamation-triangle-fill" />
@@ -115,7 +115,7 @@ export default function Certificates() {
       {
         key: 'key',
         header: 'Key',
-        render: (c) => (c.keyType ? `${c.keyType.toUpperCase()} ${c.keyBits ?? ''}`.trim() : '—'),
+        render: (c) => (c.keyType ? `${c.keyType.toUpperCase()} ${c.keyBits ?? ''}`.trim() : '-'),
       },
       { key: 'detectedAt', header: 'Seen', render: (c) => formatDate(c.detectedAt) },
     ],

@@ -67,7 +67,7 @@ describe('DataTable (uncontrolled / client sorting)', () => {
         onSortChange={onSortChange}
       />,
     );
-    // Controlled mode trusts the server's order — rows stay as given.
+    // Controlled mode trusts the server's order, rows stay as given.
     expect(cellTexts()).toEqual(['bravo', 'alpha', 'charlie']);
     fireEvent.click(screen.getByTestId('data-table-header-name'));
     expect(onSortChange).toHaveBeenCalledWith({ key: 'name', dir: 'desc' });

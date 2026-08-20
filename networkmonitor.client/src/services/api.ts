@@ -5,13 +5,13 @@
  * lives in exactly one place. The wrapper's one real job is turning an HTTP
  * failure into an ApiError whose message is worth putting on screen: the
  * server sends meaningful bodies (ProblemDetails, `{ message }`, or plain
- * text — e.g. the 503 "nmap is not installed" from POST /api/scans/run), and
+ * text: e.g. the 503 "nmap is not installed" from POST /api/scans/run), and
  * a user staring at "Request failed" learns nothing.
  */
 
 /** Error thrown for any non-2xx response, carrying the HTTP status code. */
 export class ApiError extends Error {
-  /** HTTP status code — pages branch on this (404 → not found, 503 → nmap missing). */
+  /** HTTP status code: pages branch on this (404 → not found, 503 → nmap missing). */
   readonly status: number;
 
   /**
@@ -66,7 +66,7 @@ async function extractError(response: Response): Promise<FailureDetail> {
       }
       return { message: fallback, correlationId: null };
     } catch {
-      // Not JSON — a short plain-text body is usually the message itself.
+      // Not JSON: a short plain-text body is usually the message itself.
       return { message: text.length <= 500 ? text : fallback, correlationId: null };
     }
   } catch {

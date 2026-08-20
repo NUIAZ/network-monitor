@@ -7,13 +7,13 @@
  *
  *  1. It uses raw `fetch`, never services/api.ts. The api wrapper is one of
  *     the things that can fail, and reporting a wrapper failure through the
- *     wrapper would re-enter the same code path — at best a duplicate error,
+ *     wrapper would re-enter the same code path, at best a duplicate error,
  *     at worst an unbounded loop of reports about reports.
  *  2. It is fire-and-forget. `reportError` returns void, never rejects, and
  *     never awaits anything on the UI's critical path. A logging endpoint
  *     being down must not be able to break a page that was otherwise fine.
  *  3. It de-duplicates. A component that throws inside render throws again on
- *     every retry/re-render — a render loop can fire hundreds of identical
+ *     every retry/re-render; a render loop can fire hundreds of identical
  *     errors per second. Without a short-lived signature cache one bad commit
  *     writes thousands of identical rows and the log becomes unreadable
  *     exactly when it is needed most.
@@ -33,7 +33,7 @@ const DEDUPE_WINDOW_MS = 15_000;
 /** Cap on tracked signatures so a page that throws endlessly can't leak memory. */
 const MAX_TRACKED_SIGNATURES = 200;
 
-/** Stack traces are trimmed before sending — the top frames carry the meaning. */
+/** Stack traces are trimmed before sending, the top frames carry the meaning. */
 const MAX_STACK_CHARS = 8_000;
 
 /** signature → timestamp of the report that claimed it. */
@@ -52,7 +52,7 @@ export interface ReportOptions {
   path?: string;
 }
 
-/** djb2 — a cheap, stable, non-cryptographic hash for building signatures. */
+/** djb2: a cheap, stable, non-cryptographic hash for building signatures. */
 function hash(value: string): string {
   let h = 5381;
   for (let i = 0; i < value.length; i++) {
@@ -91,7 +91,7 @@ function describeError(error: unknown): { message: string; exceptionType: string
     };
   }
   // Non-Error throws are legal in JS and common in library code ("string
-  // thrown", rejected promises carrying plain objects) — record them anyway.
+  // thrown", rejected promises carrying plain objects), record them anyway.
   if (typeof error === 'string') {
     return { message: error, exceptionType: 'String', stackTrace: null };
   }
@@ -117,7 +117,7 @@ function correlationIdOf(error: unknown): string | null {
   return null;
 }
 
-/** The route the user was on — the single most useful piece of context. */
+/** The route the user was on, the single most useful piece of context. */
 function currentPath(): string {
   if (typeof window === 'undefined') return '/';
   return `${window.location.pathname}${window.location.search}` || '/';
@@ -170,7 +170,7 @@ export function resetReportedErrors(): void {
  * Installs the global handlers. Called once from main.tsx.
  *
  * Both handlers chain to whatever was already installed (Vite's dev overlay,
- * for instance) — swallowing another handler's callback would trade error
+ * for instance): swallowing another handler's callback would trade error
  * visibility for error logging, which is a bad trade.
  */
 export function init(): void {

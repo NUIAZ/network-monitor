@@ -19,7 +19,7 @@ function swatchColors(theme: ThemeDefinition): string[] {
 
 /**
  * Reads the theme list from context rather than importing THEMES, so the menu
- * cannot drift from the set the provider will actually accept — selecting a
+ * cannot drift from the set the provider will actually accept, selecting a
  * name the provider does not know is silently ignored there.
  *
  * The outside-close listener is only attached while the menu is open, so the
@@ -30,7 +30,7 @@ export default function ThemePicker() {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click — the standard dropdown contract.
+  // Close on outside click: the standard dropdown contract.
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {

@@ -1,6 +1,6 @@
 /**
  * Error Logs page styling. Token-driven like every other page stylesheet, so
- * the badges and the stack-trace panel stay legible across all eight themes —
+ * the badges and the stack-trace panel stay legible across all eight themes;
  * a log viewer that only works in light mode is a log viewer people stop
  * opening.
  */
@@ -107,7 +107,7 @@
   color: var(--error);
 }
 
-/* Fatal is "error, but it took a screen down" — same hue, outlined so it
+/* Fatal is "error, but it took a screen down", same hue, outlined so it
    separates from the far more common error rows at a glance. */
 .log-level.lvl-fatal {
   background: var(--error-bg);

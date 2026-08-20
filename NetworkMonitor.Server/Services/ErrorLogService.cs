@@ -22,7 +22,7 @@ public interface IErrorLogService
 ///
 /// Every method here swallows its own failures. An error logger that throws
 /// turns a handled problem into an unhandled one, and a logger that cannot
-/// reach the database must not be the reason a request fails — the ILogger
+/// reach the database must not be the reason a request fails; the ILogger
 /// fallback means the information still reaches stdout and the container log.
 /// </summary>
 public class ErrorLogService : IErrorLogService
@@ -97,7 +97,7 @@ public class ErrorLogService : IErrorLogService
         }
     }
 
-    /// <summary>Caps a value to <paramref name="max"/> characters. Null in, null out — stated explicitly so callers assigning to non-nullable fields flow-analyse correctly.</summary>
+    /// <summary>Caps a value to <paramref name="max"/> characters. Null in, null out, stated explicitly so callers assigning to non-nullable fields flow-analyse correctly.</summary>
     [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(value))]
     private static string? Truncate(string? value, int max) =>
         string.IsNullOrEmpty(value) ? value

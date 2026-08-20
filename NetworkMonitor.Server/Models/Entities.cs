@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace NetworkMonitor.Server.Models;
 
 /// <summary>
-/// A physical or logical location that owns one or more networks — a plant, an
+/// A physical or logical location that owns one or more networks: a plant, an
 /// office, a data center. Sites are the top of the inventory hierarchy and give
 /// every device a "where" for filtering, alert routing, and reporting.
 /// </summary>
@@ -27,7 +27,7 @@ public class Site
     [Column("name")]
     public string Name { get; set; } = "";
 
-    /// <summary>City the facility sits in. Display only — nothing keys on it.</summary>
+    /// <summary>City the facility sits in. Display only, nothing keys on it.</summary>
     [MaxLength(120)]
     [Column("city")]
     public string? City { get; set; }
@@ -215,7 +215,7 @@ public class Device
     [Column("hardware")]
     public string? Hardware { get; set; }
 
-    /// <summary>Operator-entered physical location — rack, room, or closet.</summary>
+    /// <summary>Operator-entered physical location, rack, room, or closet.</summary>
     [MaxLength(255)]
     [Column("physical_location")]
     public string? PhysicalLocation { get; set; }
@@ -227,7 +227,7 @@ public class Device
 
     /// <summary>
     /// Consecutive scans in which the device did not answer. Once this reaches the
-    /// configured threshold the device flips to offline — a single dropped packet
+    /// configured threshold the device flips to offline; a single dropped packet
     /// should never page anyone.
     /// </summary>
     [Column("missed_scans")]
@@ -243,7 +243,7 @@ public class Device
     /// <summary>Alerts raised about this device. The link is nulled rather than cascaded on delete, so the alert history survives.</summary>
     public ICollection<Alert> Alerts { get; set; } = [];
 
-    /// <summary>Per-scan observations of this device — the raw material for the history chart.</summary>
+    /// <summary>Per-scan observations of this device, the raw material for the history chart.</summary>
     public ICollection<ScanDeviceSnapshot> Snapshots { get; set; } = [];
 }
 
@@ -338,11 +338,11 @@ public class ScanResult
     [Column("hosts_down")]
     public int HostsDown { get; set; }
 
-    /// <summary>Devices this run saw for the first time — the number that drives "new device" alerts.</summary>
+    /// <summary>Devices this run saw for the first time, the number that drives "new device" alerts.</summary>
     [Column("new_devices")]
     public int NewDevices { get; set; }
 
-    /// <summary>Raw nmap XML. JsonIgnore'd — it is far too large for list responses.</summary>
+    /// <summary>Raw nmap XML. JsonIgnore'd; it is far too large for list responses.</summary>
     [JsonIgnore]
     [Column("raw_xml")]
     public string? RawXml { get; set; }
@@ -352,7 +352,7 @@ public class ScanResult
     [Column("status")]
     public string Status { get; set; } = "running";
 
-    /// <summary>Why a failed run failed — usually the nmap stderr text. Null on success.</summary>
+    /// <summary>Why a failed run failed: usually the nmap stderr text. Null on success.</summary>
     [MaxLength(1000)]
     [Column("failure_reason")]
     public string? FailureReason { get; set; }
@@ -392,14 +392,14 @@ public class ScanDeviceSnapshot
     /// <summary>
     /// What this scan saw. Three values, not two:
     /// <list type="bullet">
-    ///   <item><c>online</c> — the device answered.</item>
-    ///   <item><c>missed</c> — the scan covered it and it did not answer, but it
+    ///   <item><c>online</c>: the device answered.</item>
+    ///   <item><c>missed</c>: the scan covered it and it did not answer, but it
     ///     has not yet missed enough consecutive scans to be declared down.</item>
-    ///   <item><c>offline</c> — it did not answer and the device is now offline.</item>
+    ///   <item><c>offline</c>: it did not answer and the device is now offline.</item>
     /// </list>
     /// A consumer switching on only online/offline silently mis-renders every
     /// <c>missed</c> row, which is most of a flaky device's history. Never
-    /// <c>new</c> — that is a device-level lifecycle state, not an observation.
+    /// <c>new</c>: that is a device-level lifecycle state, not an observation.
     /// </summary>
     [Required, MaxLength(20)]
     [Column("status")]
@@ -451,7 +451,7 @@ public class Alert
     [Column("alert_type")]
     public string AlertType { get; set; } = "";
 
-    /// <summary>info, warning, or critical — drives colour and notification routing.</summary>
+    /// <summary>info, warning, or critical; drives colour and notification routing.</summary>
     [Required, MaxLength(20)]
     [Column("severity")]
     public string Severity { get; set; } = "info";
@@ -469,7 +469,7 @@ public class Alert
     [Column("is_acknowledged")]
     public bool IsAcknowledged { get; set; }
 
-    /// <summary>Who acknowledged it. Unverified free text — this build has no authentication, so treat it as a claim, not an identity.</summary>
+    /// <summary>Who acknowledged it. Unverified free text; this build has no authentication, so treat it as a claim, not an identity.</summary>
     [MaxLength(120)]
     [Column("acknowledged_by")]
     public string? AcknowledgedBy { get; set; }
@@ -482,7 +482,7 @@ public class Alert
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    /// <summary>Device the alert concerns. Null unless the query included it — or because the device has since been deleted.</summary>
+    /// <summary>Device the alert concerns. Null unless the query included it, or because the device has since been deleted.</summary>
     [ForeignKey(nameof(DeviceId))]
     public Device? Device { get; set; }
 }
@@ -604,7 +604,7 @@ public class SslCertificate
     [Column("device_id")]
     public int DeviceId { get; set; }
 
-    /// <summary>Port the certificate was served on — one device can serve several different certs.</summary>
+    /// <summary>Port the certificate was served on; one device can serve several different certs.</summary>
     [Column("port_number")]
     public int PortNumber { get; set; }
 
@@ -635,7 +635,7 @@ public class SslCertificate
     [Column("key_bits")]
     public int? KeyBits { get; set; }
 
-    /// <summary>True when the certificate signs itself — routine on appliance management interfaces, alarming almost anywhere else.</summary>
+    /// <summary>True when the certificate signs itself: routine on appliance management interfaces, alarming almost anywhere else.</summary>
     [Column("is_self_signed")]
     public bool IsSelfSigned { get; set; }
 
@@ -659,7 +659,7 @@ public class SnmpTarget
     [Column("id")]
     public int Id { get; set; }
 
-    /// <summary>Site the device sits at. SNMP targets hang off sites, not networks — a core switch often carries every VLAN at once.</summary>
+    /// <summary>Site the device sits at. SNMP targets hang off sites, not networks; a core switch often carries every VLAN at once.</summary>
     [Column("site_id")]
     public int SiteId { get; set; }
 
@@ -680,7 +680,7 @@ public class SnmpTarget
 
     /// <summary>
     /// SNMP v2c community string. In a real deployment supply this via
-    /// configuration or a secret store — never commit a production community.
+    /// configuration or a secret store: never commit a production community.
     /// </summary>
     [MaxLength(120)]
     [Column("community")]
@@ -723,7 +723,7 @@ public class InterfaceSnapshot
     [Column("snmp_target_id")]
     public int SnmpTargetId { get; set; }
 
-    /// <summary>SNMP ifIndex — an interface's identity within its device, and stable only until the device reboots or is re-carded.</summary>
+    /// <summary>SNMP ifIndex: an interface's identity within its device, and stable only until the device reboots or is re-carded.</summary>
     [Column("if_index")]
     public int IfIndex { get; set; }
 
@@ -732,7 +732,7 @@ public class InterfaceSnapshot
     [Column("if_name")]
     public string IfName { get; set; } = "";
 
-    /// <summary>ifAlias — whatever description the network team configured. Usually the most useful label on the row.</summary>
+    /// <summary>ifAlias: whatever description the network team configured. Usually the most useful label on the row.</summary>
     [MaxLength(255)]
     [Column("if_alias")]
     public string? IfAlias { get; set; }

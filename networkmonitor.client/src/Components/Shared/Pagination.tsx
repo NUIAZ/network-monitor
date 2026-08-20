@@ -25,7 +25,7 @@ function pageWindow(page: number, totalPages: number): number[] {
 
 /**
  * Renders nothing at all when there are no results, so callers can drop it
- * under any list without guarding — the empty state below the table is already
+ * under any list without guarding: the empty state below the table is already
  * saying it. With exactly one page the summary still shows (the count is useful
  * on its own) but the buttons do not.
  *

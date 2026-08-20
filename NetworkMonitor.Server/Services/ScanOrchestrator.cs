@@ -10,7 +10,7 @@ namespace NetworkMonitor.Server.Services;
 /// <summary>
 /// Runs a scan end to end: execute nmap, parse the XML, reconcile what changed
 /// against what we already knew, and raise alerts. This is the piece that turns
-/// a port scanner into a monitoring system — a raw scan tells you what is there
+/// a port scanner into a monitoring system: a raw scan tells you what is there
 /// now; the reconciliation tells you what is <em>different</em>, which is the
 /// only part a human needs to read.
 /// </summary>
@@ -24,7 +24,7 @@ public class ScanOrchestrator
     private readonly ILogger<ScanOrchestrator> _logger;
 
     /// <summary>Creates the orchestrator. Scoped, because it holds a DbContext.</summary>
-    /// <param name="db">Unit of work for the whole reconciliation — the scan record, device updates, snapshots, and alerts all land through this one context.</param>
+    /// <param name="db">Unit of work for the whole reconciliation, the scan record, device updates, snapshots, and alerts all land through this one context.</param>
     /// <param name="nmap">The process seam; substituting it is what makes this class testable without a scanner.</param>
     /// <param name="parser">Turns the XML nmap wrote into objects.</param>
     /// <param name="alertOptions">Supplies the missed-scan threshold that decides when a quiet device becomes an offline one.</param>
@@ -307,7 +307,7 @@ public class ScanOrchestrator
             }
         }
 
-        // Only treat ports as closed when the scan actually probed ports at all —
+        // Only treat ports as closed when the scan actually probed ports at all;
         // a ping sweep returns none and must not close everything.
         foreach (var gone in stored.Where(p => !scannedKeys.Contains((p.PortNumber, p.Protocol))))
         {
@@ -358,7 +358,7 @@ public static class ScanProfileDefaults
     /// </summary>
     public static IReadOnlyList<DefaultProfile> All { get; } =
     [
-        // Host discovery only — cheap enough to run every few minutes.
+        // Host discovery only: cheap enough to run every few minutes.
         new("quick", "-sn -PE -PP -PS22,80,443,3389,445 -PA80,445 -T4", 300, true),
 
         // Service detection. Carries the same discovery probes as quick on
@@ -367,13 +367,13 @@ public static class ScanProfileDefaults
         // works without raw-socket privileges.
         new("deep", "-sT -sV -T3 -PE -PP -PS22,80,443,3389,445 -PA80,445 --host-timeout 10m --max-retries 2 --top-ports 50", 3600, true),
 
-        // NSE vulnerability and TLS scripts. Heavier and noisier — weekly, off by default.
+        // NSE vulnerability and TLS scripts. Heavier and noisier, weekly, off by default.
         new("security", "-sT -sV --script \"(vuln or ssl-cert or ssl-enum-ciphers) and not (auth or brute or dos)\" -T3 --top-ports 100 --host-timeout 4m", 604800, false),
 
         // Every TCP port. Slow; run it deliberately.
         new("full_port", "-sT -sV -p- -T3", 604800, false),
 
-        // UDP needs raw sockets — requires elevated privileges (or Npcap on Windows).
+        // UDP needs raw sockets: requires elevated privileges (or Npcap on Windows).
         new("udp", "-sU -sV --top-ports 100 -T3 --host-timeout 5m --version-intensity 2", 604800, false),
     ];
 
@@ -436,7 +436,7 @@ public class ScanSchedulerService : BackgroundService
     /// <summary>
     /// The scheduling loop. Returns immediately without scanning anything when
     /// Scanning:SchedulerEnabled is false, which is how the shipped configuration
-    /// leaves it — a freshly cloned demo must not start probing the network it
+    /// leaves it: a freshly cloned demo must not start probing the network it
     /// happens to be sitting on.
     /// </summary>
     /// <param name="stoppingToken">Signalled on host shutdown; ends the loop.</param>

@@ -178,7 +178,7 @@ public record ErrorLogDto(
 
 /// <summary>Counts shown on the Error Logs summary tiles.</summary>
 /// <param name="Total">All entries retained.</param>
-/// <param name="Last24Hours">Entries from the last 24 hours — the number that indicates whether something is wrong now.</param>
+/// <param name="Last24Hours">Entries from the last 24 hours, the number that indicates whether something is wrong now.</param>
 /// <param name="ServerErrors">Entries raised by the API.</param>
 /// <param name="ClientErrors">Entries reported by browsers.</param>
 /// <param name="Unresolved">Entries not yet marked resolved.</param>

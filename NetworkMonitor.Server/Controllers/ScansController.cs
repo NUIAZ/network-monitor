@@ -7,7 +7,7 @@ using NetworkMonitor.Server.Services;
 namespace NetworkMonitor.Server.Controllers;
 
 /// <summary>
-/// Scan history plus the "run one now" trigger. History is read-only — scan
+/// Scan history plus the "run one now" trigger. History is read-only; scan
 /// records are the system's evidence trail and nothing is allowed to edit them.
 /// </summary>
 [ApiController]
@@ -21,10 +21,10 @@ public class ScansController : ControllerBase
     private static readonly IReadOnlyDictionary<string, string> ProfileDescriptions =
         new Dictionary<string, string>
         {
-            ["quick"] = "Host discovery only. Finds which addresses answer without probing any ports — cheap enough to run every few minutes.",
+            ["quick"] = "Host discovery only. Finds which addresses answer without probing any ports, cheap enough to run every few minutes.",
             ["deep"] = "Service detection on the 50 most common TCP ports. Identifies what each host is running; the hourly default.",
             ["security"] = "NSE vulnerability and TLS scripts. Heavier and noisier; run weekly or on demand.",
-            ["full_port"] = "Every TCP port (1-65535) with service detection. Slow — run it deliberately, not on a schedule.",
+            ["full_port"] = "Every TCP port (1-65535) with service detection. Slow; run it deliberately, not on a schedule.",
             ["udp"] = "Top 100 UDP services. Requires raw-socket privileges (root, or Npcap on Windows).",
         };
 
@@ -57,7 +57,7 @@ public class ScansController : ControllerBase
 
         var total = await query.CountAsync();
 
-        // Project to a slim shape first (never the entity — RawXml can be
+        // Project to a slim shape first (never the entity; RawXml can be
         // megabytes per row), then compute duration in memory where TimeSpan
         // arithmetic works the same on every provider.
         var rows = await query
@@ -121,7 +121,7 @@ public class ScansController : ControllerBase
 
     /// <summary>
     /// Runs a real nmap scan synchronously and returns the finished result.
-    /// Fails fast with 503 when nmap is not installed — the alternative is a
+    /// Fails fast with 503 when nmap is not installed; the alternative is a
     /// "failed" scan record whose root cause the user has to go digging for.
     /// </summary>
     [HttpPost("run")]
@@ -150,7 +150,7 @@ public class ScansController : ControllerBase
             });
 
         // The orchestrator persists the outcome either way, so a failed scan
-        // still comes back 200 with status "failed" — the run itself succeeded
+        // still comes back 200 with status "failed"; the run itself succeeded
         // as an operation even when the scan did not.
         var scan = await _orchestrator.RunScanAsync(network.Id, profileType, ct);
 

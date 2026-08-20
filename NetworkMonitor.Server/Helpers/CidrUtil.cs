@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace NetworkMonitor.Server.Helpers;
 
 /// <summary>
-/// CIDR parsing and — more importantly — validation. Every scan target is passed
+/// CIDR parsing and (more importantly) validation. Every scan target is passed
 /// to an external process command line, so it is validated here first. Anything
 /// that is not a plain IPv4 address or IPv4/prefix is rejected outright rather
 /// than escaped, which keeps the rule easy to reason about.

@@ -1,7 +1,7 @@
 /**
  * Theme engine: eight named themes (four light, four dark), each a complete
  * set of design-token values. applyTheme writes every token as a CSS custom
- * property on <html>, so the entire UI — components, charts, scrollbars —
+ * property on <html>, so the entire UI (components, charts, scrollbars)
  * re-skins from one place and no component ever hardcodes a color.
  *
  * data-bs-theme is set alongside the tokens so Bootstrap's own light/dark
@@ -20,7 +20,7 @@ const STORAGE_KEY = 'netmon_theme';
 /** Falls back to this when storage is empty or names a theme we removed. */
 const DEFAULT_THEME = 'Midnight';
 
-/** A complete token set. Themes are whole palettes, never partial overrides —
+/** A complete token set. Themes are whole palettes, never partial overrides;
  *  there is no merging against a base, so every theme defines every token. */
 export interface ThemeDefinition {
   /** Also the persisted identity: this string is what goes into localStorage,
@@ -322,7 +322,7 @@ function resolveInitial(): ThemeDefinition {
   try {
     stored = localStorage.getItem(STORAGE_KEY);
   } catch {
-    // Storage can be unavailable (private windows, embedded webviews) — the
+    // Storage can be unavailable (private windows, embedded webviews), the
     // default theme is a perfectly good answer there.
   }
   return THEMES.find((t) => t.name === stored) ?? THEMES.find((t) => t.name === DEFAULT_THEME)!;
@@ -334,14 +334,14 @@ function resolveInitial(): ThemeDefinition {
  * visitor's saved theme is applied before the app body paints instead of
  * flashing the default first.
  *
- * Its side effect is global — tokens are written onto <html>, not scoped to
- * this subtree — so mounting two providers means the last one to render wins.
+ * Its side effect is global: tokens are written onto <html>, not scoped to
+ * this subtree: so mounting two providers means the last one to render wins.
  * Mount it once, at the root, above anything that reads a design token.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeDefinition>(resolveInitial);
 
-  // Apply on mount and whenever the selection changes — including the initial
+  // Apply on mount and whenever the selection changes, including the initial
   // render, so a persisted theme is active before first paint of the app body.
   useEffect(() => {
     applyTheme(theme);

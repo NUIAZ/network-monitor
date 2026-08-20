@@ -8,7 +8,7 @@ namespace NetworkMonitor.Server.Controllers;
 /// <summary>
 /// SNMP-polled switch/router interface data for the utilization page. Snapshot
 /// volume per target is bounded by the poll interval and retention, so the
-/// "latest per interface" rollups are computed in memory — a windowed SQL query
+/// "latest per interface" rollups are computed in memory; a windowed SQL query
 /// would translate differently on SQLite vs PostgreSQL for no practical gain
 /// at this scale.
 /// </summary>

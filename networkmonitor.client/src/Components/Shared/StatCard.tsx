@@ -1,6 +1,6 @@
 /**
  * Dashboard stat tile: icon, big value, small label, optional sub-line.
- * Clickable tiles navigate to the filtered list behind the number — a stat
+ * Clickable tiles navigate to the filtered list behind the number, a stat
  * you can't drill into is just decoration.
  */
 import type { ReactNode } from 'react';
@@ -27,7 +27,7 @@ interface StatCardProps {
  *
  * Taking `role="button"` obliges the tile to behave like one, which means
  * answering BOTH Enter and Space (WCAG 2.1.1 Keyboard). Space additionally has
- * to have its default suppressed, or activating a tile also scrolls the page —
+ * to have its default suppressed, or activating a tile also scrolls the page;
  * the browser only skips that for real `<button>` elements.
  */
 export default function StatCard({ icon, label, value, sub, tone = 'accent', onClick, testId }: StatCardProps) {

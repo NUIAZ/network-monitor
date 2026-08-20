@@ -1,10 +1,10 @@
 // The scanner-facing half of the pipeline: run nmap, read what it said, and
-// classify what was found. Everything in this file is site-local work — it
+// classify what was found. Everything in this file is site-local work: it
 // needs a network to probe and a binary to run, but no database and no global
 // state.
 //
-// That boundary is deliberate rather than incidental. Reconciliation — which
-// devices are new, which stopped answering, which ports changed — lives in
+// That boundary is deliberate rather than incidental. Reconciliation (which
+// devices are new, which stopped answering, which ports changed) lives in
 // ScanOrchestrator because it needs the whole inventory to decide anything;
 // the concerns here need only the host in front of them. Keeping the seam at
 // this line is what makes the distributed-agent topology described in
@@ -21,7 +21,7 @@ using NetworkMonitor.Server.Helpers;
 namespace NetworkMonitor.Server.Services;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Parsed scan DTOs — the boundary between "what nmap said" and "what we store".
+// Parsed scan DTOs: the boundary between "what nmap said" and "what we store".
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// <summary>Everything one scan produced, before it touches the database.</summary>
@@ -77,7 +77,7 @@ public class ParsedPort
     /// <summary>"tcp" or "udp".</summary>
     public string Protocol { get; set; } = "tcp";
 
-    /// <summary>Nmap port state: open, filtered, closed — or "unknown" when the XML carried no state element.</summary>
+    /// <summary>Nmap port state: open, filtered, closed, or "unknown" when the XML carried no state element.</summary>
     public string State { get; set; } = "open";
 
     /// <summary>Service name nmap assigned. Inferred from the port number alone unless -sV ran.</summary>
@@ -93,7 +93,7 @@ public class ParsedPort
 /// <summary>Output of one NSE script, both raw text and any structured elements.</summary>
 public class ParsedScript
 {
-    /// <summary>Script name, e.g. "ssl-cert" or "vulners" — how consumers decide whether they care about this result.</summary>
+    /// <summary>Script name, e.g. "ssl-cert" or "vulners", how consumers decide whether they care about this result.</summary>
     public string Id { get; set; } = "";
 
     /// <summary>The script's human-readable output block, kept verbatim for scripts with no structured elements.</summary>
@@ -120,7 +120,7 @@ public interface INmapExecutorService
 {
     /// <summary>Runs one scan and returns the XML output path plus the exact command that produced it.</summary>
     /// <param name="cidr">Target IPv4 address or CIDR block. Validated before it can reach a command line.</param>
-    /// <param name="nmapArgs">Profile arguments, minus target and output flags. The implementation may adjust these — see the remarks on the concrete method.</param>
+    /// <param name="nmapArgs">Profile arguments, minus target and output flags. The implementation may adjust these, see the remarks on the concrete method.</param>
     /// <param name="excludeIps">Addresses to skip via --exclude. Each is validated the same way as the target.</param>
     /// <param name="ct">Cancels the wait on the nmap process.</param>
     /// <returns>The path to the XML nmap wrote, and the full command line, which the caller stores on the scan record.</returns>
@@ -135,7 +135,7 @@ public interface INmapExecutorService
 /// <summary>
 /// Runs nmap as an external process and hands back the XML it produced.
 /// Targets are validated before they reach the command line, and the argument
-/// string is adjusted for two behaviours that bite every nmap integration —
+/// string is adjusted for two behaviours that bite every nmap integration;
 /// see the comments in <see cref="RunProfileScanAsync"/>.
 /// </summary>
 public class NmapExecutorService : INmapExecutorService
@@ -250,7 +250,7 @@ public class NmapExecutorService : INmapExecutorService
         using var process = new Process { StartInfo = psi };
         process.Start();
 
-        // Drain both pipes concurrently — reading them in sequence deadlocks on
+        // Drain both pipes concurrently: reading them in sequence deadlocks on
         // scans that write a lot to stderr.
         var stdoutTask = process.StandardOutput.ReadToEndAsync(ct);
         var stderrTask = process.StandardError.ReadToEndAsync(ct);
@@ -299,7 +299,7 @@ public class ScanResultParserService : IScanResultParserService
     /// <summary>
     /// Reads one nmap XML document into <see cref="ParsedScanResult"/>. Hosts
     /// without an IPv4 address are dropped, but they still count toward the
-    /// up/down totals — those are taken from the XML's own status elements.
+    /// up/down totals: those are taken from the XML's own status elements.
     /// </summary>
     /// <param name="xmlContent">The complete XML text nmap wrote.</param>
     /// <returns>The parsed hosts plus the up/down counts nmap reported.</returns>

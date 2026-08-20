@@ -4,7 +4,7 @@
  * its per-interface table (status, speed, utilization bar, error counters)
  * and a 24-hour utilization chart.
  *
- * The chart caps itself at the six busiest interfaces — a 48-port switch as
+ * The chart caps itself at the six busiest interfaces, a 48-port switch as
  * 48 lines is noise, and six is where the categorical palette stays honest.
  * The utilization endpoint's exact grouping is normalized in one place
  * (normalizeSamples) so either a flat sample list or a per-interface series
@@ -36,8 +36,8 @@ const SERIES_VARS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(
 const MAX_SERIES = 6;
 
 /**
- * Accepts either shape the utilization endpoint may return — flat samples or
- * `[{ ifName, points: [...] }]` — and yields flat samples.
+ * Accepts either shape the utilization endpoint may return, flat samples or
+ * `[{ ifName, points: [...] }]`, and yields flat samples.
  */
 function normalizeSamples(raw: unknown): UtilizationSample[] {
   if (!Array.isArray(raw)) return [];

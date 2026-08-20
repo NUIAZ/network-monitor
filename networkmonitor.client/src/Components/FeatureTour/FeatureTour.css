@@ -2,7 +2,7 @@
  * Spotlight overlay styling. Every color is a design token so the tour reads
  * correctly in all eight themes; nothing here is hardcoded.
  *
- * The "hole" is not a mask — it is one absolutely-positioned box carrying a
+ * The "hole" is not a mask, it is one absolutely-positioned box carrying a
  * large box-shadow spread. Everything outside the box gets the wash, the box
  * itself stays untouched, and the ring is a *border* rather than a second
  * shadow because an outward spread would paint straight over an outer shadow.
@@ -21,7 +21,7 @@
 
   position: fixed;
   inset: 0;
-  /* Above the sidebar (1040) and the shared dialog layer (1200) — while the
+  /* Above the sidebar (1040) and the shared dialog layer (1200), while the
      tour is running it owns the screen. */
   z-index: 1500;
 }
@@ -46,7 +46,7 @@
   box-sizing: border-box;
   border: 2px solid var(--accent-color);
   border-radius: var(--radius-md);
-  /* See the file header — 200vmax, not 9999px, to keep the rasterised area sane. */
+  /* See the file header: 200vmax, not 9999px, to keep the rasterised area sane. */
   box-shadow: 0 0 0 200vmax var(--tour-scrim);
   /* The scrim beneath handles interaction; the ring must never eat a click. */
   pointer-events: none;

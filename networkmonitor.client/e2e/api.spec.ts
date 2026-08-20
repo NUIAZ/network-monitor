@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
  *
  * These hit the real HTTP surface against the seeded demo database. They are
  * deliberately assertion-light on exact numbers (the seeder can grow) and
- * strict on shape and invariants — the things a client will actually break on.
+ * strict on shape and invariants: the things a client will actually break on.
  */
 
 test.describe('Dashboard API', () => {
@@ -22,7 +22,7 @@ test.describe('Dashboard API', () => {
         // must never exceed the whole.
         expect(summary.onlineDevices + summary.offlineDevices).toBeLessThanOrEqual(summary.totalDevices);
 
-        // nmapAvailable is a boolean either way — its value depends on the host,
+        // nmapAvailable is a boolean either way; its value depends on the host,
         // but the field must always be present so the UI can render the banner.
         expect(typeof summary.nmapAvailable).toBe('boolean');
     });

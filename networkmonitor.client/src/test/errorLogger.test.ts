@@ -1,5 +1,5 @@
 /**
- * errorLogger: the guarantees the rest of the app relies on — one row per
+ * errorLogger: the guarantees the rest of the app relies on, one row per
  * distinct failure (not one per render), a payload the API can store, and a
  * reporter that can never make a bad situation worse by throwing.
  */

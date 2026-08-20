@@ -1,6 +1,6 @@
 /**
  * Friendly "nothing here" placeholder. Every list/table shows one of these
- * instead of a bare empty grid — a blank table reads as broken; an empty
+ * instead of a bare empty grid, a blank table reads as broken; an empty
  * state reads as truth.
  */
 import type { ReactNode } from 'react';
@@ -17,7 +17,7 @@ interface EmptyStateProps {
 
 /**
  * `title` is required on purpose: the whole point is saying which nothing this
- * is — "no devices yet" and "no devices match these filters" call for different
+ * is: "no devices yet" and "no devices match these filters" call for different
  * next actions, and a generic placeholder would blur them together.
  */
 export default function EmptyState({ icon = 'bi-inbox', title, message, children }: EmptyStateProps) {

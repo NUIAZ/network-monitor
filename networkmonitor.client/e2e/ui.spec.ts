@@ -8,7 +8,7 @@ import { test, expect, type Page } from '@playwright/test';
  * a heading disappears is telling you something true.
  *
  * Every page assertion also fails on a console error, because a React page that
- * throws still "renders" — just blank — and a screenshot-free assertion would
+ * throws still "renders" (just blank), and a screenshot-free assertion would
  * otherwise pass on an empty screen.
  */
 
@@ -56,7 +56,7 @@ test.describe('Dashboard', () => {
         await page.goto('/');
 
         // The seeded estate is ~120 devices, so the total tile must show a
-        // non-zero number — a zero here means the seeder silently did nothing.
+        // non-zero number; a zero here means the seeder silently did nothing.
         const body = await page.locator('body').innerText();
         expect(body).toMatch(/\d+/);
         await expect(page.locator('svg').first()).toBeVisible(); // at least one chart rendered
@@ -168,7 +168,7 @@ test.describe('Theming', () => {
             getComputedStyle(document.documentElement).getPropertyValue('--bg-primary'));
         expect(after).not.toBe(before);
 
-        // The choice must survive a reload — it is stored in localStorage.
+        // The choice must survive a reload; it is stored in localStorage.
         await page.reload();
         const afterReload = await page.evaluate(() =>
             getComputedStyle(document.documentElement).getPropertyValue('--bg-primary'));

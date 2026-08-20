@@ -1,13 +1,13 @@
 /**
  * Tiny data-loading hook standardizing the loading/error/reload trio every
- * page needs. Deliberately not a cache — this app's data is live monitoring
+ * page needs. Deliberately not a cache; this app's data is live monitoring
  * state, and showing stale devices as "online" is worse than a spinner.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * What a page gets back from useAsync. `T` is whatever the fetch function
- * resolves to — usually a DTO from types.ts, or a Paged<> envelope of one.
+ * resolves to: usually a DTO from types.ts, or a Paged<> envelope of one.
  */
 export interface AsyncState<T> {
   /** Null until the first fetch resolves, and *retained* across a reload so a
@@ -15,7 +15,7 @@ export interface AsyncState<T> {
   data: T | null;
   /** True during the very first load and during every reload. */
   loading: boolean;
-  /** The ApiError message, already human-readable — safe to put straight on screen. */
+  /** The ApiError message, already human-readable, safe to put straight on screen. */
   error: string | null;
   /** Re-runs the fetch (used by retry buttons and after mutations). */
   reload: () => void;

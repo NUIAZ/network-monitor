@@ -6,7 +6,7 @@ using NetworkMonitor.Server.Models;
 namespace NetworkMonitor.Server.Controllers;
 
 /// <summary>
-/// The alert feed. Acknowledging is the only mutation that matters here —
+/// The alert feed. Acknowledging is the only mutation that matters here;
 /// alerts are raised by the scan pipeline, never created by hand, so this
 /// controller is read + acknowledge + delete and nothing else.
 /// </summary>
@@ -101,7 +101,7 @@ public class AlertsController : ControllerBase
     }
 
     /// <summary>
-    /// Permanently removes one alert. Acknowledging is the normal disposition —
+    /// Permanently removes one alert. Acknowledging is the normal disposition;
     /// deleting discards the record that something happened at all, which is why
     /// there is no bulk equivalent of this call.
     /// </summary>

@@ -8,7 +8,7 @@ namespace NetworkMonitor.Server.Controllers;
 /// <summary>
 /// TLS certificates observed by security scans. Read-only: certificates are
 /// facts about the network, not records anyone should edit. The whole page
-/// exists to answer one question — "what expires next?" — so the default sort
+/// exists to answer one question: "what expires next?", so the default sort
 /// is soonest-expiry-first.
 /// </summary>
 [ApiController]
@@ -22,7 +22,7 @@ public class CertificatesController : ControllerBase
 
     /// <summary>
     /// Paged certificate list. <paramref name="expiringWithinDays"/> keeps
-    /// already-expired certificates in the result on purpose — filtering them
+    /// already-expired certificates in the result on purpose; filtering them
     /// out would hide exactly the rows that most need attention.
     /// </summary>
     [HttpGet]

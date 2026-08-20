@@ -18,7 +18,7 @@ const TYPE_ICONS: Record<string, string> = {
 
 /**
  * Case-insensitive, and falls through to the "unknown" glyph for anything it
- * does not recognise — including null. The classifier's vocabulary can grow on
+ * does not recognise: including null. The classifier's vocabulary can grow on
  * the server before this map catches up, and an unfamiliar type should render
  * as a question mark rather than as a hole in the table.
  */

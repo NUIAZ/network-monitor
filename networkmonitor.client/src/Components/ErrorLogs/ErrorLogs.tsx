@@ -4,7 +4,7 @@
  * Server entries arrive from the exception middleware and the database logger
  * provider; browser entries are posted by services/errorLogger.ts. Because the
  * two share a table, an incident that started as a 500 and ended as a broken
- * page shows up as two rows carrying the same correlation id — which is why
+ * page shows up as two rows carrying the same correlation id, which is why
  * the detail panel puts that id behind a copy button rather than burying it.
  *
  * The table is hand-rolled rather than built on DataTable: rows expand into an
@@ -60,7 +60,7 @@ function truncate(value: string, max = 140): string {
  * typing re-renders the input without re-running the request.
  *
  * `expandedId` allows one open detail panel at a time, and it is not cleared
- * when the list reloads — an id that is no longer on the page simply matches
+ * when the list reloads: an id that is no longer on the page simply matches
  * nothing, so a background refresh cannot collapse the trace you are reading.
  *
  * An empty table here is the correct, healthy state, which is why the page
@@ -147,7 +147,7 @@ export default function ErrorLogs() {
       setCopiedId(entry.id);
       setTimeout(() => setCopiedId((current) => (current === entry.id ? null : current)), 1_500);
     } catch {
-      // Copying is a convenience — the id is on screen and selectable anyway.
+      // Copying is a convenience: the id is on screen and selectable anyway.
     }
   };
 
@@ -160,7 +160,7 @@ export default function ErrorLogs() {
           <h2>Activity &amp; Error Logs</h2>
           <div className="page-subtitle">
             What the application is doing, and everything that has failed on either
-            tier — newest first. Server activity and failures arrive through the
+            tier: newest first. Server activity and failures arrive through the
             standard logging pipeline; browser errors are reported back by the client.
           </div>
         </div>
@@ -321,7 +321,7 @@ export default function ErrorLogs() {
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={COLUMN_COUNT}>
-                    {/* An empty error log is the goal state, not a failure —
+                    {/* An empty error log is the goal state, not a failure;
                         the copy says so instead of showing a sad shrug. */}
                     <EmptyState
                       icon={filtered ? 'bi-funnel' : 'bi-emoji-smile'}
@@ -365,7 +365,7 @@ export default function ErrorLogs() {
                           <span className="log-exception-type">{entry.exceptionType}</span>
                         )}
                       </td>
-                      <td className="cell-mono log-path">{entry.path ?? '—'}</td>
+                      <td className="cell-mono log-path">{entry.path ?? '-'}</td>
                       <td>
                         <button
                           type="button"
@@ -390,7 +390,7 @@ export default function ErrorLogs() {
                             <dl className="detail-facts">
                               <div>
                                 <dt>Exception type</dt>
-                                <dd className="mono">{entry.exceptionType ?? '—'}</dd>
+                                <dd className="mono">{entry.exceptionType ?? '-'}</dd>
                               </div>
                               <div>
                                 <dt>Occurred</dt>
@@ -399,18 +399,18 @@ export default function ErrorLogs() {
                               <div>
                                 <dt>Request</dt>
                                 <dd className="mono">
-                                  {[entry.method, entry.path].filter(Boolean).join(' ') || '—'}
+                                  {[entry.method, entry.path].filter(Boolean).join(' ') || '-'}
                                   {entry.statusCode != null && ` · ${entry.statusCode}`}
                                 </dd>
                               </div>
                               <div>
                                 <dt>User agent</dt>
-                                <dd className="detail-agent">{entry.userAgent ?? '—'}</dd>
+                                <dd className="detail-agent">{entry.userAgent ?? '-'}</dd>
                               </div>
                               <div>
                                 <dt>Correlation id</dt>
                                 <dd className="detail-correlation">
-                                  <span className="mono">{entry.correlationId ?? '—'}</span>
+                                  <span className="mono">{entry.correlationId ?? '-'}</span>
                                   {entry.correlationId && (
                                     <button
                                       type="button"

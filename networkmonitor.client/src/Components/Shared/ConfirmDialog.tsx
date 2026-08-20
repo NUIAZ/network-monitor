@@ -1,5 +1,5 @@
 /**
- * Minimal confirm modal (custom, not Bootstrap JS — we ship Bootstrap CSS
+ * Minimal confirm modal (custom, not Bootstrap JS, we ship Bootstrap CSS
  * only). Used before destructive actions: deleting sites/networks/devices,
  * acknowledging every alert at once.
  */
@@ -22,7 +22,7 @@ interface ConfirmDialogProps {
 /**
  * Kept mounted and gated on `open` rather than conditionally rendered by the
  * caller, so the Escape listener can be wired to the same lifecycle as the
- * dialog. While `busy`, both the backdrop click and the buttons are inert —
+ * dialog. While `busy`, both the backdrop click and the buttons are inert;
  * a destructive action already in flight must not be cancellable or repeatable.
  *
  * Nothing here traps focus, so it is a confirm prompt rather than a full modal.
@@ -37,7 +37,7 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  // Escape closes — standard dialog affordance people expect.
+  // Escape closes: standard dialog affordance people expect.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {

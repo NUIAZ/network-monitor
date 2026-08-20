@@ -14,17 +14,17 @@ function parse(value: string | null | undefined): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-/** "Aug 5, 2026" — date only, for columns where the time would be noise. */
+/** "Aug 5, 2026": date only, for columns where the time would be noise. */
 export function formatDate(value: string | null | undefined): string {
   const d = parse(value);
-  if (!d) return '—';
+  if (!d) return '-';
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-/** "Aug 5, 2026, 2:14 PM" — full timestamp for detail panels and tooltips. */
+/** "Aug 5, 2026, 2:14 PM": full timestamp for detail panels and tooltips. */
 export function formatDateTime(value: string | null | undefined): string {
   const d = parse(value);
-  if (!d) return '—';
+  if (!d) return '-';
   return d.toLocaleString(undefined, {
     month: 'short',
     day: 'numeric',
@@ -35,12 +35,12 @@ export function formatDateTime(value: string | null | undefined): string {
 }
 
 /**
- * "just now", "5m ago", "3h ago", "2d ago" — the alert-feed style. Past a
+ * "just now", "5m ago", "3h ago", "2d ago": the alert-feed style. Past a
  * week, relative time stops being meaningful and we fall back to the date.
  */
 export function relativeTime(value: string | null | undefined, now: Date = new Date()): string {
   const d = parse(value);
-  if (!d) return '—';
+  if (!d) return '-';
   const seconds = Math.floor((now.getTime() - d.getTime()) / 1000);
   if (seconds < 0) return formatDateTime(value);
   if (seconds < 60) return 'just now';
@@ -54,11 +54,11 @@ export function relativeTime(value: string | null | undefined, now: Date = new D
 }
 
 /**
- * "45s", "3m 20s", "1h 12m" — scan durations. Sub-minute keeps seconds
+ * "45s", "3m 20s", "1h 12m": scan durations. Sub-minute keeps seconds
  * because quick scans finish in seconds and "0m" would look broken.
  */
 export function formatDuration(totalSeconds: number | null | undefined): string {
-  if (totalSeconds === null || totalSeconds === undefined || totalSeconds < 0) return '—';
+  if (totalSeconds === null || totalSeconds === undefined || totalSeconds < 0) return '-';
   const s = Math.round(totalSeconds);
   if (s < 60) return `${s}s`;
   const m = Math.floor(s / 60);
@@ -67,9 +67,9 @@ export function formatDuration(totalSeconds: number | null | undefined): string 
   return m % 60 === 0 ? `${h}h` : `${h}h ${m % 60}m`;
 }
 
-/** "1 Gbps", "100 Mbps" — interface speeds from SNMP ifSpeed (bits/second). */
+/** "1 Gbps", "100 Mbps": interface speeds from SNMP ifSpeed (bits/second). */
 export function formatBps(bps: number | null | undefined): string {
-  if (!bps || bps <= 0) return '—';
+  if (!bps || bps <= 0) return '-';
   if (bps >= 1_000_000_000) return `${trimZero(bps / 1_000_000_000)} Gbps`;
   if (bps >= 1_000_000) return `${trimZero(bps / 1_000_000)} Mbps`;
   if (bps >= 1_000) return `${trimZero(bps / 1_000)} Kbps`;
@@ -81,21 +81,21 @@ function trimZero(n: number): string {
   return rounded % 1 === 0 ? String(Math.round(rounded)) : rounded.toFixed(1);
 }
 
-/** "42%" / "3.5%" — utilization display with one decimal only when it matters. */
+/** "42%" / "3.5%": utilization display with one decimal only when it matters. */
 export function formatPercent(value: number | null | undefined): string {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+  if (value === null || value === undefined || Number.isNaN(value)) return '-';
   return `${trimZero(value)}%`;
 }
 
-/** "1,204" — thousands separators for stat tiles. */
+/** "1,204": thousands separators for stat tiles. */
 export function formatNumber(value: number | null | undefined): string {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) return '-';
   return value.toLocaleString();
 }
 
-/** "accepted_risk" → "Accepted risk" — display form for enum-ish API strings. */
+/** "accepted_risk" → "Accepted risk": display form for enum-ish API strings. */
 export function humanize(value: string | null | undefined): string {
-  if (!value) return '—';
+  if (!value) return '-';
   const spaced = value.replace(/_/g, ' ');
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }

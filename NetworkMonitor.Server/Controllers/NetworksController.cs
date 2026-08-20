@@ -12,7 +12,7 @@ namespace NetworkMonitor.Server.Controllers;
 /// <summary>
 /// CRUD for networks (scan targets). The CIDR is the one field that eventually
 /// reaches an external command line, so it is validated here with the same
-/// <see cref="CidrUtil"/> rule the executor enforces — rejecting bad input at
+/// <see cref="CidrUtil"/> rule the executor enforces, rejecting bad input at
 /// the API keeps the failure visible to the person who typed it.
 /// </summary>
 [ApiController]

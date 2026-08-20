@@ -14,7 +14,7 @@
  *
  * Content rule (inherited from HelpGuide.tsx): everything below is verified
  * against the README, docs/API.md, and the components it describes. This build
- * has no authentication, no syslog, no NetFlow — do not describe features that
+ * has no authentication, no syslog, no NetFlow, do not describe features that
  * do not exist.
  */
 
@@ -24,12 +24,12 @@ export type TourPlacement = 'top' | 'bottom' | 'left' | 'right';
 
 /** One stop on the walkthrough: what to ring, what to say, and where to say it. */
 export interface TourStep {
-  /** Stable id — used for React keys and the callout's aria-labelledby. */
+  /** Stable id: used for React keys and the callout's aria-labelledby. */
   id: string;
   /** CSS selector for the element to spotlight. */
   target: string;
   title: string;
-  /** Plain prose, not JSX — see the file header on why the copy stays reviewable. */
+  /** Plain prose, not JSX, see the file header on why the copy stays reviewable. */
   body: string;
   /**
    * Route this step lives on. The tour navigates there first and waits for the
@@ -37,24 +37,24 @@ export interface TourStep {
    * sidebar) leave this undefined and run wherever the reader already is.
    */
   route?: string;
-  /** Defaults to 'bottom' at the overlay. Only a hint — see TourPlacement. */
+  /** Defaults to 'bottom' at the overlay. Only a hint, see TourPlacement. */
   placement?: TourPlacement;
 }
 
 /**
  * Version of the walkthrough. Bumping it changes the localStorage key below,
- * which makes the tour auto-play once more for *everyone* — including people
+ * which makes the tour auto-play once more for *everyone*, including people
  * who already dismissed it. Bump it after a significant UI change (a page
  * added or removed, navigation restructured, steps rewritten); do not bump it
  * for a typo fix, or the tour becomes something users learn to dismiss.
  */
 export const TOUR_VERSION = 1;
 
-/** First-run gate. Versioned so a bump re-plays the tour — see TOUR_VERSION. */
+/** First-run gate. Versioned so a bump re-plays the tour, see TOUR_VERSION. */
 export const TOUR_SEEN_KEY = `netmon_tour_seen_v${TOUR_VERSION}`;
 
 /**
- * The walkthrough, in reading order — array position *is* the step order, and
+ * The walkthrough, in reading order, array position *is* the step order, and
  * the progress pips count entries here.
  *
  * The route sequence is intentionally a tour of the app rather than the
@@ -72,7 +72,7 @@ export const TOUR_STEPS: TourStep[] = [
     placement: 'right',
     title: 'Welcome to NetworkMonitor',
     body:
-      'This app runs nmap scans on a schedule, keeps state between runs, and turns the difference between one scan and the next into an asset inventory, a change feed, and a vulnerability queue. It ships seeded with a fictional demo estate — four sites and roughly 120 devices with 14 days of history — so every screen has real-looking data before you scan anything. nmap itself is optional: without it the app runs entirely on stored data. There is no sign-in in this build.',
+      'This app runs nmap scans on a schedule, keeps state between runs, and turns the difference between one scan and the next into an asset inventory, a change feed, and a vulnerability queue. It ships seeded with a fictional demo estate (four sites and roughly 120 devices with 14 days of history), so every screen has real-looking data before you scan anything. nmap itself is optional: without it the app runs entirely on stored data. There is no sign-in in this build.',
   },
   {
     id: 'stat-tiles',
@@ -81,7 +81,7 @@ export const TOUR_STEPS: TourStep[] = [
     placement: 'bottom',
     title: 'The numbers that matter first',
     body:
-      'Six tiles: total devices, online, offline, open alerts, open vulnerabilities, and TLS certificates expiring within 30 days. Each tile is a link rather than a readout — clicking one opens the filtered list behind its number, so it is a starting point instead of a dead end.',
+      'Six tiles: total devices, online, offline, open alerts, open vulnerabilities, and TLS certificates expiring within 30 days. Each tile is a link rather than a readout: clicking one opens the filtered list behind its number, so it is a starting point instead of a dead end.',
   },
   {
     id: 'dashboard-charts',
@@ -115,7 +115,7 @@ export const TOUR_STEPS: TourStep[] = [
     target: '[data-tour="network-map"]',
     route: '/map',
     placement: 'top',
-    title: 'Site, network, device — as one picture',
+    title: 'Site, network, device: one picture',
     body:
       'The topology view draws the whole estate as a diagram: sites containing networks containing devices, colored by device type and status. Scroll to zoom, drag to pan, hover a node for its details, and click a device to jump to its page. The site filter narrows the drawing to one location.',
   },
@@ -126,7 +126,7 @@ export const TOUR_STEPS: TourStep[] = [
     placement: 'top',
     title: 'A triage queue, not a report',
     body:
-      'Vulnerabilities come from matching the service versions scans discovered against CVE records, ranked by CVSS score descending. Set a finding to open, remediated or accepted risk inline from its row, so the list shrinks over time instead of scrolling forever. The Certificates page beside it lists every TLS certificate seen on an open port, soonest expiry first. Both are fed by the security scan profile, which ships disabled — on a fresh install the demo data stands in for it.',
+      'Vulnerabilities come from matching the service versions scans discovered against CVE records, ranked by CVSS score descending. Set a finding to open, remediated or accepted risk inline from its row, so the list shrinks over time instead of scrolling forever. The Certificates page beside it lists every TLS certificate seen on an open port, soonest expiry first. Both are fed by the security scan profile, which ships disabled; on a fresh install the demo data stands in for it.',
   },
   {
     id: 'switches',
@@ -135,7 +135,7 @@ export const TOUR_STEPS: TourStep[] = [
     placement: 'right',
     title: 'The one thing a port scan cannot tell you',
     body:
-      'Switches and routers are polled over SNMP for per-interface counters — how much traffic a link is actually carrying. Pick a target from this rail to load its interface table (status, negotiated speed, utilization, error counters) and a 24-hour chart of its busiest interfaces. Errors climbing while utilization stays low usually means a physical problem rather than load.',
+      'Switches and routers are polled over SNMP for per-interface counters: how much traffic a link is actually carrying. Pick a target from this rail to load its interface table (status, negotiated speed, utilization, error counters) and a 24-hour chart of its busiest interfaces. Errors climbing while utilization stays low usually means a physical problem rather than load.',
   },
   {
     id: 'error-logs',
@@ -153,7 +153,7 @@ export const TOUR_STEPS: TourStep[] = [
     placement: 'bottom',
     title: 'The long version',
     body:
-      'This guide documents every page, how change detection works, and the safety rules — searchable, with a stable anchor per section so /help#change-detection deep-links straight to it. This button replays the tour whenever you want it, and so does the signpost button in the top bar.',
+      'This guide documents every page, how change detection works, and the safety rules: searchable, with a stable anchor per section so /help#change-detection deep-links straight to it. This button replays the tour whenever you want it, and so does the signpost button in the top bar.',
   },
   {
     id: 'theme',
@@ -161,6 +161,6 @@ export const TOUR_STEPS: TourStep[] = [
     placement: 'bottom',
     title: 'Make it yours, then go explore',
     body:
-      'Eight themes, four light and four dark, remembered in this browser. Every color in the interface comes from one design-token set, so switching theme re-skins the charts, status pills and scrollbars along with the page instead of leaving them stranded. That is the tour — press Finish and have a look around.',
+      'Eight themes, four light and four dark, remembered in this browser. Every color in the interface comes from one design-token set, so switching theme re-skins the charts, status pills and scrollbars along with the page instead of leaving them stranded. That is the tour, press Finish and have a look around.',
   },
 ];

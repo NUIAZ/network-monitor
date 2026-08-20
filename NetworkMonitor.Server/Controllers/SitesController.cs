@@ -6,7 +6,7 @@ using NetworkMonitor.Server.Models;
 namespace NetworkMonitor.Server.Controllers;
 
 /// <summary>
-/// CRUD for sites — the top of the inventory hierarchy. Deleting a site is the
+/// CRUD for sites: the top of the inventory hierarchy. Deleting a site is the
 /// most destructive single call in the API (it cascades through networks to
 /// devices and their history), which is why the client confirms it twice.
 /// </summary>
@@ -85,7 +85,7 @@ public class SitesController : ControllerBase
     }
 
     /// <summary>
-    /// Replaces a site's editable fields. This is a full replace, not a patch —
+    /// Replaces a site's editable fields. This is a full replace, not a patch;
     /// omitting City clears it rather than leaving it alone.
     /// </summary>
     /// <param name="id">Site to update.</param>

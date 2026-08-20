@@ -4,7 +4,7 @@
  * Six stat tiles (each clicking through to the filtered list behind its
  * number), a device-type donut, 14 days of scan activity, the alert trend
  * stacked by severity, and the newest unacknowledged alerts. When the server
- * reports nmap missing, a banner says so up front — a scanner that can't
+ * reports nmap missing, a banner says so up front: a scanner that can't
  * scan should announce it on the front page, not bury it in Settings.
  */
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +63,7 @@ function shortDate(value: string | number): string {
  * disagree with the charts beside them.
  *
  * Renders `data-testid="dashboard"` only once real content is on screen, never
- * during the spinner — the tour's auto-start polls for that element to decide
+ * during the spinner: the tour's auto-start polls for that element to decide
  * the app is ready, so moving it onto the loading branch would make the first
  * spotlight land on a skeleton.
  */
@@ -71,7 +71,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const { data, loading, error, reload } = useAsync<DashboardData>(async () => {
-    // Fire the five requests together — the dashboard is read-only and the
+    // Fire the five requests together: the dashboard is read-only and the
     // pieces are independent, so serializing them would just add latency.
     const [summary, deviceTypes, scanActivity, alertTrend, recent] = await Promise.all([
       api.get<DashboardSummary>('/api/dashboard/summary'),
@@ -97,7 +97,7 @@ export default function Dashboard() {
         <div className="warn-banner" data-testid="nmap-banner">
           <i className="bi bi-exclamation-triangle-fill" />
           <div>
-            <strong>nmap not detected on the server.</strong> Discovery and scanning are disabled —
+            <strong>nmap not detected on the server.</strong> Discovery and scanning are disabled;
             existing data is shown, but no new scans will run until nmap is installed and on the PATH.
           </div>
         </div>

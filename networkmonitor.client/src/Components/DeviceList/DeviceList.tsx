@@ -36,7 +36,7 @@ function parseSort(raw: string | null): SortState | undefined {
  * value is the debounced echo of the search box (kept so the input stays
  * responsive between the keystroke and the URL catching up 300ms later).
  *
- * Filter changes reset to page 1 — staying on page 7 of a result set that just
+ * Filter changes reset to page 1, staying on page 7 of a result set that just
  * shrank to two pages would show an empty table and look like a failure.
  * Params are written with `replace`, so a filter tweak is not a Back-button
  * step; Back leaves the page rather than undoing one keystroke at a time.
@@ -120,7 +120,7 @@ export default function DeviceList() {
         sortable: true,
         render: (d) => (
           <span className="cell-primary">
-            {d.hostname ?? <span className="text-muted-token">—</span>}
+            {d.hostname ?? <span className="text-muted-token">-</span>}
             {d.isFlagged && <i className="bi bi-flag-fill text-flag ms-2" title="Flagged" />}
             {d.isExcluded && <i className="bi bi-eye-slash ms-2 text-muted-token" title="Excluded from scans" />}
           </span>
@@ -132,12 +132,12 @@ export default function DeviceList() {
         sortable: true,
         render: (d) => <span className="text-capitalize">{d.deviceType}</span>,
       },
-      { key: 'vendor', header: 'Vendor', sortable: true, render: (d) => d.vendor ?? '—' },
+      { key: 'vendor', header: 'Vendor', sortable: true, render: (d) => d.vendor ?? '-' },
       {
         key: 'osGuess',
         header: 'OS',
         render: (d) => (
-          <span className="os-cell" title={d.osGuess ?? undefined}>{d.osGuess ?? '—'}</span>
+          <span className="os-cell" title={d.osGuess ?? undefined}>{d.osGuess ?? '-'}</span>
         ),
       },
       {

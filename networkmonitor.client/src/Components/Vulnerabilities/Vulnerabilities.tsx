@@ -1,7 +1,7 @@
 /**
  * Vulnerability triage: CVSS-sorted table with severity/status filters,
  * free-text search, and inline status changes (open / remediated /
- * accepted_risk) — the three-way outcome every finding eventually gets.
+ * accepted_risk): the three-way outcome every finding eventually gets.
  * CVE ids link out to the NVD entry for the full write-up.
  */
 import { useMemo, useState } from 'react';
@@ -35,7 +35,7 @@ function cvssBand(score: number | null): string {
  * setting changed to remediated should leave the list.
  *
  * Status changes reload the whole page of results instead of patching the row
- * in place — a row that no longer matches the filter has to disappear, and
+ * in place: a row that no longer matches the filter has to disappear, and
  * re-reading is simpler than reconciling that locally.
  */
 export default function Vulnerabilities() {
@@ -75,7 +75,7 @@ export default function Vulnerabilities() {
         sortValue: (v) => v.cvssScore,
         render: (v) => (
           <span className={`cvss-chip cvss-${cvssBand(v.cvssScore)}`}>
-            {v.cvssScore != null ? v.cvssScore.toFixed(1) : '—'}
+            {v.cvssScore != null ? v.cvssScore.toFixed(1) : '-'}
           </span>
         ),
       },
@@ -112,7 +112,7 @@ export default function Vulnerabilities() {
         header: 'Service',
         render: (v) => (
           <span>
-            {v.affectedService ?? '—'}
+            {v.affectedService ?? '-'}
             {v.portNumber != null && <span className="text-muted-token"> :{v.portNumber}</span>}
           </span>
         ),
@@ -187,7 +187,7 @@ export default function Vulnerabilities() {
           onRowClick={(v) => navigate(`/devices/${v.deviceId}`)}
           defaultSort={{ key: 'cvssScore', dir: 'desc' }}
           emptyTitle="No vulnerabilities match"
-          emptyMessage={status === 'open' ? 'Nothing open — either you patched everything or the security profile hasn’t run yet.' : 'Try widening the filters.'}
+          emptyMessage={status === 'open' ? 'Nothing open: either you patched everything or the security profile hasn’t run yet.' : 'Try widening the filters.'}
           emptyIcon="bi-shield-check"
           testId="vulns-table"
         />

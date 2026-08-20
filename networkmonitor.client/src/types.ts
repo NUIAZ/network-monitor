@@ -33,7 +33,7 @@ export interface DashboardSummary {
   totalDevices: number;
   onlineDevices: number;
   offlineDevices: number;
-  /** First seen within a rolling 24 hours — not "since midnight". */
+  /** First seen within a rolling 24 hours, not "since midnight". */
   newDevices24h: number;
   /** Unacknowledged, any severity. */
   openAlerts: number;
@@ -44,19 +44,19 @@ export interface DashboardSummary {
   networks: number;
   /** Start time of the newest scan of any type. Null until something has scanned. */
   lastScanAt: string | null;
-  /** Status 'open' only — remediated and accepted-risk findings are excluded. */
+  /** Status 'open' only; remediated and accepted-risk findings are excluded. */
   openVulnerabilities: number;
   criticalVulnerabilities: number;
   /**
    * Certificates inside the expiry warning window (30 days by default).
-   * Already-expired certificates are counted here too — an expired cert is the
+   * Already-expired certificates are counted here too; an expired cert is the
    * most urgent member of the set, not a separate category.
    */
   expiringCerts: number;
   /**
    * Whether the server can execute nmap *right now*; re-checked per request
    * rather than cached at startup, so the "install nmap" banner reflects the
-   * host as it currently is. False is not fatal — every screen still works off
+   * host as it currently is. False is not fatal; every screen still works off
    * stored data, only new scans are unavailable.
    */
   nmapAvailable: boolean;
@@ -66,14 +66,14 @@ export interface DashboardSummary {
 
 /** One slice of the device-type donut. Sorted by count descending by the server. */
 export interface DeviceTypeCount {
-  /** One of DEVICE_TYPES — the classifier's own vocabulary, not free text. */
+  /** One of DEVICE_TYPES: the classifier's own vocabulary, not free text. */
   deviceType: string;
   count: number;
 }
 
 /** A day in the scan-activity chart. */
 export interface ScanActivityPoint {
-  /** Calendar day in UTC as 'yyyy-MM-dd' — chosen so points sort lexically. */
+  /** Calendar day in UTC as 'yyyy-MM-dd', chosen so points sort lexically. */
   date: string;
   /** Scans started that day. Days with no scans are still emitted, zero-filled,
    *  so the x-axis stays continuous rather than skipping over quiet days. */
@@ -84,7 +84,7 @@ export interface ScanActivityPoint {
    * and over and make a busy schedule look like a growing estate.
    */
   hostsUp: number;
-  /** Genuinely a daily total — a device is only ever discovered once. */
+  /** Genuinely a daily total: a device is only ever discovered once. */
   newDevices: number;
 }
 
@@ -106,7 +106,7 @@ export interface Site {
   id: number;
   /**
    * Short uppercase key shown in filters and badges (e.g. 'DAL'). Max 20 chars,
-   * uppercased on write, and unique — a collision is rejected with a 409 rather
+   * uppercased on write, and unique; a collision is rejected with a 409 rather
    * than silently renamed.
    */
   siteKey: string;
@@ -128,7 +128,7 @@ export interface Site {
 }
 
 /**
- * Body for both POST and PUT /api/sites — the two operations validate
+ * Body for both POST and PUT /api/sites, the two operations validate
  * identically, so there is one shape rather than two that drift apart.
  */
 export interface SitePayload {
@@ -193,8 +193,8 @@ export interface NetworkPayload {
 }
 
 /**
- * One of the five scan profiles attached to a network. The set is fixed — one
- * of each type per network — so profiles are addressed by `profileType` rather
+ * One of the five scan profiles attached to a network. The set is fixed (one
+ * of each type per network), so profiles are addressed by `profileType` rather
  * than by id (it is the route segment for PUT /api/networks/{id}/profiles/{type}).
  */
 export interface ScanProfile {
@@ -213,7 +213,7 @@ export interface ScanProfile {
   /** False leaves the profile configured but never scheduled; it can still be run on demand. */
   isEnabled: boolean;
   /**
-   * When the last run *started*, not when it finished — that is what the
+   * When the last run *started*, not when it finished; that is what the
    * scheduler's "is it due" check keys on. Null means never ran, which the
    * scheduler treats as immediately due.
    */
@@ -273,7 +273,7 @@ export interface Device {
    * One of DEVICE_TYPES. Inferred from OS, vendor, open ports and hostname by
    * an ordered rule set where the first match wins, so a printer that also
    * serves a web UI is still a printer. Re-classification only happens when a
-   * scan actually learned something — a quick ping sweep must not downgrade a
+   * scan actually learned something: a quick ping sweep must not downgrade a
    * device that a deep scan had already typed.
    */
   deviceType: string;
@@ -285,7 +285,7 @@ export interface Device {
   lastSeen: string;
   /**
    * The last scan that *covered* this device, whether or not it answered.
-   * Compare against lastSeen to tell "quiet" apart from "not looked at" —
+   * Compare against lastSeen to tell "quiet" apart from "not looked at";
    * they look identical if you only read one of the two.
    */
   lastScannedAt: string | null;
@@ -308,7 +308,7 @@ export interface Device {
   /**
    * Consecutive scans that covered this device and got no answer; reset to 0 on
    * any successful sighting. At 3 the device flips to 'offline' and raises a
-   * critical alert — the threshold is above 1 so one dropped probe cannot page
+   * critical alert: the threshold is above 1 so one dropped probe cannot page
    * anyone.
    */
   missedScans: number;
@@ -323,7 +323,7 @@ export interface Device {
   certificates?: SslCertificate[];
 }
 
-/** Body for PUT /api/devices/{id} — only the operator-owned fields. */
+/** Body for PUT /api/devices/{id}, only the operator-owned fields. */
 export interface DeviceUpdatePayload {
   hostname: string | null;
   hardware: string | null;
@@ -351,7 +351,7 @@ export interface DevicePort {
    * the same number can be open on both at once.
    */
   protocol: string;
-  /** 'open', 'filtered' or 'closed' — and 'unknown' when the scan reported no state. */
+  /** 'open', 'filtered' or 'closed', and 'unknown' when the scan reported no state. */
   state: string;
   /** A guess from the port number alone unless the profile ran version detection. */
   serviceName: string | null;
@@ -374,7 +374,7 @@ export interface DeviceHistoryPoint {
   /** A step change here is usually the interesting part of the chart. */
   openPortCount: number;
   /**
-   * Round-trip latency in milliseconds. Null when the scan did not measure it —
+   * Round-trip latency in milliseconds. Null when the scan did not measure it:
    * either the host was down, or the profile reports no timing at all.
    */
   responseTimeMs: number | null;
@@ -432,7 +432,7 @@ export interface TopologyResponse {
 /**
  * One run of one scan profile against one network.
  *
- * A failed scan still arrives over HTTP 200 — the request succeeded even though
+ * A failed scan still arrives over HTTP 200; the request succeeded even though
  * the scan did not, so callers must check `status` rather than trusting the
  * status code.
  */
@@ -474,7 +474,7 @@ export interface ScanResult {
 
 /**
  * What one scan saw of one device. These rows are what make the history view
- * possible at all — the device row only ever holds current state, so without a
+ * possible at all: the device row only ever holds current state, so without a
  * per-scan record there would be nothing to plot.
  */
 export interface ScanDeviceSnapshot {
@@ -484,7 +484,7 @@ export interface ScanDeviceSnapshot {
   /**
    * An observation, not a lifecycle state: 'online' when the device answered,
    * otherwise 'offline' or 'missed' depending on what the device was already
-   * marked as. Never 'new' — that belongs to the device, not to a sighting.
+   * marked as. Never 'new'; that belongs to the device, not to a sighting.
    */
   status: string;
   openPortCount: number;
@@ -522,7 +522,7 @@ export const ALERT_TYPES = [
   'vulnerability',
 ] as const;
 
-/** One entry in the change feed — something the scanner noticed differed from last time. */
+/** One entry in the change feed, something the scanner noticed differed from last time. */
 export interface Alert {
   id: number;
   /**
@@ -563,7 +563,7 @@ export interface Alert {
 
 /**
  * Triage state. 'accepted_risk' is a decision someone made, not a lesser form
- * of 'open' — which is why the queue counts only 'open' as outstanding.
+ * of 'open', which is why the queue counts only 'open' as outstanding.
  */
 export type VulnerabilityStatus = 'open' | 'remediated' | 'accepted_risk';
 
@@ -615,7 +615,7 @@ export interface SslCertificate {
   isSelfSigned: boolean;
   detectedAt: string;
   /**
-   * Not stored — computed server-side against request time so every client
+   * Not stored: computed server-side against request time so every client
    * agrees on it. Negative means already expired; absent when validTo is unknown.
    */
   daysUntilExpiry?: number;
@@ -642,7 +642,7 @@ export interface SnmpTargetSummary {
   siteName: string | null;
   /**
    * Interfaces seen in the last 48 hours of polling, not the device's lifetime
-   * total — the window bounds the work regardless of how long history is kept.
+   * total: the window bounds the work regardless of how long history is kept.
    */
   interfaceCount: number;
   /** Of those interfaces, how many are currently 'up'. */
@@ -657,7 +657,7 @@ export interface InterfaceSnapshot {
   id?: number;
   snmpTargetId?: number;
   /**
-   * SNMP ifIndex — an interface's identity within its device, but stable only
+   * SNMP ifIndex: an interface's identity within its device, but stable only
    * until the device reboots or is re-carded, so it is not a durable key.
    */
   ifIndex: number;
@@ -670,7 +670,7 @@ export interface InterfaceSnapshot {
   speedBps: number;
   /** ifOperStatus: 'up', 'down' or 'testing'. */
   operStatus: string;
-  /** Raw cumulative counter at poll time. Wraps, so only deltas mean anything —
+  /** Raw cumulative counter at poll time. Wraps, so only deltas mean anything;
    *  a wrapping or reset counter shows up here as a drop. */
   inOctets: number;
   /** Same wrapping caveat as inOctets. */
@@ -702,14 +702,14 @@ export interface UtilizationSample {
 // Error logs
 // ---------------------------------------------------------------------------
 
-/** Which tier produced the entry — the API host or a browser session. */
+/** Which tier produced the entry, the API host or a browser session. */
 export type ErrorLogSource = 'server' | 'client';
 
 /**
  * Severity the server persists.
  *
- * `info` is routine application activity — a scan starting, the scheduler
- * deciding what is due — captured because the database sink applies a lower
+ * `info` is routine application activity (a scan starting, the scheduler
+ * deciding what is due), captured because the database sink applies a lower
  * threshold to the application's own log categories than to the framework's.
  * `fatal` is reserved for failures that took a request or a screen down.
  */
@@ -740,7 +740,7 @@ export interface ErrorLogEntry {
   isResolved: boolean;
 }
 
-/** GET /api/logs/summary — the five numbers the page tiles. */
+/** GET /api/logs/summary: the five numbers the page tiles. */
 export interface ErrorLogSummary {
   total: number;
   last24Hours: number;
@@ -759,7 +759,7 @@ export interface ClientErrorReport {
   correlationId: string | null;
 }
 
-/** DELETE /api/logs?olderThanDays= — how many rows the purge removed. */
+/** DELETE /api/logs?olderThanDays=: how many rows the purge removed. */
 export interface ErrorLogPurgeResult {
   removed: number;
 }
@@ -778,7 +778,7 @@ export interface AppSetting {
   /** Unique, and the route segment for PUT /api/settings/{key}. */
   key: string;
   /** Always a string on the wire however it is interpreted. Null is a valid,
-   *  stored value — it is how a setting gets cleared. */
+   *  stored value: it is how a setting gets cleared. */
   value: string | null;
   /** Rendered as help text beside the field. */
   description: string | null;
@@ -790,7 +790,7 @@ export interface SystemInfo {
   /** Informational version with the git-sha suffix already trimmed server-side,
    *  because the full 40-char suffix overflows the sidebar footer it renders into. */
   version: string;
-  /** Live check, same as the dashboard's — not a startup snapshot. */
+  /** Live check, same as the dashboard's, not a startup snapshot. */
   nmapAvailable: boolean;
   nmapVersion: string | null;
   /**

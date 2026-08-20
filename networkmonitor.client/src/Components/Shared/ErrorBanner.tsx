@@ -12,7 +12,7 @@ interface ErrorBannerProps {
 }
 
 /**
- * Carries `role="alert"`, so it is announced the moment it appears — mount it
+ * Carries `role="alert"`, so it is announced the moment it appears, mount it
  * when the failure happens rather than rendering it hidden and revealing it,
  * which would announce nothing.
  *

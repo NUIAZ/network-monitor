@@ -38,7 +38,7 @@ builder.Services.Configure<AlertOptions>(builder.Configuration.GetSection(AlertO
 builder.Services.Configure<DemoOptions>(builder.Configuration.GetSection(DemoOptions.SectionName));
 
 // ── Database ──────────────────────────────────────────────────────────────────
-// SQLite by default so the app runs with zero setup — the file is created and
+// SQLite by default so the app runs with zero setup; the file is created and
 // seeded with demo data on first start. Set Database:Provider to "postgres"
 // (and a matching connection string) for a real deployment; see INSTALL.md.
 var provider = builder.Configuration["Database:Provider"] ?? "sqlite";

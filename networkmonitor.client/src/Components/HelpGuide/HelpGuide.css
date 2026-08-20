@@ -4,7 +4,7 @@
  * all eight themes; nothing here is hardcoded.
  */
 
-/* Guided-tour replay button in the page header — never wraps or stretches. */
+/* Guided-tour replay button in the page header, never wraps or stretches. */
 .help-tour-button {
   flex-shrink: 0;
   white-space: nowrap;
@@ -101,7 +101,7 @@
   color: var(--accent-color);
 }
 
-/* Filtered out by the search box — kept in place so the index does not
+/* Filtered out by the search box, kept in place so the index does not
    reflow under the reader's cursor while they type. */
 .help-index-item.dimmed {
   opacity: 0.35;

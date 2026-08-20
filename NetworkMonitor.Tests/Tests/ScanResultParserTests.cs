@@ -139,7 +139,7 @@ public class ScanResultParserTests
         var act = () => _parser.Parse(hostile);
 
         // Either it throws on the undefined entity or it parses without ever
-        // reading the file — both are safe. What must never happen is the
+        // reading the file: both are safe. What must never happen is the
         // contents of a local file appearing in the result.
         try
         {
@@ -148,7 +148,7 @@ public class ScanResultParserTests
         }
         catch (System.Xml.XmlException)
         {
-            // Undefined entity rejected outright — also acceptable.
+            // Undefined entity rejected outright: also acceptable.
         }
     }
 

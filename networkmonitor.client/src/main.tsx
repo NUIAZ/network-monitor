@@ -11,7 +11,7 @@ import App from './App';
 import { init as initErrorLogger } from './services/errorLogger';
 
 // Installed before the first render so a crash during initial mount is still
-// reported — the failures worth catching are the ones that happen early.
+// reported: the failures worth catching are the ones that happen early.
 initErrorLogger();
 
 createRoot(document.getElementById('root')!).render(

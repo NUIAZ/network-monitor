@@ -1,5 +1,5 @@
 /**
- * Formatting helpers — pure functions, exact expectations.
+ * Formatting helpers: pure functions, exact expectations.
  */
 import { describe, expect, it } from 'vitest';
 import {
@@ -26,8 +26,8 @@ describe('relativeTime', () => {
   });
 
   it('returns a dash for null/garbage', () => {
-    expect(relativeTime(null)).toBe('—');
-    expect(relativeTime('not-a-date')).toBe('—');
+    expect(relativeTime(null)).toBe('-');
+    expect(relativeTime('not-a-date')).toBe('-');
   });
 });
 
@@ -41,8 +41,8 @@ describe('formatDuration', () => {
   });
 
   it('returns a dash for null and negatives', () => {
-    expect(formatDuration(null)).toBe('—');
-    expect(formatDuration(-5)).toBe('—');
+    expect(formatDuration(null)).toBe('-');
+    expect(formatDuration(-5)).toBe('-');
   });
 });
 
@@ -51,7 +51,7 @@ describe('formatBps', () => {
     expect(formatBps(1_000_000_000)).toBe('1 Gbps');
     expect(formatBps(100_000_000)).toBe('100 Mbps');
     expect(formatBps(2_500_000_000)).toBe('2.5 Gbps');
-    expect(formatBps(0)).toBe('—');
+    expect(formatBps(0)).toBe('-');
   });
 });
 
@@ -59,7 +59,7 @@ describe('formatPercent', () => {
   it('trims trailing zeros but keeps meaningful decimals', () => {
     expect(formatPercent(42)).toBe('42%');
     expect(formatPercent(3.54)).toBe('3.5%');
-    expect(formatPercent(null)).toBe('—');
+    expect(formatPercent(null)).toBe('-');
   });
 });
 
@@ -67,7 +67,7 @@ describe('humanize', () => {
   it('capitalizes and de-underscores', () => {
     expect(humanize('accepted_risk')).toBe('Accepted risk');
     expect(humanize('device_offline')).toBe('Device offline');
-    expect(humanize(null)).toBe('—');
+    expect(humanize(null)).toBe('-');
   });
 });
 

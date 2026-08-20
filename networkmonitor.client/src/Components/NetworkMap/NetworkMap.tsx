@@ -1,5 +1,5 @@
 /**
- * Network topology map — inline SVG, no chart library.
+ * Network topology map: inline SVG, no chart library.
  *
  * Layout is deterministic and computed in one pass: each network's devices
  * sit on concentric rings sized so nodes never overlap; networks orbit their
@@ -7,8 +7,8 @@
  * rows. Everything is then normalized into a fixed 1400×800 view space so
  * pan/zoom math is independent of both the data and the container size.
  *
- * Devices are colored by status and shaped by type — two independent facts,
- * two independent visual channels — with a legend for both. Hovering shows
+ * Devices are colored by status and shaped by type (two independent facts,
+ * two independent visual channels), with a legend for both. Hovering shows
  * the identity tooltip; clicking a device jumps to its detail page.
  */
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -98,7 +98,7 @@ function layoutTopology(sites: TopologySite[]): SitePos[] {
       orbit = Math.max(orbit, needed);
     }
     // The site name is drawn just below the hub, so the ring must never place a
-    // cluster due south — its own label would land on top of the site's. An even
+    // cluster due south: its own label would land on top of the site's. An even
     // number of clusters starting at due north always produces one at due south,
     // so even counts get a half-step rotation (2 networks become left/right
     // rather than above/below). Odd counts never hit south to begin with.
@@ -141,12 +141,12 @@ function layoutTopology(sites: TopologySite[]): SitePos[] {
   // Choose the row width whose resulting grid most closely matches the view
   // space's own proportions. Everything is uniformly scaled to fit afterwards,
   // so a grid shaped unlike the frame is scaled down by whichever axis runs out
-  // first and leaves the other axis empty — the arrangement decides how large
+  // first and leaves the other axis empty, the arrangement decides how large
   // the topology ends up being drawn.
   // Try every row width and keep the arrangement whose overall proportions come
   // closest to the view space. Everything is uniformly scaled to fit afterwards,
   // so a grid shaped unlike the frame runs out of room on one axis while the
-  // other sits empty — the arrangement is what decides how large the topology
+  // other sits empty: the arrangement is what decides how large the topology
   // is finally drawn.
   const targetAspect = VIEW_W / VIEW_H;
   const rowWidth = (row: typeof prepared) =>
@@ -183,7 +183,7 @@ function layoutTopology(sites: TopologySite[]): SitePos[] {
     let x = (widestRow - rowWidth(row)) / 2;
     for (const s of row) {
       // A site's own coordinates are relative to its hub, which is not the
-      // centre of its bounding box — offset so the box lands where we packed it.
+      // centre of its bounding box: offset so the box lands where we packed it.
       const originX = x - s.minX;
       const originY = rowY + (rowHeight - s.height) / 2 - s.minY;
       laidOut.push({
@@ -210,7 +210,7 @@ function layoutTopology(sites: TopologySite[]): SitePos[] {
 function normalize(sites: SitePos[]): SitePos[] {
   if (sites.length === 0) return sites;
 
-  // Measure what is actually drawn — hubs, clusters and their labels — rather
+  // Measure what is actually drawn (hubs, clusters and their labels) rather
   // than each site's enclosing circle. The circle is far larger than the content
   // for any site that is not a full ring, and padding the bounds with empty
   // space shrinks the final scale for no benefit.
@@ -252,7 +252,7 @@ function normalize(sites: SitePos[]): SitePos[] {
 }
 
 // ---------------------------------------------------------------------------
-// Device glyphs — shape encodes type (independent of the status color).
+// Device glyphs: shape encodes type (independent of the status color).
 // ---------------------------------------------------------------------------
 
 function DeviceGlyph({ type, x, y, fill }: { type: string; x: number; y: number; fill: string }) {
@@ -273,7 +273,7 @@ function DeviceGlyph({ type, x, y, fill }: { type: string; x: number; y: number;
       return <path d={`M ${x} ${y - 8} L ${x + 8} ${y + 6} L ${x - 8} ${y + 6} Z`} {...common} />;
     case 'workstation':
       return <circle cx={x} cy={y} r={6.5} {...common} />;
-    default: // unknown — dashed ring
+    default: // unknown, dashed ring
       return <circle cx={x} cy={y} r={6} fill={fill} stroke={stroke} strokeWidth={1.4} strokeDasharray="2.5 2" />;
   }
 }
@@ -294,7 +294,7 @@ const MAX_ZOOM = 6;
 
 /**
  * Owns the pan/zoom transform and the hover/selection state; the layout itself
- * is not state at all — it is derived from the topology response in a single
+ * is not state at all: it is derived from the topology response in a single
  * memoized pass, so panning and zooming never recompute a node position.
  *
  * Because layout is deterministic and unseeded, the same estate always draws
@@ -536,7 +536,7 @@ export default function NetworkMap() {
             )}
 
             {/* Legend, as a strip beneath the canvas rather than an overlay on
-                it — see the note in NetworkMap.css. */}
+                it: see the note in NetworkMap.css. */}
             <div className="map-legend">
               <div className="legend-group">
                 <span className="legend-title">Status</span>

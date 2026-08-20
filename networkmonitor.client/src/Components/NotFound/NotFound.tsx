@@ -6,7 +6,7 @@ import EmptyState from '../Shared/EmptyState';
 
 /**
  * Reached only through the router's `*` route, so it renders inside the shell
- * with the sidebar intact — a mistyped URL should leave navigation working
+ * with the sidebar intact: a mistyped URL should leave navigation working
  * rather than dropping the reader onto a bare page.
  */
 export default function NotFound() {

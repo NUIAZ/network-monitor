@@ -12,7 +12,7 @@ namespace NetworkMonitor.Server.Models;
 /// The one paged envelope every list endpoint uses. A single shape means the
 /// client needs exactly one pagination component.
 /// </summary>
-/// <typeparam name="T">Row shape for this page — always a DTO from this file, never an entity.</typeparam>
+/// <typeparam name="T">Row shape for this page, always a DTO from this file, never an entity.</typeparam>
 /// <param name="Items">Rows for this page only, already ordered by the endpoint.</param>
 /// <param name="Page">1-based page actually served, which can differ from the one requested after clamping.</param>
 /// <param name="PageSize">Rows per page after clamping (1-500); also differs from the request when the caller asked for something silly.</param>
@@ -46,7 +46,7 @@ public static class Paging
 /// <param name="TotalDevices">Non-excluded devices across every site.</param>
 /// <param name="OnlineDevices">Devices whose status is "online".</param>
 /// <param name="OfflineDevices">Devices whose status is "offline". Devices still in the "new" state count in neither this nor OnlineDevices, so the two do not have to sum to TotalDevices.</param>
-/// <param name="NewDevices24h">Devices first seen in the last 24 hours — the number worth looking at before anything else.</param>
+/// <param name="NewDevices24h">Devices first seen in the last 24 hours, the number worth looking at before anything else.</param>
 /// <param name="OpenAlerts">Unacknowledged alerts of any severity.</param>
 /// <param name="CriticalAlerts">Subset of OpenAlerts at severity "critical".</param>
 /// <param name="Sites">Configured sites.</param>
@@ -54,7 +54,7 @@ public static class Paging
 /// <param name="LastScanAt">Start time of the most recent scan of any kind. Null on a system that has never scanned.</param>
 /// <param name="OpenVulnerabilities">Vulnerabilities still in status "open" (not remediated or accepted).</param>
 /// <param name="CriticalVulnerabilities">Subset of OpenVulnerabilities at severity "critical".</param>
-/// <param name="ExpiringCerts">Certificates expiring inside the configured warning window. Already-expired certificates are counted here too — an expired cert is the most urgent member of the set, not a separate category.</param>
+/// <param name="ExpiringCerts">Certificates expiring inside the configured warning window. Already-expired certificates are counted here too; an expired cert is the most urgent member of the set, not a separate category.</param>
 /// <param name="NmapAvailable">False when the nmap binary cannot be executed. The first screen leads with "install nmap" rather than letting every scan fail mysteriously.</param>
 /// <param name="NmapVersion">First line of <c>nmap --version</c>, or null when nmap is unavailable.</param>
 public record DashboardSummaryDto(
@@ -114,7 +114,7 @@ public record SiteDetailDto(
     double? Latitude, double? Longitude, DateTime CreatedAt, IReadOnlyList<NetworkDto> Networks);
 
 /// <summary>
-/// Body for both POST /api/sites and PUT /api/sites/{id} — one shape because
+/// Body for both POST /api/sites and PUT /api/sites/{id}, one shape because
 /// the two operations validate identically. Every field is nullable so a missing
 /// value produces a readable validation message instead of a model-binding error.
 /// </summary>
@@ -168,7 +168,7 @@ public record NetworkDetailDto(
 
 /// <summary>One network's configuration for a single scan profile.</summary>
 /// <param name="Id">Surrogate key of the profile row.</param>
-/// <param name="ProfileType">quick, deep, security, full_port, or udp — fixed set, one of each per network.</param>
+/// <param name="ProfileType">quick, deep, security, full_port, or udp; a fixed set, one of each per network.</param>
 /// <param name="NmapArgs">Arguments handed to nmap, minus the target and output flags the executor adds.</param>
 /// <param name="IntervalSeconds">How often the scheduler runs this profile, in seconds.</param>
 /// <param name="IsEnabled">False leaves the profile configured but never scheduled; it can still be run on demand.</param>
@@ -237,7 +237,7 @@ public record ProfileUpdateRequest(string? NmapArgs, int? IntervalSeconds, bool?
 /// <param name="FirstSeen">UTC timestamp of the first scan that saw this address.</param>
 /// <param name="LastSeen">UTC timestamp of the last scan the device actually answered.</param>
 /// <param name="OpenPortCount">Ports currently in state "open"; filtered and closed ports are excluded.</param>
-/// <param name="IsFlagged">Operator-set marker for follow-up. Purely a UI signal — nothing in the pipeline reads it.</param>
+/// <param name="IsFlagged">Operator-set marker for follow-up. Purely a UI signal, nothing in the pipeline reads it.</param>
 /// <param name="IsExcluded">Excluded devices are passed to nmap's --exclude, never alert, and are left out of every dashboard count.</param>
 public record DeviceListItemDto(
     int Id, int NetworkId, string NetworkName, int SiteId, string SiteName,
@@ -302,7 +302,7 @@ public record PortDto(
 
 /// <summary>
 /// One point on the device availability/latency chart
-/// (GET /api/devices/{id}/history) — a single scan's view of the device.
+/// (GET /api/devices/{id}/history), a single scan's view of the device.
 /// </summary>
 /// <param name="RecordedAt">UTC time the scan recorded this observation.</param>
 /// <param name="Status">What the scan saw: "online" or "offline".</param>
@@ -312,7 +312,7 @@ public record DeviceHistoryPointDto(DateTime RecordedAt, string Status, int Open
 
 /// <summary>
 /// The operator-editable subset of a device. Discovery-owned fields (IP, MAC,
-/// vendor, status) are deliberately absent — the next scan would overwrite them.
+/// vendor, status) are deliberately absent; the next scan would overwrite them.
 /// Null on any field means "leave it alone"; empty string clears it.
 /// </summary>
 /// <param name="Hostname">Overrides the discovered name. Note that a later scan with reverse DNS can still replace this.</param>
@@ -347,7 +347,7 @@ public record TopologySiteDto(int Id, string Name, IReadOnlyList<TopologyNetwork
 public record TopologyNetworkDto(int Id, string Name, string Cidr, IReadOnlyList<TopologyDeviceDto> Devices);
 
 /// <summary>
-/// A device leaf in the topology tree — deliberately the four fields the map
+/// A device leaf in the topology tree: deliberately the four fields the map
 /// draws and nothing else, since this payload is the whole estate at once.
 /// </summary>
 /// <param name="Id">Device id, for linking through to the detail page.</param>
@@ -375,7 +375,7 @@ public record TopologyDeviceDto(int Id, string Ip, string? Hostname, string Devi
 /// <param name="HostsDown">Addresses in range that did not answer.</param>
 /// <param name="NewDevices">Devices seen for the first time by this run.</param>
 /// <param name="Status">"running", "completed", or "failed".</param>
-/// <param name="FailureReason">Why a failed run failed. Note that a failed scan still comes back over HTTP 200 — the request succeeded even though the scan did not.</param>
+/// <param name="FailureReason">Why a failed run failed. Note that a failed scan still comes back over HTTP 200; the request succeeded even though the scan did not.</param>
 public record ScanListItemDto(
     int Id, int NetworkId, string NetworkName, string SiteName, string ScanType,
     DateTime StartedAt, DateTime? CompletedAt, double? DurationSeconds,
@@ -387,7 +387,7 @@ public record ScanListItemDto(
 /// <param name="NetworkName">That network's display name.</param>
 /// <param name="SiteName">Owning site's display name.</param>
 /// <param name="ScanType">Profile that ran: quick, deep, security, full_port, or udp.</param>
-/// <param name="NmapCommand">The exact command line executed, so a result can be reproduced by hand. The raw XML is kept server-side but never returned — it runs to megabytes per row.</param>
+/// <param name="NmapCommand">The exact command line executed, so a result can be reproduced by hand. The raw XML is kept server-side but never returned; it runs to megabytes per row.</param>
 /// <param name="StartedAt">UTC time the run began.</param>
 /// <param name="CompletedAt">UTC time the run finished; null while still running.</param>
 /// <param name="DurationSeconds">Wall-clock seconds, rounded to one decimal.</param>
@@ -404,7 +404,7 @@ public record ScanDetailDto(
     int HostsUp, int HostsDown, int NewDevices, int ExcludedCount, string Status, string? FailureReason,
     IReadOnlyList<ScanSnapshotDto> Snapshots);
 
-/// <summary>What one scan saw of one device — the row that makes scan history reconstructable.</summary>
+/// <summary>What one scan saw of one device, the row that makes scan history reconstructable.</summary>
 /// <param name="DeviceId">Device observed; links through to the detail page.</param>
 /// <param name="DeviceIp">The device's IPv4 address at the time of the scan.</param>
 /// <param name="Hostname">The device's hostname, when known.</param>
@@ -438,7 +438,7 @@ public record ProfileDefinitionDto(
 /// <summary>
 /// One alert in the feed (GET /api/alerts), and embedded in the device detail
 /// response. Device identity is denormalized in because an alert outlives its
-/// device — the link is nulled on delete, but the text stays readable.
+/// device: the link is nulled on delete, but the text stays readable.
 /// </summary>
 /// <param name="Id">Surrogate key used in routes.</param>
 /// <param name="DeviceId">Device the alert concerns; null once that device has been deleted.</param>
@@ -446,11 +446,11 @@ public record ProfileDefinitionDto(
 /// <param name="DeviceHostname">The device's hostname, captured for display.</param>
 /// <param name="NetworkId">Network context, set even for alerts that are not device-specific.</param>
 /// <param name="AlertType">new_device, device_offline, device_online, port_opened, port_closed, cert_expiring, or vulnerability.</param>
-/// <param name="Severity">"info", "warning", or "critical" — drives colour and notification routing.</param>
+/// <param name="Severity">"info", "warning", or "critical"; drives colour and notification routing.</param>
 /// <param name="Message">One-line human-readable summary.</param>
 /// <param name="Details">Optional longer body, e.g. the specific ports that changed.</param>
 /// <param name="IsAcknowledged">True once someone has taken responsibility for it; acknowledged alerts drop out of the default feed.</param>
-/// <param name="AcknowledgedBy">Who acknowledged it. Free text — this build has no authentication, so it is a claim, not an identity.</param>
+/// <param name="AcknowledgedBy">Who acknowledged it. Free text; this build has no authentication, so it is a claim, not an identity.</param>
 /// <param name="AcknowledgedAt">UTC time of acknowledgement.</param>
 /// <param name="CreatedAt">UTC time the scan pipeline raised the alert.</param>
 public record AlertDto(
@@ -545,7 +545,7 @@ public record SnmpTargetDto(
 /// The newest snapshot of one interface
 /// (GET /api/snmp/targets/{id}/interfaces).
 /// </summary>
-/// <param name="IfIndex">SNMP ifIndex — the identity of an interface within its device, stable only until the device reboots.</param>
+/// <param name="IfIndex">SNMP ifIndex, the identity of an interface within its device, stable only until the device reboots.</param>
 /// <param name="IfName">ifName as reported, e.g. "GigabitEthernet1/0/24".</param>
 /// <param name="IfAlias">ifAlias, i.e. whatever description the network team configured. Usually the most useful label on this record.</param>
 /// <param name="SpeedBps">Link speed in bits per second, from ifSpeed/ifHighSpeed. It is the denominator for UtilizationPercent, so a wrong value makes utilization meaningless.</param>
@@ -589,11 +589,11 @@ public record UtilizationPointDto(DateTime RecordedAt, double UtilizationPercent
 public record AppSettingDto(string Key, string? Value, string? Description, DateTime UpdatedAt);
 
 /// <summary>Body for PUT /api/settings/{key}.</summary>
-/// <param name="Value">New value. Null is accepted and stored as null — that is how a setting gets cleared. Unknown keys 404 rather than upsert, so a typo cannot litter the table.</param>
+/// <param name="Value">New value. Null is accepted and stored as null; that is how a setting gets cleared. Unknown keys 404 rather than upsert, so a typo cannot litter the table.</param>
 public record SettingUpdateRequest(string? Value);
 
 /// <summary>Environment facts for the About panel (GET /api/settings/system).</summary>
-/// <param name="Version">InformationalVersion from the assembly — the human-readable version, not the 1.0.0.0 AssemblyVersion.</param>
+/// <param name="Version">InformationalVersion from the assembly, the human-readable version, not the 1.0.0.0 AssemblyVersion.</param>
 /// <param name="NmapAvailable">Whether the configured nmap binary can actually be executed on this host.</param>
 /// <param name="NmapVersion">First line of <c>nmap --version</c>; null when unavailable.</param>
 /// <param name="SchedulerEnabled">Whether the background scan loop is running. Ships false so a freshly cloned demo never probes whatever network it landed on.</param>

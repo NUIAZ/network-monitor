@@ -1,7 +1,7 @@
 /**
  * Scan history + on-demand scan runner.
  *
- * The run panel POSTs /api/scans/run and *waits* — the endpoint executes a
+ * The run panel POSTs /api/scans/run and *waits*: the endpoint executes a
  * real nmap scan synchronously and returns the completed result, which can
  * take a while on a deep profile. The button therefore shows a live spinner
  * with the elapsed time, and the 503 nmap-missing case gets its own warning
@@ -29,13 +29,13 @@ function scanDuration(scan: ScanResult): string {
     const seconds = (new Date(scan.completedAt).getTime() - new Date(scan.startedAt).getTime()) / 1000;
     return formatDuration(seconds);
   }
-  return scan.status === 'running' ? 'running…' : '—';
+  return scan.status === 'running' ? 'running…' : '-';
 }
 
 /**
  * Two features sharing a screen, and the run panel is the awkward half: because
  * the run endpoint blocks until nmap exits, `running` can stay true for minutes
- * and there is no way to cancel it — navigating away abandons the request but
+ * and there is no way to cancel it; navigating away abandons the request but
  * not the scan, which finishes server-side and shows up in the table on return.
  *
  * The elapsed-seconds ticker exists purely so a long profile does not look
@@ -92,7 +92,7 @@ export default function ScanHistory() {
       scans.reload();
     } catch (err) {
       if (err instanceof ApiError && err.status === 503) {
-        // nmap isn't installed server-side — a setup problem, not a failure
+        // nmap isn't installed server-side: a setup problem, not a failure
         // of this particular scan, so it gets distinct messaging.
         setNmapMissing(true);
       } else {
@@ -154,7 +154,7 @@ export default function ScanHistory() {
             <div className="warn-banner" data-testid="nmap-missing-banner">
               <i className="bi bi-exclamation-triangle-fill" />
               <div>
-                <strong>nmap is not installed on the server</strong> — on-demand scans can't run.
+                <strong>nmap is not installed on the server</strong>; on-demand scans can't run.
                 Install nmap on the API host and it will be picked up automatically.
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function ScanHistory() {
                 Scan {runResult.status}: <strong>{runResult.hostsUp}</strong> hosts up,{' '}
                 <strong>{runResult.hostsDown}</strong> down
                 {runResult.newDevices > 0 && <>, <strong>+{runResult.newDevices} new</strong></>}
-                {runResult.failureReason && <> — {runResult.failureReason}</>}
+                {runResult.failureReason && <>: {runResult.failureReason}</>}
               </span>
             </div>
           )}

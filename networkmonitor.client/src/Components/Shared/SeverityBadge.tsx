@@ -1,6 +1,6 @@
 /**
- * Severity chip for alerts and vulnerabilities. Always icon + label — never
- * color alone — so severity survives grayscale printing and color-vision
+ * Severity chip for alerts and vulnerabilities. Always icon + label, never
+ * color alone: so severity survives grayscale printing and color-vision
  * deficiency.
  */
 import { humanize } from '../../utils/format';
@@ -21,8 +21,8 @@ const SEVERITIES: Record<string, SeverityStyle> = {
 };
 
 /**
- * Spans both severity scales in the app — alerts use info/warning/critical,
- * vulnerabilities use low/medium/high/critical — by mapping them onto three
+ * Spans both severity scales in the app, alerts use info/warning/critical,
+ * vulnerabilities use low/medium/high/critical: by mapping them onto three
  * shared tones. An unrecognised severity gets a question-mark icon and no tone
  * rather than being dropped, since a finding with an odd label is still a
  * finding somebody needs to see.

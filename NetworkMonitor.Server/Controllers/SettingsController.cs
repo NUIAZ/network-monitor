@@ -11,7 +11,7 @@ namespace NetworkMonitor.Server.Controllers;
 
 /// <summary>
 /// Key/value application settings plus the system-info panel. Setting keys are
-/// fixed by the seeder/installer — PUT updates a value but never invents a key,
+/// fixed by the seeder/installer: PUT updates a value but never invents a key,
 /// so a typo'd client call cannot litter the table with orphan settings.
 /// </summary>
 [ApiController]
@@ -54,7 +54,7 @@ public class SettingsController : ControllerBase
             .ToListAsync();
     }
 
-    /// <summary>Updates one setting's value. Unknown keys 404 rather than upsert — see class remarks.</summary>
+    /// <summary>Updates one setting's value. Unknown keys 404 rather than upsert, see class remarks.</summary>
     [HttpPut("{key}")]
     public async Task<ActionResult<AppSettingDto>> Update(string key, [FromBody] SettingUpdateRequest request)
     {
@@ -82,7 +82,7 @@ public class SettingsController : ControllerBase
         //
         // The SDK appends "+<git sha>" during build. That 40-character suffix
         // means nothing to a user and overflows the sidebar footer this value is
-        // rendered into, so it is trimmed here — once, rather than in every
+        // rendered into, so it is trimmed here, once, rather than in every
         // consumer of the field.
         var informational = Assembly.GetExecutingAssembly()
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.0.0";
