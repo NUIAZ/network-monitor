@@ -23,7 +23,7 @@ Base path `/api`. Swagger UI is served at `/swagger` in Development.
 | DELETE | `/api/sites/{id}` | Cascades to networks and devices |
 | GET | `/api/networks?siteId=` | Network list with `deviceCount`, `lastScanAt` |
 | GET | `/api/networks/{id}` | Single network including scan profiles |
-| POST | `/api/networks` | Body: `{ siteId, name, cidr, description, scanIntervalSeconds, deepScanIntervalSeconds }` — creates the five default scan profiles |
+| POST | `/api/networks` | Body: `{ siteId, name, cidr, description, scanIntervalSeconds, deepScanIntervalSeconds }`; creates the five default scan profiles |
 | PUT | `/api/networks/{id}` | Same body plus `isEnabled` |
 | DELETE | `/api/networks/{id}` | |
 | PUT | `/api/networks/{id}/profiles/{profileType}` | Body: `{ nmapArgs, intervalSeconds, isEnabled }` |
@@ -45,7 +45,7 @@ Base path `/api`. Swagger UI is served at `/swagger` in Development.
 |---|---|---|
 | GET | `/api/scans` | Query: `networkId, status, page, pageSize` → paged `{ id, networkId, networkName, siteName, scanType, startedAt, completedAt, durationSeconds, hostsUp, hostsDown, newDevices, status, failureReason }` |
 | GET | `/api/scans/{id}` | Single scan with its device snapshots |
-| POST | `/api/scans/run` | Body: `{ networkId, profileType }` — runs a real nmap scan, returns the completed `ScanResult`. 503 when nmap is missing |
+| POST | `/api/scans/run` | Body: `{ networkId, profileType }`; runs a real nmap scan, returns the completed `ScanResult`. 503 when nmap is missing |
 | GET | `/api/scans/profiles` | The five built-in profile definitions and what each is for |
 
 ## Alerts
@@ -62,7 +62,7 @@ Base path `/api`. Swagger UI is served at `/swagger` in Development.
 | Method | Route | Notes |
 |---|---|---|
 | GET | `/api/vulnerabilities` | Query: `severity, status, siteId, search, page, pageSize`; each row carries `deviceIp`, `deviceHostname`, `siteName` |
-| PUT | `/api/vulnerabilities/{id}/status` | Body: `{ status }` — `open`, `remediated`, `accepted_risk` |
+| PUT | `/api/vulnerabilities/{id}/status` | Body: `{ status }`: `open`, `remediated`, or `accepted_risk` |
 | GET | `/api/certificates` | Query: `expiringWithinDays, siteId, page, pageSize`; each row carries `daysUntilExpiry`, `deviceIp` |
 
 ## SNMP
@@ -77,7 +77,7 @@ Base path `/api`. Swagger UI is served at `/swagger` in Development.
 
 Application logging and errors from both tiers land in one table. Server-side
 entries arrive two ways: the exception middleware records anything that escapes
-a controller, and a custom `ILoggerProvider` persists `ILogger` calls — so any
+a controller, and a custom `ILoggerProvider` persists `ILogger` calls, so any
 `_logger.LogInformation/LogWarning/LogError(...)` in the codebase is reviewable
 in the UI without shell access. Browser failures are posted back by the client's
 error reporter.
@@ -87,8 +87,8 @@ The sink applies **two thresholds**, because "what is my application doing" and
 
 | Setting | Default | Applies to |
 |---|---|---|
-| `Logging:Database:ApplicationMinimumLevel` | `Information` | Categories under `NetworkMonitor.Server` — scans starting and finishing, scheduler decisions, seeding |
-| `Logging:Database:MinimumLevel` | `Warning` | Everything else — ASP.NET logs every request at Information, and persisting that makes the table unreadable |
+| `Logging:Database:ApplicationMinimumLevel` | `Information` | Categories under `NetworkMonitor.Server`: scans starting and finishing, scheduler decisions, seeding |
+| `Logging:Database:MinimumLevel` | `Warning` | Everything else; ASP.NET logs every request at Information, and persisting that makes the table unreadable |
 
 EF Core, the SQLite/Npgsql providers, and the log writer's own categories are
 excluded outright: they sit on the path that writes the row, so logging them
